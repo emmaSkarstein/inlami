@@ -19,7 +19,7 @@ Suggests:
     INLA,
     rmarkdown
 Additional_repositories: 
-    https://inla.r-inla-download.org/R/stable/
+    https://inla.r-inla-download.org/R/testing
 Config/testthat/edition: 3
 Imports: 
     dplyr,
