@@ -103,8 +103,8 @@ simplify_inlami_model_summary <- function(inlami_model){
 #' #                         initial.prec.u_c = initial.prec.u_c,
 #' #                         initial.prec.r = initial.prec.r)
 #'
-#' #summarise_me(simple_model)
-summarise_me <- function(inlami_model){
+#' #summarise_inlami(simple_model)
+summarise_inlami <- function(inlami_model){
   # Print MOI coefficients and imputation coefficients in separate chunks.
   # Highlight the covariate with error somehow.
 

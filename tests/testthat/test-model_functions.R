@@ -8,10 +8,10 @@ test_that("extract_variables_from_formula works", {
 
 })
 
-test_that("make_matrices works", {
+test_that("make_inlami_matrices works", {
   simple_moi <- y ~ x + z
   simple_imp <- x ~ z
-  matrices <- make_matrices(simple_data, simple_moi, simple_imp)
+  matrices <- make_inlami_matrices(simple_data, simple_moi, simple_imp)
   # Check if the length of the list is 10
   expect_equal(length(matrices), 10)
   # Check if the matrices (list elements) have the correct names
@@ -24,14 +24,14 @@ test_that("make_matrices works", {
   # Check if the error variable is called "error_variable"
   formula_moi <- mpg ~ error_variable + cyl + disp
   formula_imp <- error_variable ~ cyl
-  expect_error(make_matrices(data = mtcars,
+  expect_error(make_inlami_matrices(data = mtcars,
                              formula_moi = formula_moi,
                              formula_imp = formula_imp))
 
 
 })
 
-test_that("inlamemi works", {
+test_that("fit_inlami works", {
   simple_moi <- y ~ x + z
   simple_imp <- x ~ z
 
@@ -48,7 +48,7 @@ test_that("inlamemi works", {
   initial.prec.r <- 1
 
   # Fit the model
-  #simple_model <- inlamemi(data = simple_data,
+  #simple_model <- fit_inlami(data = simple_data,
   #                         formula_moi = simple_moi,
   #                         formula_imp = simple_imp,
   #                         family_moi = "gaussian",
