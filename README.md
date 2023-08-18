@@ -5,6 +5,8 @@
 # inlami
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/emmaSkarstein/inlami/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/emmaSkarstein/inlami/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 Fitting measurement error models and missing data imputation models in
