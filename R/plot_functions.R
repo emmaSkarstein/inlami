@@ -12,7 +12,7 @@
 #' @importFrom ggplot2 ggplot aes vars
 #' @importFrom rlang .data
 #' @examples
-#' #' #' simple_moi <- y ~ x + z
+#' simple_moi <- y ~ x + z
 #' simple_imp <- x ~ z
 #'
 #' # Prior for beta.x

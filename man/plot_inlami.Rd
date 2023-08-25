@@ -27,7 +27,7 @@ An object of class "ggplot2" that plots the posterior mean and 95 \% credible in
 Plot model summary
 }
 \examples{
-#' #' simple_moi <- y ~ x + z
+simple_moi <- y ~ x + z
 simple_imp <- x ~ z
 
 # Prior for beta.x
