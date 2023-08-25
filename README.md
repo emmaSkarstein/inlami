@@ -33,11 +33,23 @@ devtools::install_github("emmaSkarstein/inlami")
 
 ## When can I use this package?
 
-This package is designed for fitting models where you have one covariate that has classical measurement error, Berkson measurement error, missing observations, or any combination of these three. That could mean that you only have missing data, and if so this package can do missing data imputation.
+This package is designed for fitting models where you have one covariate
+that has classical measurement error, Berkson measurement error, missing
+observations, or any combination of these three. That could mean that
+you only have missing data, and if so this package can do missing data
+imputation.
 
-The model itself must be of the class of models that is possible to fit with R-INLA. That means that it can be used for most common regression types, like linear regression and logistic regression, and you can include as many error free covariates as needed. You can also include random effects, the same way as you would normally include such effects in R-INLA.
+The model itself must be of the class of models that is possible to fit
+with R-INLA. That means that it can be used for most common regression
+types, like linear regression and logistic regression, and you can
+include as many error free covariates as needed. You can also include
+random effects, the same way as you would normally include such effects
+in R-INLA.
 
-The package is unfortunately not able to adjust for measurement error or missingness in multiple covariates, though this could be implemented, it just hasn't yet. Feel free to get in touch if that is functionality that would be of interest for your research!
+The package is unfortunately not able to adjust for measurement error or
+missingness in multiple covariates, though this could be implemented, it
+just hasn’t yet. Feel free to get in touch if that is functionality that
+would be of interest for your research!
 
 ## How can I use this package?
 
