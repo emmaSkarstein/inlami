@@ -31,15 +31,24 @@ test_that("make_inlami_matrices works", {
 
 })
 
+test_that("make_inlami_scaling_vector works", {
+  # Check that the scaling vector is the correct length
+  expect_error(
+    make_inlami_scaling_vector(simple_data,
+                               error_variable = "x",
+                               error_type = c("classical", "berkson"),
+                               classical_error_scaling = rep(1, 500)))
+})
+
 test_that("fit_inlami works", {
   simple_moi <- y ~ x + z
   simple_imp <- x ~ z
 
   # Priors for y, measurement error and true x-value precision
-  prior.prec.y <- c(0.5, 0.5) # Gamma(0.5, 0.5)
-  prior.prec.u_b <- c(10, 9) # Gamma(0.5, 0.5)
-  prior.prec.u_c <- c(10, 9) # Gamma(0.5, 0.5)
-  prior.prec.r <- c(0.5, 0.5) # Gamma(0.5, 0.5)
+  prior.prec.y <- c(0.5, 0.5)
+  prior.prec.u_b <- c(10, 9)
+  prior.prec.u_c <- c(10, 9)
+  prior.prec.r <- c(0.5, 0.5)
 
   # Initial values
   initial.prec.y <- 1
@@ -48,22 +57,22 @@ test_that("fit_inlami works", {
   initial.prec.r <- 1
 
   # Fit the model
-  #simple_model <- fit_inlami(data = simple_data,
-  #                         formula_moi = simple_moi,
-  #                         formula_imp = simple_imp,
-  #                         family_moi = "gaussian",
-  #                         error_type = c("berkson", "classical"),
-  #                         prior.prec.y = prior.prec.y,
-  #                         prior.prec.u_b = prior.prec.u_b,
-  #                         prior.prec.u_c = prior.prec.u_c,
-  #                         prior.prec.r = prior.prec.r,
-  #                         initial.prec.y = initial.prec.y,
-  #                         initial.prec.u_b = initial.prec.u_b,
-  #                         initial.prec.u_c = initial.prec.u_c,
-  #                         initial.prec.r = initial.prec.r)
+  simple_model <- fit_inlami(data = simple_data,
+                          formula_moi = simple_moi,
+                          formula_imp = simple_imp,
+                          family_moi = "gaussian",
+                          error_type = c("berkson", "classical"),
+                          prior.prec.y = prior.prec.y,
+                          prior.prec.u_b = prior.prec.u_b,
+                          prior.prec.u_c = prior.prec.u_c,
+                          prior.prec.r = prior.prec.r,
+                          initial.prec.y = initial.prec.y,
+                          initial.prec.u_b = initial.prec.u_b,
+                          initial.prec.u_c = initial.prec.u_c,
+                          initial.prec.r = initial.prec.r)
 
   # Test if the number of hyperparameters is 5
-  #expect_equal(nrow(simple_model$summary.hyperpar), 5)
+  expect_equal(nrow(simple_model$summary.hyperpar), 5)
 
   # Catching errors -----------------------------------------------------------
 

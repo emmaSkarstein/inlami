@@ -31,30 +31,34 @@
 #' initial.prec.r <- 1
 #'
 #' # Fit the model
-#' #simple_model <- fit_inlami(data = simple_data,
-#' #                         formula_moi = simple_moi,
-#' #                         formula_imp = simple_imp,
-#' #                         family_moi = "gaussian",
-#' #                         error_type = c("berkson", "classical"),
-#' #                         prior.prec.y = prior.prec.y,
-#' #                         prior.prec.u_b = prior.prec.u_b,
-#' #                         prior.prec.u_c = prior.prec.u_c,
-#' #                         prior.prec.r = prior.prec.r,
-#' #                         initial.prec.y = initial.prec.y,
-#' #                         initial.prec.u_b = initial.prec.u_b,
-#' #                         initial.prec.u_c = initial.prec.u_c,
-#' #                         initial.prec.r = initial.prec.r)
+#' simple_model <- fit_inlami(data = simple_data,
+#'                          formula_moi = simple_moi,
+#'                          formula_imp = simple_imp,
+#'                          family_moi = "gaussian",
+#'                          error_type = c("berkson", "classical"),
+#'                          prior.prec.y = prior.prec.y,
+#'                          prior.prec.u_b = prior.prec.u_b,
+#'                          prior.prec.u_c = prior.prec.u_c,
+#'                          prior.prec.r = prior.prec.r,
+#'                          initial.prec.y = initial.prec.y,
+#'                          initial.prec.u_b = initial.prec.u_b,
+#'                          initial.prec.u_c = initial.prec.u_c,
+#'                          initial.prec.r = initial.prec.r)
 #'
-#' #plot_inlami(simple_model)
+#' plot_inlami(simple_model)
 plot_inlami <- function(inlami_model, plot_moi = TRUE, plot_imp = TRUE, plot_intercepts = TRUE){
   # Plot the posterior mean and 0.975 and 0.025 quantiles for all the coefficients
-  # Highlight the error prone variable?
-  # Return ggplot2 object so that it can be futher modified by user
+  # Highlight the error prone variable
+  # Return ggplot2 object so that it can be further modified by user
 
   # What other arguments would be useful?
   # - Which covariates to plot
   # - Font? (check if this can be changed for the ggplot object after being returned)
   # - colors? (check if this can be changed for the ggplot object after being returned)
+
+  # I think a useful principle can be to keep the stylistic stuff as basic as
+  # possible, as long as it is possible for the user to change once the object
+  # is returned.
 
   simple_summary <- simplify_inlami_model_summary(inlami_model)
 

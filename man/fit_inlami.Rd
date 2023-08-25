@@ -8,8 +8,9 @@ fit_inlami(
   data,
   formula_moi,
   formula_imp,
-  error_type = "classical",
   family_moi,
+  error_type = "classical",
+  classical_error_scaling = NULL,
   prior.prec.y = NULL,
   prior.prec.u_b = NULL,
   prior.prec.u_c = NULL,
@@ -19,7 +20,8 @@ fit_inlami(
   initial.prec.u_c = NULL,
   initial.prec.r = NULL,
   control.family = NULL,
-  control.predictor = NULL
+  control.predictor = NULL,
+  ...
 )
 }
 \arguments{
@@ -29,9 +31,11 @@ fit_inlami(
 
 \item{formula_imp}{an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.}
 
+\item{family_moi}{a string indicating the likelihood family for the model of interest (the main model).}
+
 \item{error_type}{type of error (one or more of "classical", "berkson", "missing")}
 
-\item{family_moi}{a string indicating the likelihood family for the model of interest (the main model).}
+\item{classical_error_scaling}{can be specified if the classical measurement error varies across observations. Must be a vector of the same length as the data.}
 
 \item{prior.prec.y}{a string containing the parameters for the prior for the precision of the residual term for the model of interest.}
 
@@ -52,9 +56,11 @@ fit_inlami(
 \item{control.family}{control.family for use in inla (can be provided directly instead of passing the "prior.prec...." and "initial.prec..." arguments.}
 
 \item{control.predictor}{control.predictor for use in inla.}
+
+\item{...}{other arguments to pass to `inla`.}
 }
 \value{
-An object of class \code{inla}.
+An object of class \code{inlami}.
 }
 \description{
 A wrapper function around "INLA::inla()", providing the necessary structure to fit the hierarchical measurement error model that adjusts coefficient estimates to account for biases due to measurement error and missing data.
@@ -79,17 +85,17 @@ initial.prec.u_c <- 1
 initial.prec.r <- 1
 
 # Fit the model
-#simple_model <- fit_inlami(data = simple_data,
-#                         formula_moi = simple_moi,
-#                         formula_imp = simple_imp,
-#                         family_moi = "gaussian",
-#                         error_type = c("berkson", "classical"),
-#                         prior.prec.y = prior.prec.y,
-#                         prior.prec.u_b = prior.prec.u_b,
-#                         prior.prec.u_c = prior.prec.u_c,
-#                         prior.prec.r = prior.prec.r,
-#                         initial.prec.y = initial.prec.y,
-#                         initial.prec.u_b = initial.prec.u_b,
-#                         initial.prec.u_c = initial.prec.u_c,
-#                         initial.prec.r = initial.prec.r)
+simple_model <- fit_inlami(data = simple_data,
+                         formula_moi = simple_moi,
+                         formula_imp = simple_imp,
+                         family_moi = "gaussian",
+                         error_type = c("berkson", "classical"),
+                         prior.prec.y = prior.prec.y,
+                         prior.prec.u_b = prior.prec.u_b,
+                         prior.prec.u_c = prior.prec.u_c,
+                         prior.prec.r = prior.prec.r,
+                         initial.prec.y = initial.prec.y,
+                         initial.prec.u_b = initial.prec.u_b,
+                         initial.prec.u_c = initial.prec.u_c,
+                         initial.prec.r = initial.prec.r)
 }
