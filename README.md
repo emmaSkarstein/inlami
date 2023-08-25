@@ -9,6 +9,11 @@
 [![R-CMD-check](https://github.com/emmaSkarstein/inlami/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/emmaSkarstein/inlami/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
+NOTE \| The package is still under development, and some important
+functionality is still missing. Feel free to get in touch if you would
+like to use the package, but would like to know more about it’s current
+limitations.
+
 Fitting measurement error models and missing data imputation models in
 INLA is not trivial, and requires several workarounds in order to fit
 the model. At the same time, a Bayesian hierarchical framework is very
