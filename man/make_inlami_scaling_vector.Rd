@@ -4,14 +4,14 @@
 \alias{make_inlami_scaling_vector}
 \title{Construct scaling vector to scale the precision of non-mismeasured observations}
 \usage{
-make_inlami_scaling_vector(data, error_variable, error_type)
+make_inlami_scaling_vector(data, error_type, classical_error_scaling = NULL)
 }
 \arguments{
 \item{data}{a data frame containing the variables in the model.}
 
-\item{error_variable}{the variable with measurement error or missingness.}
-
 \item{error_type}{one of "classical", "berkson" or "missing".}
+
+\item{classical_error_scaling}{can be specified if the classical measurement error varies across observations. Must be a vector of the same length as the data.}
 }
 \value{
 A vector reflecting the scaling factor for the residual terms in each model level.
@@ -21,6 +21,5 @@ Construct scaling vector to scale the precision of non-mismeasured observations
 }
 \examples{
 make_inlami_scaling_vector(simple_data,
-                           error_variable = "x",
                            error_type = c("classical", "berkson"))
 }
