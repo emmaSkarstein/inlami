@@ -15,7 +15,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-# inlami
+# inlami <a href='https://github.com/emmaSkarstein/inlami'><img src='man/figures/inlami_transparent.png' align="right" height="131.5" /></a>
+
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/emmaSkarstein/inlami/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/emmaSkarstein/inlami/actions/workflows/R-CMD-check.yaml)
