@@ -217,40 +217,69 @@ make_inlami_matrices <- function(data,
 #' Construct scaling vector to scale the precision of non-mismeasured observations
 #'
 #' @param data a data frame containing the variables in the model.
-#' @param error_variable the variable with measurement error or missingness.
 #' @param error_type one of "classical", "berkson" or "missing".
+#' @param classical_error_scaling can be specified if the classical measurement error varies across observations. Must be a vector of the same length as the data.
 #'
 #' @return A vector reflecting the scaling factor for the residual terms in each model level.
 #' @export
 #'
 #' @examples
 #' make_inlami_scaling_vector(simple_data,
-#'                            error_variable = "x",
 #'                            error_type = c("classical", "berkson"))
 make_inlami_scaling_vector <- function(data,
-                                error_variable,
-                                error_type){
-  # NOTE: I think this is unnecessary. a switch for classical error/not classical error should be enough.
-  # Maybe a helper for cases where the ME is varying would be useful.
-
+                                error_type,
+                                classical_error_scaling = NULL){
   # Scale the classical error precision of the perfectly measured values to a very high value (10^12).
   # If we have only missing data/perfectly observed data, then the precision can be scaled for all (because it makes no difference for the missing values)
   # but if we have measurement error (possibly varying), then the value of the precision is more meaningful.
+
   n <- nrow(data)
-  missing_indicator <- is.na(data$error_variable)
-  #scale_non_missing <-
-  #precision_scaling <- c(rep(1, 2*n), scale_non_missing, rep(1, n))
+
+  # Default case:
+  scale_classical <- rep(1, n)
+  scale_berkson <- rep(1, n)
+
+  if(!"classical" %in% error_type){
+    # If there is no classical measurement error, then the classical error
+    # precision should be scaled very high to indicate that there is no error.
+    # Even if there is missingness, this scaling should be done, as the missing
+    # values will anyway be imputed.
+    scale_classical <- rep(10^12, n)
+  }
+
+  if(!"berkson" %in% error_type){
+    # If there is no Berkson error, we scale this to a large value to "skip"
+    # that level of the model.
+    scale_berkson <- rep(10^12, n)
+  }
+
+  if(!is.null(classical_error_scaling)){
+    if(length(classical_error_scaling) != n){
+      stop(paste0("The length of classical_error_scaling (",
+                  length(classical_error_scaling),
+                  ") is not the same as the number of observations (",
+                  n,
+                  ")."))
+    }
+
+    # This can be used if the error varies for each observation somehow.
+    scale_classical <- classical_error_scaling
+  }
+
+  precision_scaling <- c(rep(1, n), scale_berkson, scale_classical, rep(1, n))
+  return(precision_scaling)
 }
 
 #' Fit model for measurement error and missing data in INLA
 #'
 #' A wrapper function around "INLA::inla()", providing the necessary structure to fit the hierarchical measurement error model that adjusts coefficient estimates to account for biases due to measurement error and missing data.
 #'
-#' @param data a data frame containing the variables in the model.
 #' @param formula_moi an object of class "formula", describing the main model to be fitted.
 #' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
-#' @param error_type type of error (one or more of "classical", "berkson", "missing")
 #' @param family_moi a string indicating the likelihood family for the model of interest (the main model).
+#' @param data a data frame containing the variables in the model.
+#' @param error_type type of error (one or more of "classical", "berkson", "missing")
+#' @param classical_error_scaling can be specified if the classical measurement error varies across observations. Must be a vector of the same length as the data.
 #' @param prior.prec.y a string containing the parameters for the prior for the precision of the residual term for the model of interest.
 #' @param prior.prec.u_b a string containing the parameters for the prior for the precision of the error term for the Berkson error model.
 #' @param prior.prec.u_c a string containing the parameters for the prior for the precision of the error term for the classical error model.
@@ -261,8 +290,9 @@ make_inlami_scaling_vector <- function(data,
 #' @param initial.prec.r the initial value for the precision of the residual term for the latent variable r.
 #' @param control.family control.family for use in inla (can be provided directly instead of passing the "prior.prec...." and "initial.prec..." arguments.
 #' @param control.predictor control.predictor for use in inla.
+#' @param ... other arguments to pass to `inla`.
 #'
-#' @return An object of class \code{inla}.
+#' @return An object of class \code{inlami}.
 #' @export
 #'
 #' @examples
@@ -285,24 +315,25 @@ make_inlami_scaling_vector <- function(data,
 #' initial.prec.r <- 1
 #'
 #' # Fit the model
-#' #simple_model <- fit_inlami(data = simple_data,
-#' #                         formula_moi = simple_moi,
-#' #                         formula_imp = simple_imp,
-#' #                         family_moi = "gaussian",
-#' #                         error_type = c("berkson", "classical"),
-#' #                         prior.prec.y = prior.prec.y,
-#' #                         prior.prec.u_b = prior.prec.u_b,
-#' #                         prior.prec.u_c = prior.prec.u_c,
-#' #                         prior.prec.r = prior.prec.r,
-#' #                         initial.prec.y = initial.prec.y,
-#' #                         initial.prec.u_b = initial.prec.u_b,
-#' #                         initial.prec.u_c = initial.prec.u_c,
-#' #                         initial.prec.r = initial.prec.r)
-fit_inlami <- function(data,
-                     formula_moi,
+#' simple_model <- fit_inlami(data = simple_data,
+#'                          formula_moi = simple_moi,
+#'                          formula_imp = simple_imp,
+#'                          family_moi = "gaussian",
+#'                          error_type = c("berkson", "classical"),
+#'                          prior.prec.y = prior.prec.y,
+#'                          prior.prec.u_b = prior.prec.u_b,
+#'                          prior.prec.u_c = prior.prec.u_c,
+#'                          prior.prec.r = prior.prec.r,
+#'                          initial.prec.y = initial.prec.y,
+#'                          initial.prec.u_b = initial.prec.u_b,
+#'                          initial.prec.u_c = initial.prec.u_c,
+#'                          initial.prec.r = initial.prec.r)
+fit_inlami <- function(formula_moi,
                      formula_imp,
-                     error_type = "classical",
                      family_moi,
+                     data,
+                     error_type = "classical",
+                     classical_error_scaling = NULL,
                      prior.prec.y = NULL,
                      prior.prec.u_b = NULL,
                      prior.prec.u_c = NULL,
@@ -312,33 +343,35 @@ fit_inlami <- function(data,
                      initial.prec.u_c = NULL,
                      initial.prec.r = NULL,
                      control.family = NULL,
-                     control.predictor = NULL){
-  # Define n
-  n <- nrow(data)
-  # ----------------------------------------------------------------------------
-  # Make formula from sub-models
-  # ----------------------------------------------------------------------------
+                     control.predictor = NULL,
+                     ...){
+
+  # Make formula from sub-models -----------------------------------------------
   formula_full <- make_inlami_formula(formula_moi = formula_moi,
                                formula_imp = formula_imp,
                                error_type = error_type)
 
-  # ----------------------------------------------------------------------------
-  # Make the matrices for the joint model
-  # ----------------------------------------------------------------------------
+  # Make scaling vector --------------------------------------------------------
+  scaling_vec <- make_inlami_scaling_vector(
+   data = data,
+   error_type = error_type,
+   classical_error_scaling = classical_error_scaling)
+
+  # scaling_vec <- rep(1, 4*n)
+
+  # Make the matrices for the joint model --------------------------------------
   data_matrices <- make_inlami_matrices(data = data,
-                                 formula_moi = formula_moi,
-                                 formula_imp = formula_imp,
-                                 error_type = error_type)
+                                        formula_moi = formula_moi,
+                                        formula_imp = formula_imp,
+                                        error_type = error_type)
 
-  # ----------------------------------------------------------------------------
-  # Make scaling vector
-  # ----------------------------------------------------------------------------
-  #scaling_vec <- make_inlami_scaling_vector()
-  scaling_vec <- rep(1, 4*n)
+  # Append scaling vector and data size to the matrices to pass to inla() ------
+  n <- nrow(data) # Define number of observations
+  data_with_other_stuff <- data_matrices
+  data_with_other_stuff$n <- n
+  data_with_other_stuff$scaling_vec <- scaling_vec
 
-  # ----------------------------------------------------------------------------
-  # Make "control.family"
-  # ----------------------------------------------------------------------------
+  # Make "control.family" ------------------------------------------------------
   if(is.null(control.family)){
     if(family_moi == "binomial"){
       control.family.y <- list(hyper = list())
@@ -350,13 +383,13 @@ fit_inlami <- function(data,
     }
     control.family.u_b <- list(hyper = list(prec = list(initial = log(initial.prec.u_b),
                                                         param = prior.prec.u_b,
-                                                        fixed = TRUE)))
+                                                        fixed = FALSE)))
     control.family.u_c <- list(hyper = list(prec = list(initial = log(initial.prec.u_c),
                                                         param = prior.prec.u_c,
-                                                        fixed = TRUE)))
+                                                        fixed = FALSE)))
     control.family.r <- list(hyper = list(prec = list(initial = log(initial.prec.r),
                                                       param = prior.prec.r,
-                                                      fixed = TRUE)))
+                                                      fixed = FALSE)))
     control.family <- list(
       control.family.y,
       control.family.u_b,
@@ -365,24 +398,25 @@ fit_inlami <- function(data,
     )
   }
 
-  # ----------------------------------------------------------------------------
-  # Specify "control.predictor"
-  # ----------------------------------------------------------------------------
+  # Specify "control.predictor" ------------------------------------------------
   if(is.null(control.predictor)){
     control.predictor <- list(compute = TRUE)
   }
 
-  # ----------------------------------------------------------------------------
-  # Run everything in the "inla"-function
-  # ----------------------------------------------------------------------------
+  # Run everything in the "inla"-function --------------------------------------
   inlami_model <- INLA::inla(
     formula = formula_full,
-    data = data_matrices,
     family = c(family_moi, "gaussian", "gaussian", "gaussian"),
-    #scale = scaling_vec,
+    data = data_with_other_stuff,
+    scale = scaling_vec,
     control.family = control.family,
-    control.predictor = control.predictor
+    control.predictor = control.predictor,
+    ...
   )
+
+  # Set class ------------------------------------------------------------------
+  class(inlami_model) <- c("inlami", class(inlami_model))
+
 
   return(inlami_model)
 }
