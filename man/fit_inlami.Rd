@@ -5,10 +5,10 @@
 \title{Fit model for measurement error and missing data in INLA}
 \usage{
 fit_inlami(
-  data,
   formula_moi,
   formula_imp,
   family_moi,
+  data,
   error_type = "classical",
   classical_error_scaling = NULL,
   prior.prec.y = NULL,
@@ -25,13 +25,13 @@ fit_inlami(
 )
 }
 \arguments{
-\item{data}{a data frame containing the variables in the model.}
-
 \item{formula_moi}{an object of class "formula", describing the main model to be fitted.}
 
 \item{formula_imp}{an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.}
 
 \item{family_moi}{a string indicating the likelihood family for the model of interest (the main model).}
+
+\item{data}{a data frame containing the variables in the model.}
 
 \item{error_type}{type of error (one or more of "classical", "berkson", "missing")}
 
