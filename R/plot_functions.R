@@ -7,6 +7,7 @@
 #' @param plot_intercepts should the posterior mean for the intercept(s) be plotted?
 #'
 #' @return An object of class "ggplot2" that plots the posterior mean and 95 \% credible interval for each coefficient in the model. The coefficients are colored to indicate if they belong to the main or imputation model, and the variable with error is also highlighted.
+#' @method plot inlami
 #' @export
 #'
 #' @importFrom ggplot2 ggplot aes vars
@@ -15,38 +16,26 @@
 #' simple_moi <- y ~ x + z
 #' simple_imp <- x ~ z
 #'
-#' # Prior for beta.x
-#' prior.beta <- c(0, 1/1000) # N(0, 10^3)
-#'
-#' # Priors for y, measurement error and true x-value precision
-#' prior.prec.y <- c(0.5, 0.5) # Gamma(0.5, 0.5)
-#' prior.prec.u_b <- c(10, 9) # Gamma(0.5, 0.5)
-#' prior.prec.u_c <- c(10, 9) # Gamma(0.5, 0.5)
-#' prior.prec.r <- c(0.5, 0.5) # Gamma(0.5, 0.5)
-#'
-#' # Initial values
-#' initial.prec.y <- 1
-#' initial.prec.u_b <- 1
-#' initial.prec.u_c <- 1
-#' initial.prec.r <- 1
-#'
 #' # Fit the model
 #' simple_model <- fit_inlami(data = simple_data,
-#'                          formula_moi = simple_moi,
-#'                          formula_imp = simple_imp,
-#'                          family_moi = "gaussian",
-#'                          error_type = c("berkson", "classical"),
-#'                          prior.prec.y = prior.prec.y,
-#'                          prior.prec.u_b = prior.prec.u_b,
-#'                          prior.prec.u_c = prior.prec.u_c,
-#'                          prior.prec.r = prior.prec.r,
-#'                          initial.prec.y = initial.prec.y,
-#'                          initial.prec.u_b = initial.prec.u_b,
-#'                          initial.prec.u_c = initial.prec.u_c,
-#'                          initial.prec.r = initial.prec.r)
+#'                            formula_moi = simple_moi,
+#'                            formula_imp = simple_imp,
+#'                            family_moi = "gaussian",
+#'                            error_type = c("berkson", "classical"),
+#'                            prior.prec.y = c(0.5, 0.5),
+#'                            prior.prec.u_b = c(10, 9),
+#'                            prior.prec.u_c = c(10, 9),
+#'                            prior.prec.r = c(0.5, 0.5),
+#'                            initial.prec.y = 1,
+#'                            initial.prec.u_b = 1,
+#'                            initial.prec.u_c = 1,
+#'                            initial.prec.r = 1)
 #'
-#' plot_inlami(simple_model)
-plot_inlami <- function(inlami_model, plot_moi = TRUE, plot_imp = TRUE, plot_intercepts = TRUE){
+#' #plot_inlami(simple_model)
+plot.inlami <- function(inlami_model,
+                        plot_moi = TRUE,
+                        plot_imp = TRUE,
+                        plot_intercepts = TRUE, ...){
   # Plot the posterior mean and 0.975 and 0.025 quantiles for all the coefficients
   # Highlight the error prone variable
   # Return ggplot2 object so that it can be further modified by user
