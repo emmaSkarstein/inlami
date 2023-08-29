@@ -1,10 +1,11 @@
 
 #' Plot model summary
 #'
-#' @param inlami_model the model returned from the fit_inlami function.
+#' @param x the model returned from the fit_inlami function.
 #' @param plot_moi should the posterior mean for the coefficients of the model of interest be plotted? Defaults to TRUE.
 #' @param plot_imp should the posterior mean for the coefficients of the imputation model be plotted? Defaults to TRUE.
 #' @param plot_intercepts should the posterior mean for the intercept(s) be plotted?
+#' @param ... other arguments
 #'
 #' @return An object of class "ggplot2" that plots the posterior mean and 95 \% credible interval for each coefficient in the model. The coefficients are colored to indicate if they belong to the main or imputation model, and the variable with error is also highlighted.
 #' @method plot inlami
@@ -32,7 +33,7 @@
 #'                            initial.prec.r = 1)
 #'
 #' #plot_inlami(simple_model)
-plot.inlami <- function(inlami_model,
+plot.inlami <- function(x,
                         plot_moi = TRUE,
                         plot_imp = TRUE,
                         plot_intercepts = TRUE, ...){
@@ -49,7 +50,7 @@ plot.inlami <- function(inlami_model,
   # possible, as long as it is possible for the user to change once the object
   # is returned.
 
-  simple_summary <- simplify_inlami_model_summary(inlami_model)
+  simple_summary <- simplify_inlami_model_summary(x)
 
   joint_summary_df <- dplyr::bind_rows(moi_coef = simple_summary$moi_coef[,1:6],
                                        error_coef = simple_summary$error_coef[,1:6],

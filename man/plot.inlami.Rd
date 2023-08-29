@@ -4,22 +4,18 @@
 \alias{plot.inlami}
 \title{Plot model summary}
 \usage{
-\method{plot}{inlami}(
-  inlami_model,
-  plot_moi = TRUE,
-  plot_imp = TRUE,
-  plot_intercepts = TRUE,
-  ...
-)
+\method{plot}{inlami}(x, plot_moi = TRUE, plot_imp = TRUE, plot_intercepts = TRUE, ...)
 }
 \arguments{
-\item{inlami_model}{the model returned from the fit_inlami function.}
+\item{x}{the model returned from the fit_inlami function.}
 
 \item{plot_moi}{should the posterior mean for the coefficients of the model of interest be plotted? Defaults to TRUE.}
 
 \item{plot_imp}{should the posterior mean for the coefficients of the imputation model be plotted? Defaults to TRUE.}
 
 \item{plot_intercepts}{should the posterior mean for the intercept(s) be plotted?}
+
+\item{...}{other arguments}
 }
 \value{
 An object of class "ggplot2" that plots the posterior mean and 95 \% credible interval for each coefficient in the model. The coefficients are colored to indicate if they belong to the main or imputation model, and the variable with error is also highlighted.
