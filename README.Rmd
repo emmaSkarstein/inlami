@@ -84,7 +84,7 @@ In this case, since we have in fact simulated the data ourselves, we know that t
 
 In the `fit_inlami` function we also need to specify the likelihood for the model of interest, which in this case is Gaussian.
 
-```{r}
+```{r, message=FALSE}
 simple_model <- fit_inlami(formula_moi = main_formula,
                            formula_imp = imputation_formula,
                            family_moi = "gaussian",

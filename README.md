@@ -128,14 +128,6 @@ simple_model <- fit_inlami(formula_moi = main_formula,
                            initial.prec.u_b = 1,
                            initial.prec.u_c = 1,
                            initial.prec.r = 1)
-#> The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
-#> which was just loaded, will retire in October 2023.
-#> Please refer to R-spatial evolution reports for details, especially
-#> https://r-spatial.org/r/2023/05/15/evolution4.html.
-#> It may be desirable to make the sf package available;
-#> package maintainers should consider adding sf to Suggests:.
-#> The sp package is now running under evolution status 2
-#>      (status 2 uses the sf package in place of rgdal)
 ```
 
 Once we have fit the model, we can view the summary:
@@ -143,33 +135,30 @@ Once we have fit the model, we can view the summary:
 ``` r
 summary(simple_model)
 #> Fixed effects for model of interest: 
-#>            mean        sd 0.025quant 0.5quant 0.975quant     mode          kld
-#> beta.0 1.031288 0.2182262   0.607848 1.030313   1.449727 1.013496 1.181286e-07
-#> beta.z 1.914097 0.3879392   1.187159 1.907715   2.616672 1.910104 1.014903e-04
+#>            mean        sd 0.025quant 0.5quant 0.975quant mode          kld
+#> beta.0 1.061151 0.2127240  0.6705817 1.063019   1.477755   NA 8.493350e-07
+#> beta.z 1.974166 0.3780126  1.3358725 1.985972   2.729297   NA 3.940928e-05
 #> 
 #> Coefficient for error prone variable: 
-#>            mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> beta.x 1.967574 0.1873602   1.594241 1.969018   2.333466 1.974462
+#>            mean        sd 0.025quant 0.5quant 0.975quant mode
+#> beta.x 1.957773 0.1922135   1.594628 1.951969   2.350201   NA
 #> 
 #> Fixed effects for imputation model: 
-#>             mean         sd 0.025quant 0.5quant 0.975quant     mode
-#> alpha.0 1.033076 0.05060075  0.9337947 1.033083   1.132313 1.033099
-#> alpha.z 2.024717 0.05226267  1.9222465 2.024700   2.127284 2.024667
-#>                  kld
-#> alpha.0 2.384838e-12
-#> alpha.z 1.040559e-11
+#>             mean         sd 0.025quant 0.5quant 0.975quant mode          kld
+#> alpha.0 1.033028 0.05063999  0.9336686 1.033036   1.132342   NA 2.489377e-12
+#> alpha.z 2.024825 0.05230249  1.9222768 2.024807   2.127472   NA 1.079561e-11
 #> 
 #> Model hyperparameters (apart from beta.x): 
 #>                                                 mean        sd 0.025quant
-#> Precision for the Gaussian observations    1.1245683 0.3351916  0.5843459
-#> Precision for the Gaussian observations[2] 1.1050378 0.3131168  0.6106247
-#> Precision for the Gaussian observations[3] 0.9282395 0.1044870  0.7402968
-#> Precision for the Gaussian observations[4] 0.9744697 0.1186832  0.7605170
-#>                                             0.5quant 0.975quant      mode
-#> Precision for the Gaussian observations    1.0858233   1.892886 1.0133511
-#> Precision for the Gaussian observations[2] 1.0645916   1.835945 0.9887091
-#> Precision for the Gaussian observations[3] 0.9220227   1.151868 0.9091415
-#> Precision for the Gaussian observations[4] 0.9676896   1.227926 0.9548077
+#> Precision for the Gaussian observations    1.1020773 0.3340954  0.5589400
+#> Precision for the Gaussian observations[2] 1.1048977 0.3447231  0.6018762
+#> Precision for the Gaussian observations[3] 0.9369939 0.1090914  0.7364776
+#> Precision for the Gaussian observations[4] 0.9626393 0.1201652  0.7561588
+#>                                             0.5quant 0.975quant mode
+#> Precision for the Gaussian observations    1.0656762   1.860774   NA
+#> Precision for the Gaussian observations[2] 1.0465304   1.941469   NA
+#> Precision for the Gaussian observations[3] 0.9323416   1.165366   NA
+#> Precision for the Gaussian observations[4] 0.9520423   1.228233   NA
 ```
 
 And we can use the default plot function to see a plot of the fixed
