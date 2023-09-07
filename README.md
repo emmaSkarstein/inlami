@@ -134,35 +134,46 @@ Once we have fit the model, we can view the summary:
 
 ``` r
 summary(simple_model)
+#> Formula for model of interest: 
+#> y ~ x + z
+#> <environment: 0x7fb742bd9518>
+#> 
+#> Formula for imputation model: 
+#> x ~ z
+#> <environment: 0x7fb742bd9518>
+#> 
+#> Error types: 
+#> [1] "classical" "berkson"   "missing"  
+#> 
 #> Fixed effects for model of interest: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode          kld
-#> beta.0 1.061151 0.2127240  0.6705817 1.063019   1.477755   NA 8.493350e-07
-#> beta.z 1.974166 0.3780126  1.3358725 1.985972   2.729297   NA 3.940928e-05
+#> beta.0 1.020779 0.2211861  0.6093435 1.008954   1.462165   NA 2.192841e-07
+#> beta.z 1.890660 0.3935202  1.1822076 1.862592   2.678665   NA 1.883402e-04
 #> 
 #> Coefficient for error prone variable: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode
-#> beta.x 1.957773 0.1922135   1.594628 1.951969   2.350201   NA
+#> beta.x 1.955145 0.1767436   1.593271 1.960075     2.2901   NA
 #> 
 #> Fixed effects for imputation model: 
 #>             mean         sd 0.025quant 0.5quant 0.975quant mode          kld
-#> alpha.0 1.033028 0.05063999  0.9336686 1.033036   1.132342   NA 2.489377e-12
-#> alpha.z 2.024825 0.05230249  1.9222768 2.024807   2.127472   NA 1.079561e-11
+#> alpha.0 1.033068 0.05061362  0.9337587 1.033076   1.132328   NA 2.817012e-12
+#> alpha.z 2.024735 0.05227631  1.9222427 2.024716   2.127334   NA 1.283770e-11
 #> 
 #> Model hyperparameters (apart from beta.x): 
 #>                                                 mean        sd 0.025quant
-#> Precision for the Gaussian observations    1.1020773 0.3340954  0.5589400
-#> Precision for the Gaussian observations[2] 1.1048977 0.3447231  0.6018762
-#> Precision for the Gaussian observations[3] 0.9369939 0.1090914  0.7364776
-#> Precision for the Gaussian observations[4] 0.9626393 0.1201652  0.7561588
+#> Precision for the Gaussian observations    1.1040326 0.3285003  0.5811172
+#> Precision for the Gaussian observations[2] 1.0866549 0.3115291  0.5794241
+#> Precision for the Gaussian observations[3] 0.9361987 0.1069106  0.7487714
+#> Precision for the Gaussian observations[4] 0.9694880 0.1072114  0.7719423
 #>                                             0.5quant 0.975quant mode
-#> Precision for the Gaussian observations    1.0656762   1.860774   NA
-#> Precision for the Gaussian observations[2] 1.0465304   1.941469   NA
-#> Precision for the Gaussian observations[3] 0.9323416   1.165366   NA
-#> Precision for the Gaussian observations[4] 0.9520423   1.228233   NA
+#> Precision for the Gaussian observations    1.0635626   1.864750   NA
+#> Precision for the Gaussian observations[2] 1.0518426   1.797655   NA
+#> Precision for the Gaussian observations[3] 0.9280689   1.169881   NA
+#> Precision for the Gaussian observations[4] 0.9648352   1.194554   NA
 ```
 
 And we can use the default plot function to see a plot of the fixed
-effects:
+effects and estimated coefficient for the variable with error:
 
 ``` r
 plot(simple_model)

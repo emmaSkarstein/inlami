@@ -342,8 +342,6 @@ fit_inlami <- function(formula_moi,
    error_type = error_type,
    classical_error_scaling = classical_error_scaling)
 
-  # scaling_vec <- rep(1, 4*n)
-
   # Make the matrices for the joint model --------------------------------------
   data_matrices <- make_inlami_matrices(data = data,
                                         formula_moi = formula_moi,
@@ -399,7 +397,15 @@ fit_inlami <- function(formula_moi,
     ...
   )
 
-  # Set class ------------------------------------------------------------------
+  # Set call to be full formula
+  inlami_model$call <- formula_full
+
+  # Add interesting arguments to output
+  inlami_model$.args$formula_moi <- formula_moi
+  inlami_model$.args$formula_imp <- formula_imp
+  inlami_model$.args$error_type <- error_type
+
+    # Set class ------------------------------------------------------------------
   class(inlami_model) <- c("inlami", class(inlami_model))
 
 

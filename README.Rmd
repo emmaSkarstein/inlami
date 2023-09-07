@@ -106,7 +106,7 @@ Once we have fit the model, we can view the summary:
 summary(simple_model)
 ```
 
-And we can use the default plot function to see a plot of the fixed effects:
+And we can use the default plot function to see a plot of the fixed effects and estimated coefficient for the variable with error:
 
 ```{r}
 plot(simple_model)

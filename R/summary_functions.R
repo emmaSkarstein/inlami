@@ -20,6 +20,7 @@ simplify_inlami_model_summary <- function(inlami_model){
 
   other_model_hyperpar <- dplyr::filter(hyper, !grepl("Beta for ", rownames(hyper)))
 
+
   return(list(moi_coef = moi_coef,
               error_coef = error_coef,
               imp_coef = imp_coef,
@@ -61,11 +62,15 @@ simplify_inlami_model_summary <- function(inlami_model){
 #'
 #' summary(simple_model)
 summary.inlami <- function(object, ...){
-  simple_summary <- simplify_inlami_model_summary(object)
+  inlami_summary <- simplify_inlami_model_summary(object)
 
-  class(simple_summary) <- "summary.inlami"
+  inlami_summary$formula_moi <- object$.args$formula_moi
+  inlami_summary$formula_imp <- object$.args$formula_imp
+  inlami_summary$error_type <- object$.args$error_type
 
-  return(simple_summary)
+  class(inlami_summary) <- "summary.inlami"
+
+  return(inlami_summary)
 }
 
 #' Print method for summary.inlami
@@ -78,7 +83,19 @@ summary.inlami <- function(object, ...){
 #' @export
 #'
 print.summary.inlami <- function(x, ...){
-  # inlami_summary <- summary(inlami_model)
+  cat("Formula for model of interest: \n")
+  print(x$formula_moi)
+  cat("\n")
+
+  # Print error model as well?
+
+  cat("Formula for imputation model: \n")
+  print(x$formula_imp)
+  cat("\n")
+
+  cat("Error types: \n")
+  print(x$error_type)
+  cat("\n")
 
   cat("Fixed effects for model of interest: \n")
   print(x$moi_coef)
