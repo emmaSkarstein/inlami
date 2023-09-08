@@ -84,13 +84,13 @@ summary.inlami <- function(object, ...){
 #'
 print.summary.inlami <- function(x, ...){
   cat("Formula for model of interest: \n")
-  print(x$formula_moi)
+  print(x$formula_moi, showEnv = FALSE)
   cat("\n")
 
   # Print error model as well?
 
   cat("Formula for imputation model: \n")
-  print(x$formula_imp)
+  print(x$formula_imp, showEnv = FALSE)
   cat("\n")
 
   cat("Error types: \n")
