@@ -214,6 +214,138 @@ make_inlami_matrices <- function(data,
   return(dd)
 }
 
+#' Make data stacks for joint model specification in INLA
+#'
+#' @param data A data frame with response and covariate variables for the main model and the imputation model.
+#' @param formula_moi an object of class "formula", describing the main model to be fitted.
+#' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
+#' @param error_type Type of error (one or more of "classical", "berkson", "missing")
+#'
+#' @return An object of class inla.data.stack with data structured according to specified formulas and error models.
+#' @export
+#'
+#' @examples
+#' f_moi <- y ~ x + z
+#' f_imp <- x ~ z
+#' make_inlami_stacks(data = simple_data,
+#'               formula_moi = f_moi,
+#'               formula_imp = f_imp,
+#'               error_type = "classical")
+make_inlami_stacks <- function(data,
+                               formula_moi,
+                               formula_imp,
+                               error_type = "classical"){
+
+  # Extract and group all variables from formulas:
+  vars <- extract_variables_from_formula(formula_moi = formula_moi,
+                                         formula_imp = formula_imp)
+
+  if(vars$error_variable == "error_variable"){
+    stop("Please name the variable with error something other than 'error_variable', as this name is used internally in the code and will lead to errors.")
+  }
+
+  n <- nrow(data)
+
+
+  # Model of interest stack  ---------------------------------------------------
+
+  # Set up intercept vector for MOI:
+  beta.0 <- rep(1, n)
+
+  # Set up vector for variable with error
+  beta.error_variable <- paste0("beta.", vars$error_variable)
+  assign(beta.error_variable, 1:n)
+
+  # Set up vectors for all error-free covariates with the correct names:
+  cov_moi_names <- c()
+
+  for(variable in vars$covariates_error_free){
+    var_name <- paste0("beta.", variable)
+    cov_moi_names <- c(cov_moi_names, var_name)
+    assign(var_name, as.matrix(data[variable]))
+  }
+
+  # The names of the variables that change based on the covariate names:
+  moi_effects <- paste0(c("beta.0", beta.error_variable, cov_moi_names), " = ",
+                             c("beta.0", beta.error_variable, cov_moi_names), collapse = ", ")
+
+  moi_effects_list <- NULL # Assign NULL to moi_effects_list, just to avoid notes when running checks.
+
+  # A string containing the code needed to define a list of all the objects:
+  moi_code <- paste0("moi_effects_list <- list(", moi_effects, ")")
+
+  # Evaluate the string of code from above:
+  eval(parse(text = moi_code))
+
+  # y = x + z...
+  stk_moi <- INLA::inla.stack(data = list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA, NA)),
+                        A = list(1),
+                        effects = list(moi_effects_list),
+                        tag = "moi")
+
+
+  # Berkson stack --------------------------------------------------------------
+
+  # 0 = -x_true + r + u_b
+  stk_b <- INLA::inla.stack(data = list(Y = cbind(NA, rep(0, n), NA, NA)),
+                      A = list(1),
+                      effects = list(
+                        list(id.x = 1:n,
+                             weight.x = -1,
+                             id.r = 1:n,
+                             weight.r = 1)),
+                      tag = "berkson")
+
+  # Classical stack  -----------------------------------------------------------
+
+  # x = r + u_c
+  stk_c <- INLA::inla.stack(data = list(Y = cbind(NA, NA, as.matrix(data[vars$error_variable]), NA)),
+                      A = list(1),
+                      effects = list(
+                        list(id.r = 1:n, weight.r = 1)),
+                      tag = "classical")
+
+  # Imputation stack  ----------------------------------------------------------
+
+  # Intercept for imputation model:
+  alpha.0 <- rep(1, n)
+
+  # Set up vectors for covariates in the imputation model
+  cov_imp_names <- c()
+
+  for(variable in vars$covariates_imp){
+    var_name <- paste0("alpha.", variable)
+    cov_imp_names <- c(cov_imp_names, var_name)
+    assign(var_name, as.matrix(data[variable]))
+  }
+
+  # The names of the variables that change based on the covariate names:
+  imp_effects <- paste0(c("alpha.0", cov_imp_names), " = ",
+                        c("alpha.0", cov_imp_names), collapse = ", ")
+
+  imp_effects_list <- NULL # Assign NULL to imp_effects_list, just to avoid notes when running checks.
+
+  # A string containing the code needed to define a list of all the objects:
+  imp_code <- paste0("imp_effects_list <- list(", imp_effects, ")")
+
+  # Evaluate the string of code from above:
+  eval(parse(text = imp_code))
+
+  imp_effects_list$id.r <- 1:n
+  imp_effects_list$weight.r = rep(-1, n)
+
+  # r = z + ...
+  stk_imp <- INLA::inla.stack(data = list(Y = cbind(NA, NA, NA, rep(0, n))),
+                        A = list(1),
+                        effects = list(imp_effects_list),
+                        tag = "imputation")
+
+  # Stack them on top of each other
+  stk_full <- INLA::inla.stack(stk_moi, stk_b, stk_c, stk_imp)
+
+  return(stk_full)
+}
+
 #' Construct scaling vector to scale the precision of non-mismeasured observations
 #'
 #' @param data a data frame containing the variables in the model.
@@ -342,17 +474,23 @@ fit_inlami <- function(formula_moi,
    error_type = error_type,
    classical_error_scaling = classical_error_scaling)
 
-  # Make the matrices for the joint model --------------------------------------
-  data_matrices <- make_inlami_matrices(data = data,
-                                        formula_moi = formula_moi,
-                                        formula_imp = formula_imp,
-                                        error_type = error_type)
+  # Make the stacks for the joint model --------------------------------------
+  # data_matrices <- make_inlami_matrices(data = data,
+  #                                       formula_moi = formula_moi,
+  #                                       formula_imp = formula_imp,
+  #                                       error_type = error_type)
+  data_stack <- make_inlami_stacks(data = data,
+                                   formula_moi = formula_moi,
+                                   formula_imp = formula_imp,
+                                   error_type = error_type)
 
   # Append scaling vector and data size to the matrices to pass to inla() ------
   n <- nrow(data) # Define number of observations
-  data_with_other_stuff <- data_matrices
-  data_with_other_stuff$n <- n
-  data_with_other_stuff$scaling_vec <- scaling_vec
+  data_for_inla <- INLA::inla.stack.data(data_stack, n = n, scaling_vec = scaling_vec)
+
+  #data_with_other_stuff <- data_matrices
+  #data_with_other_stuff$n <- n
+  #data_with_other_stuff$scaling_vec <- scaling_vec
 
   # Make "control.family" ------------------------------------------------------
   if(is.null(control.family)){
@@ -390,7 +528,7 @@ fit_inlami <- function(formula_moi,
   inlami_model <- INLA::inla(
     formula = formula_full,
     family = c(family_moi, "gaussian", "gaussian", "gaussian"),
-    data = data_with_other_stuff,
+    data = data_for_inla,
     scale = scaling_vec,
     control.family = control.family,
     control.predictor = control.predictor,
