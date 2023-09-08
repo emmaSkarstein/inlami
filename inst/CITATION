@@ -2,8 +2,8 @@ citHeader("To cite inlami in publications use:")
 
 citEntry(
   entry    = "Article",
-  title    = ,
-  author   = ,
+  title    = "inlami: Missing data imputation and measurment error adjustment with INLA",
+  author   = "Skarstein, E. S and Muff, S",
   journal  = ,
   year     = ,
   volume   = ,
