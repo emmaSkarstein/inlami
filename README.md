@@ -9,7 +9,7 @@
 [![R-CMD-check](https://github.com/emmaSkarstein/inlami/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/emmaSkarstein/inlami/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-> :warning: **NOTE** The package is still under development, and some
+> :warning: **NOTE** The package is under development, and some
 > important functionality is still missing. Feel free to get in touch if
 > you would like to use the package, but would like to know more about
 > it’s current limitations.
@@ -136,40 +136,38 @@ Once we have fit the model, we can view the summary:
 summary(simple_model)
 #> Formula for model of interest: 
 #> y ~ x + z
-#> <environment: 0x7fb742bd9518>
 #> 
 #> Formula for imputation model: 
 #> x ~ z
-#> <environment: 0x7fb742bd9518>
 #> 
 #> Error types: 
 #> [1] "classical" "berkson"   "missing"  
 #> 
 #> Fixed effects for model of interest: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode          kld
-#> beta.0 1.020779 0.2211861  0.6093435 1.008954   1.462165   NA 2.192841e-07
-#> beta.z 1.890660 0.3935202  1.1822076 1.862592   2.678665   NA 1.883402e-04
+#> beta.0 1.042874 0.2095123  0.6433057 1.039206   1.461921   NA 6.147448e-08
+#> beta.z 1.938090 0.3706152  1.2597232 1.931397   2.704585   NA 3.275361e-05
 #> 
 #> Coefficient for error prone variable: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode
-#> beta.x 1.955145 0.1767436   1.593271 1.960075     2.2901   NA
+#> beta.x 1.942433 0.1756671   1.605044 1.939015   2.298852   NA
 #> 
 #> Fixed effects for imputation model: 
 #>             mean         sd 0.025quant 0.5quant 0.975quant mode          kld
-#> alpha.0 1.033068 0.05061362  0.9337587 1.033076   1.132328   NA 2.817012e-12
-#> alpha.z 2.024735 0.05227631  1.9222427 2.024716   2.127334   NA 1.283770e-11
+#> alpha.0 1.033086 0.05063312  0.9337396 1.033094   1.132386   NA 2.598316e-12
+#> alpha.z 2.024694 0.05229666  1.9221582 2.024676   2.127331   NA 1.152871e-11
 #> 
 #> Model hyperparameters (apart from beta.x): 
 #>                                                 mean        sd 0.025quant
-#> Precision for the Gaussian observations    1.1040326 0.3285003  0.5811172
-#> Precision for the Gaussian observations[2] 1.0866549 0.3115291  0.5794241
-#> Precision for the Gaussian observations[3] 0.9361987 0.1069106  0.7487714
-#> Precision for the Gaussian observations[4] 0.9694880 0.1072114  0.7719423
+#> Precision for the Gaussian observations    1.1301553 0.3383802  0.5850415
+#> Precision for the Gaussian observations[2] 1.0473862 0.2741746  0.6230968
+#> Precision for the Gaussian observations[3] 0.9395991 0.1098593  0.7363208
+#> Precision for the Gaussian observations[4] 0.9610432 0.1203167  0.7514060
 #>                                             0.5quant 0.975quant mode
-#> Precision for the Gaussian observations    1.0635626   1.864750   NA
-#> Precision for the Gaussian observations[2] 1.0518426   1.797655   NA
-#> Precision for the Gaussian observations[3] 0.9280689   1.169881   NA
-#> Precision for the Gaussian observations[4] 0.9648352   1.194554   NA
+#> Precision for the Gaussian observations    1.0911721   1.905370   NA
+#> Precision for the Gaussian observations[2] 1.0085937   1.698301   NA
+#> Precision for the Gaussian observations[3] 0.9351223   1.169360   NA
+#> Precision for the Gaussian observations[4] 0.9514879   1.225613   NA
 ```
 
 And we can use the default plot function to see a plot of the fixed
