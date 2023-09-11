@@ -117,9 +117,9 @@ print.summary.inlami <- function(x, ...){
 
 #' Visualize the model data structure as matrices
 #'
-#' @param stack
+#' @param stack an object of class inla.stack returned from the function make_inlami_stacks, which describes the structure of the data for the measurement error and imputation model.
 #'
-#' @return A latex table?
+#' @return A list containing data frames with the left hand side (response_df) and right hand side (effects_df), along with the latex code needed to visualize the matrices (matrix_string).
 #' @export
 #'
 #' @examples

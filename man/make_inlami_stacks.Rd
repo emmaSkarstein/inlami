@@ -16,7 +16,7 @@ make_inlami_stacks(data, formula_moi, formula_imp, error_type = "classical")
 \item{error_type}{Type of error (one or more of "classical", "berkson", "missing")}
 }
 \value{
-An object of class inla.data.stack with data structured according to specified formulas and error models.
+An object of class inla.stack with data structured according to specified formulas and error models.
 }
 \description{
 Make data stacks for joint model specification in INLA

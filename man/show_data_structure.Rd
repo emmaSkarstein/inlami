@@ -7,11 +7,20 @@
 show_data_structure(stack)
 }
 \arguments{
-\item{stack}{}
+\item{stack}{an object of class inla.stack returned from the function make_inlami_stacks, which describes the structure of the data for the measurement error and imputation model.}
 }
 \value{
-A latex table?
+A list containing data frames with the left hand side (response_df) and right hand side (effects_df), along with the latex code needed to visualize the matrices (matrix_string).
 }
 \description{
 Visualize the model data structure as matrices
+}
+\examples{
+f_moi <- y ~ x + z
+f_imp <- x ~ z
+stack <- make_inlami_stacks(data = simple_data,
+                   formula_moi = f_moi,
+                   formula_imp = f_imp,
+                   error_type = "classical")
+show_data_structure(stack)
 }

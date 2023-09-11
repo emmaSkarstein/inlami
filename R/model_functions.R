@@ -221,7 +221,7 @@ make_inlami_matrices <- function(data,
 #' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
 #' @param error_type Type of error (one or more of "classical", "berkson", "missing")
 #'
-#' @return An object of class inla.data.stack with data structured according to specified formulas and error models.
+#' @return An object of class inla.stack with data structured according to specified formulas and error models.
 #' @export
 #'
 #' @examples
