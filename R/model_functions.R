@@ -277,8 +277,15 @@ make_inlami_stacks <- function(data,
   # Evaluate the string of code from above:
   eval(parse(text = moi_code))
 
+  # Response
+  if("berkson" %in% error_type){
+    response_moi <- list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA, NA))
+  }else{
+    response_moi <- list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA))
+  }
+
   # y = x + z...
-  stk_moi <- INLA::inla.stack(data = list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA, NA)),
+  stk_moi <- INLA::inla.stack(data = response_moi,
                         A = list(1),
                         effects = list(moi_effects_list),
                         tag = "moi")
@@ -286,23 +293,39 @@ make_inlami_stacks <- function(data,
 
   # Berkson stack --------------------------------------------------------------
 
-  # 0 = -x_true + r + u_b
-  stk_b <- INLA::inla.stack(data = list(Y = cbind(NA, rep(0, n), NA, NA)),
-                      A = list(1),
-                      effects = list(
-                        list(id.x = 1:n,
-                             weight.x = -1,
-                             id.r = 1:n,
-                             weight.r = 1)),
-                      tag = "berkson")
+  if("berkson" %in% error_type){
+    # 0 = -x_true + r + u_b
+    stk_b <- INLA::inla.stack(data = list(Y = cbind(NA, rep(0, n), NA, NA)),
+                              A = list(1),
+                              effects = list(
+                                list(id.x = 1:n,
+                                     weight.x = -1,
+                                     id.r = 1:n,
+                                     weight.r = 1)),
+                              tag = "berkson")
+  }
+
 
   # Classical stack  -----------------------------------------------------------
 
+  # Latent variable r if Berkson ME, otherwise x
+  if("berkson" %in% error_type){
+    classical_effects_list <- list(id.r = 1:n, weight.r = 1)
+  }else{
+    classical_effects_list <- list(id.x = 1:n, weight.x = 1)
+  }
+
+  # Response
+  if("berkson" %in% error_type){
+    response_classical <- list(Y = cbind(NA, NA, as.matrix(data[vars$error_variable]), NA))
+  }else{
+    response_classical <- list(Y = cbind(NA, as.matrix(data[vars$error_variable]), NA))
+  }
+
   # x = r + u_c
-  stk_c <- INLA::inla.stack(data = list(Y = cbind(NA, NA, as.matrix(data[vars$error_variable]), NA)),
+  stk_c <- INLA::inla.stack(data = response_classical,
                       A = list(1),
-                      effects = list(
-                        list(id.r = 1:n, weight.r = 1)),
+                      effects = list(classical_effects_list),
                       tag = "classical")
 
   # Imputation stack  ----------------------------------------------------------
@@ -331,17 +354,36 @@ make_inlami_stacks <- function(data,
   # Evaluate the string of code from above:
   eval(parse(text = imp_code))
 
-  imp_effects_list$id.r <- 1:n
-  imp_effects_list$weight.r = rep(-1, n)
+  # Latent variable r if Berkson ME, otherwise x
+  if("berkson" %in% error_type){
+    imp_effects_list$id.r <- 1:n
+    imp_effects_list$weight.r <- rep(-1, n)
+  }else{
+    imp_effects_list$id.x <- 1:n
+    imp_effects_list$weight.x <- rep(-1, n)
+  }
+
+
+  # Response
+  if("berkson" %in% error_type){
+    response_imputation <- list(Y = cbind(NA, NA, NA, rep(0, n)))
+  }else{
+    response_imputation <- list(Y = cbind(NA, NA, rep(0, n)))
+  }
 
   # r = z + ...
-  stk_imp <- INLA::inla.stack(data = list(Y = cbind(NA, NA, NA, rep(0, n))),
+  stk_imp <- INLA::inla.stack(data = response_imputation,
                         A = list(1),
                         effects = list(imp_effects_list),
                         tag = "imputation")
 
-  # Stack them on top of each other
-  stk_full <- INLA::inla.stack(stk_moi, stk_b, stk_c, stk_imp)
+  # Join stacks ----
+
+  if("berkson" %in% error_type){
+    stk_full <- INLA::inla.stack(stk_moi, stk_b, stk_c, stk_imp)
+  }else{
+    stk_full <- INLA::inla.stack(stk_moi, stk_c, stk_imp)
+  }
 
   return(stk_full)
 }
