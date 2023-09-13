@@ -103,7 +103,7 @@ $$
 \texttt{NA} & \texttt{NA} & 0\\
 \end{bmatrix}}_{\texttt{Y}}
  = 
-\underbrace{\begin{bmatrix} 
+\beta_{0}\underbrace{\begin{bmatrix} 
 1\\
 \vdots\\
 1\\
@@ -113,7 +113,7 @@ $$
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.0}} + \underbrace{\begin{bmatrix} 
+\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix} 
 1\\
 \vdots\\
 1000\\
@@ -123,7 +123,7 @@ $$
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.x}} + \underbrace{\begin{bmatrix} 
+\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix} 
 0.98\\
 \vdots\\
 0.77\\
@@ -140,20 +140,10 @@ $$
 1\\
 \vdots\\
 1000\\
-1\\
-\vdots\\
-1000\\
-\end{bmatrix}}_{\texttt{id.x}} + \underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1\\
 -1\\
 \vdots\\
--1\\
-\end{bmatrix}}_{\texttt{weight.x}} + \underbrace{\begin{bmatrix} 
+-1000\\
+\end{bmatrix}}_{\texttt{id.x}} + \alpha_{0}\underbrace{\begin{bmatrix} 
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
@@ -163,7 +153,7 @@ $$
 1\\
 \vdots\\
 1\\
-\end{bmatrix}}_{\texttt{alpha.0}} + \underbrace{\begin{bmatrix} 
+\end{bmatrix}}_{\texttt{alpha.0}} + \alpha_{z}\underbrace{\begin{bmatrix} 
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
@@ -244,7 +234,7 @@ $$
 \texttt{NA} & \texttt{NA} & \texttt{NA} & 0\\
 \end{bmatrix}}_{\texttt{Y}}
  = 
-\underbrace{\begin{bmatrix} 
+\beta_{0}\underbrace{\begin{bmatrix} 
 1\\
 \vdots\\
 1\\
@@ -257,7 +247,7 @@ $$
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.0}} + \underbrace{\begin{bmatrix} 
+\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix} 
 1\\
 \vdots\\
 1000\\
@@ -270,7 +260,7 @@ $$
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.x}} + \underbrace{\begin{bmatrix} 
+\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix} 
 0.98\\
 \vdots\\
 0.77\\
@@ -287,9 +277,9 @@ $$
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
-1\\
+-1\\
 \vdots\\
-1000\\
+-1000\\
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
@@ -300,42 +290,16 @@ $$
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
--1\\
-\vdots\\
--1\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{weight.x}} + \underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
 1\\
 \vdots\\
 1000\\
 1\\
 \vdots\\
 1000\\
-1\\
-\vdots\\
-1000\\
-\end{bmatrix}}_{\texttt{id.r}} + \underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1\\
-1\\
-\vdots\\
-1\\
 -1\\
 \vdots\\
--1\\
-\end{bmatrix}}_{\texttt{weight.r}} + \underbrace{\begin{bmatrix} 
+-1000\\
+\end{bmatrix}}_{\texttt{id.r}} + \alpha_{0}\underbrace{\begin{bmatrix} 
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
@@ -348,7 +312,7 @@ $$
 1\\
 \vdots\\
 1\\
-\end{bmatrix}}_{\texttt{alpha.0}} + \underbrace{\begin{bmatrix} 
+\end{bmatrix}}_{\texttt{alpha.0}} + \alpha_{z}\underbrace{\begin{bmatrix} 
 \texttt{NA}\\
 \vdots\\
 \texttt{NA}\\
@@ -363,5 +327,6 @@ $$
 0.77\\
 \end{bmatrix}}_{\texttt{alpha.z}}
 $$
+
 As you see, the only things that change is that there is added another model level, which leads to another column in the response matrix, and we additionally have a new column for the latent effect $\boldsymbol{r}$.
 

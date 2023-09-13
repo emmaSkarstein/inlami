@@ -134,6 +134,20 @@ show_data_structure <- function(stack){
   response_df <- round(stack$data$data, 2)
   effects_df <- round(stack$effects$data, 2)
 
+  # Multiply weights with ids
+  effects_mult_df <- effects_df
+  id.vars <- colnames(effects_mult_df)[grepl("id.", colnames(effects_mult_df), fixed = TRUE)]
+
+  for(variable in id.vars){
+    # Check if it is actually an id variable, and not just a variable that happens to contain "id."
+    # I check this by looking for a "weight" variable with the same suffix
+    weight <- paste0("weight.", sub(".*\\.", "", variable))
+    if(weight %in% colnames(effects_mult_df)){
+      mult_id <- effects_df[variable]*effects_df[weight]
+      effects_mult_df[variable] <- mult_id
+    }
+  }
+
   response <- list()
   effects <- list()
 
@@ -150,11 +164,11 @@ show_data_structure <- function(stack){
     response <- rbind(response, sub_response_top, vdot_response, sub_response_bottom)
 
     # Building effects matrix ----
-    sub_effects <- effects_df[index, ]
+    sub_effects <- effects_mult_df[index, ]
     sub_effects_top <- sub_effects[1, ]
     sub_effects_bottom <- sub_effects[nrow(sub_effects), ]
 
-    vdot_effects <- rep("\\vdots", ncol(effects_df))
+    vdot_effects <- rep("\\vdots", ncol(effects_mult_df))
 
     effects <- rbind(effects, sub_effects_top, vdot_effects, sub_effects_bottom)
   }
@@ -167,17 +181,30 @@ show_data_structure <- function(stack){
   response_matrix <- paste0("\\begin{bmatrix} \n", response_matrix_body, "\n\\end{bmatrix}")
   underbrace_response <- paste0("\\underbrace{", response_matrix, "}_{\\texttt{Y}}")
 
+
+
+  # List of all column names in effects except the weights
+  colnames_except_weight <- colnames(effects)[grep("weight", colnames(effects),
+                                                   invert = TRUE)]
   # Constructing effects bmatrix vectors
   effect_matrices <- list()
 
-  for(variable in colnames(effects)){
+  for(variable in colnames_except_weight){
+    if(grepl("id.", variable, fixed = TRUE)){
+      coef_name <- ""
+    }else{
+      var_comps <- unlist(strsplit(variable, split = "[.]"))
+      var_coef <- var_comps[1]
+      var_subscript <- var_comps[2]
+      coef_name <- paste0("\\", var_coef, "_{", var_subscript, "}")
+    }
     effect_table <- knitr::kable(effects[variable], format = "latex",
                                  row.names = FALSE, escape = FALSE,
                                  booktabs = TRUE, linesep = "")
     effect_matrix_body <- gsub('^.*\\\\midrule\\s*|\\s*\\\\bottomrule.*$', '', effect_table)
     effect_matrix <- paste0("\\begin{bmatrix} \n", effect_matrix_body, "\n\\end{bmatrix}")
 
-    underbrace_effects <- paste0("\\underbrace{", effect_matrix, "}_{\\texttt{", variable, "}}")
+    underbrace_effects <- paste0(coef_name, "\\underbrace{", effect_matrix, "}_{\\texttt{", variable, "}}")
 
     effect_matrices[[variable]] <- underbrace_effects
   }
