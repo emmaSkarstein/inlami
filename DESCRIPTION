@@ -2,7 +2,7 @@ Package: inlami
 Type: Package
 Title: Missing Data and Measurement Error Modelling in INLA 
 Version: 0.1.0
-Author: Emma Skarstein
+Author: Emma Skarstein, Stefanie Muff
 Maintainer: Emma Skarstein <emma@skarstein.no>
 Description: Facilitates fitting measurement error and missing data imputation models in INLA.
     Use four spaces when indenting paragraphs within the Description.
