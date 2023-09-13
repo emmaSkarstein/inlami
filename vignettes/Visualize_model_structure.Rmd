@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The measurement error models in `inlami` are hierarchical models with three or more sub-models. To construct these kinds of models in R-INLA, the structure of the data plays an important role (see for instance [chapter 6.4 in "Bayesian Inference with INLA by Virgilio Gómez-Rubio](https://becarioprecario.bitbucket.io/inla-gitbook/ch-INLAfeatures.html#sec:sevlik). 
+The measurement error models in `inlami` are hierarchical models with three or more sub-models. To construct these kinds of models in R-INLA, the structure of the data plays an important role (see for instance [chapter 6.4 in "Bayesian Inference with INLA by Virgilio Gómez-Rubio](https://becarioprecario.bitbucket.io/inla-gitbook/ch-INLAfeatures.html#sec:sevlik)). 
 
 The data for each of the models is organized and stacked together in a specific way, which together with the formula tells R-INLA how to construct the model. For you as a user, it is not necessary to understand these structures, but I have included this vignette nonetheless to give some more insight for those that are interested. 
 
