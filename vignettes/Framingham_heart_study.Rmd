@@ -1,0 +1,53 @@
+---
+title: "Influence of systolic blood pressure oc coronary heart disease"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Framingham_heart_study}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+|Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
+|:-----------|:----------|:--------|:----------|:------------|
+|Classical | Binomial | $y$ | $w_1$, $w_2$ | $z$ |
+
+
+```{r setup}
+library(inlami)
+```
+
+```{r}
+prior.beta <- c(0, 0.01)
+prior.alpha0 <- c(0, 1)
+prior.alphaz <- c(0, 1)
+prior.prec.x <- c(10, 1)
+prior.prec.u <- c(100, 1)
+
+# initial values (mean of prior)
+prec.u <- 100
+prec.x <- 10
+
+framingham_model <- fit_inlami(formula_moi = disease ~ sbp + smoking,
+                               formula_imp = sbp ~ smoking,
+                               family_moi = "binomial", 
+                               data = framingham,
+                               error_type = "classical", 
+                               repeated_observations = TRUE,
+                               prior.prec.imp = c(10, 1),
+                               prior.prec.classical = c(100, 1),
+                               initial.prec.imp = 10,
+                               initial.prec.classical = 100)
+
+
+framingham_stacks <- show_data_structure(framingham_model$stack_data)
+cat(framingham_stacks$matrix_string)
+```
+
+
