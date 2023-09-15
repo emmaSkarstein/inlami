@@ -4,7 +4,13 @@
 \alias{make_inlami_stacks}
 \title{Make data stacks for joint model specification in INLA}
 \usage{
-make_inlami_stacks(data, formula_moi, formula_imp, error_type = "classical")
+make_inlami_stacks(
+  data,
+  formula_moi,
+  formula_imp,
+  error_type = "classical",
+  repeated_observations = FALSE
+)
 }
 \arguments{
 \item{data}{A data frame with response and covariate variables for the main model and the imputation model.}
@@ -14,6 +20,8 @@ make_inlami_stacks(data, formula_moi, formula_imp, error_type = "classical")
 \item{formula_imp}{an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.}
 
 \item{error_type}{Type of error (one or more of "classical", "berkson", "missing")}
+
+\item{repeated_observations}{Does the variable with measurement error and/or missingness have repeated observations? If so, set this to "TRUE". In that case, when specifying the formula, use the name of the variable without any numbers, but when specifying the data, make sure that the repeated measurements end in a number, i.e "sbp1" and "sbp2".}
 }
 \value{
 An object of class inla.stack with data structured according to specified formulas and error models.
