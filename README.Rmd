@@ -85,19 +85,19 @@ In this case, since we have in fact simulated the data ourselves, we know that t
 In the `fit_inlami` function we also need to specify the likelihood for the model of interest, which in this case is Gaussian.
 
 ```{r, message=FALSE}
-simple_model <- fit_inlami(formula_moi = main_formula,
-                           formula_imp = imputation_formula,
-                           family_moi = "gaussian",
-                           data = simple_data, 
-                           error_type = c("classical", "berkson", "missing"),
-                           prior.prec.y = c(10, 9),
-                           prior.prec.u_b = c(10, 9),
-                           prior.prec.u_c = c(10, 9),
-                           prior.prec.r = c(10, 9),
-                           initial.prec.y = 1,
-                           initial.prec.u_b = 1,
-                           initial.prec.u_c = 1,
-                           initial.prec.r = 1)
+simple_model <- fit_inlami(data = simple_data, 
+                         formula_moi = main_formula, 
+                         formula_imp = imputation_formula, 
+                         family_moi = "gaussian",
+                         error_type = c("berkson", "classical"),
+                         prior.prec.moi = c(10, 9),
+                         prior.prec.berkson = c(10, 9), 
+                         prior.prec.classical = c(10, 9),
+                         prior.prec.imp = c(10, 9),
+                         initial.prec.moi = 1,
+                         initial.prec.berkson = 1,
+                         initial.prec.classical = 1,
+                         initial.prec.imp = 1)
 ```
 
 Once we have fit the model, we can view the summary:

@@ -66,7 +66,7 @@ m_index <- as.logical(rbinom(n, 1, prob = m_prob)) # MAR
 # m_index <- sample(1:n, 0.2*n, replace = FALSE) # MCAR
 x_obs[m_index] <- NA
 
-simulated_data <- data.frame(y = y, x = x_obs, z = z)
+simple_data <- data.frame(y = y, x = x_obs, z = z)
 ```
 
 ## Fitting the model
@@ -79,32 +79,20 @@ simple_imp <- x ~ z
 # Prior for beta.x
 prior.beta <- c(0, 1/1000) # N(0, 10^3)
 
-# Priors for y, measurement error and true x-value precision
-prior.prec.y <- c(10, 9) # Gamma(0.5, 0.5)
-prior.prec.u_b <- c(10, 9) # Gamma(0.5, 0.5)
-prior.prec.u_c <- c(10, 9) # Gamma(0.5, 0.5)
-prior.prec.r <- c(0.5, 0.5) # Gamma(0.5, 0.5)
-
-# Initial values
-initial.prec.y <- 1
-initial.prec.u_b <- 1
-initial.prec.u_c <- 1
-initial.prec.r <- 1
-
 # Fit the model
-simple_model <- fit_inlami(data = simulated_data, 
+simple_model <- fit_inlami(data = simple_data, 
                          formula_moi = simple_moi, 
                          formula_imp = simple_imp, 
                          family_moi = "gaussian",
                          error_type = c("berkson", "classical"),
-                         prior.prec.y = prior.prec.y,
-                         prior.prec.u_b = prior.prec.u_b, 
-                         prior.prec.u_c = prior.prec.u_c,
-                         prior.prec.r = prior.prec.r,
-                         initial.prec.y = initial.prec.y,
-                         initial.prec.u_b = initial.prec.u_b,
-                         initial.prec.u_c = initial.prec.u_c,
-                         initial.prec.r = initial.prec.r)
+                         prior.prec.moi = c(10, 9),
+                         prior.prec.berkson = c(10, 9), 
+                         prior.prec.classical = c(10, 9),
+                         prior.prec.imp = c(10, 9),
+                         initial.prec.moi = 1,
+                         initial.prec.berkson = 1,
+                         initial.prec.classical = 1,
+                         initial.prec.imp = 1)
 summary(simple_model)
 ```
 
@@ -152,29 +140,26 @@ pollution_b <- alpha.0 + alpha.district*district +
 pollution <- pollution_b + rnorm(n, 0, 1) # Classical and Berkson error (this is what is observed)
 pollution_correct <- pollution_b + rnorm(n, mean = 0, sd = 2) # Correct
 
-beta.0 <- -8; beta.pollution <- 1; beta.gender <- -1; beta.age <- 0.5; beta.district <- -2
+beta.0 <- -8; beta.pollution <- 1; beta.gender <- -1; 
+beta.age <- 0.5; beta.district <- -2
+
 asthma_predictor <- beta.0 + beta.pollution*pollution_correct + 
   beta.gender*gender + beta.age*age + beta.district*district
 asthma_prob <- exp(asthma_predictor)/(1 + exp(asthma_predictor))
 asthma <- rbinom(n, 1, prob = asthma_prob)
 
-airpollution <- data.frame(asthma = asthma, pollution = pollution, district, age, gender)
+airpollution <- data.frame(asthma = asthma, 
+                           pollution = pollution, 
+                           district, 
+                           age, 
+                           gender)
 ```
 
 ## Fitting the model
 ```{r}
 # Priors for model of interest coefficients
 prior.beta <- c(0, 1/1000) # N(0, 10^3)
-  
-# Priors for y, measurement error and true x-value precision
-prior.prec.u_b <- c(1000, 999) # Gamma(0.5, 0.5)
-prior.prec.u_c <- c(1000, 999) # Gamma(0.5, 0.5)
-prior.prec.r <- c(0.5, 0.5) # Gamma(0.5, 0.5)
-  
-# Initial values
-prec.u_b <- 1
-prec.u_c <- 1
-prec.r <- 1/16
+
 ```
 
 ```{r}
@@ -190,12 +175,12 @@ airpollution_model <- fit_inlami(data = airpollution_scaled,
                          formula_imp = airpollution_imp, 
                          family_moi = "binomial",
                          error_type = c("berkson", "classical"),
-                         prior.prec.u_b = prior.prec.u_b, 
-                         prior.prec.u_c = prior.prec.u_c,
-                         prior.prec.r = prior.prec.r,
-                         initial.prec.u_b = prec.u_b,
-                         initial.prec.u_c = prec.u_c,
-                         initial.prec.r = prec.r)
+                         prior.prec.berkson = c(1000, 999), 
+                         prior.prec.classical = c(1000, 999),
+                         prior.prec.imp = c(0.5, 0.5),
+                         initial.prec.berkson = 1,
+                         initial.prec.classical = 1,
+                         initial.prec.imp = 1/16)
 
 airpollution_summary <- summary(airpollution_model)
 
@@ -280,7 +265,8 @@ initial.prec.r <- 1
 
 ```{r, eval = FALSE}
 birthweight_scaled <- birthweight %>% 
-  mutate(across(c(mom_weight, age, gestation_time), ~ c(scale(., scale = FALSE))))
+  mutate(across(c(mom_weight, age, gestation_time), 
+                ~ c(scale(., scale = FALSE))))
 
 birthweight_moi <- birthweight ~ mom_weight + age + gestation_time
 birthweight_imp <- mom_weight ~ age 
@@ -290,14 +276,14 @@ birthweight_model <- fit_inlami(data = birthweight_scaled,
                          formula_imp = birthweight_imp, 
                          family_moi = "gaussian",
                          error_type = c("classical"),
-                         prior.prec.y = prior.prec.y,
-                         prior.prec.u_b = prior.prec.u_b, 
-                         prior.prec.u_c = prior.prec.u_c,
-                         prior.prec.r = prior.prec.r,
-                         initial.prec.y = initial.prec.y,
-                         initial.prec.u_b = initial.prec.u_b,
-                         initial.prec.u_c = initial.prec.u_c,
-                         initial.prec.r = initial.prec.r)
+                         prior.prec.moi = c(10, 9),
+                         prior.prec.berkson = c(100, 1), 
+                         prior.prec.classical = c(100, 1),
+                         prior.prec.imp = c(10, 9),
+                         initial.prec.moi = 1,
+                         initial.prec.berkson = 1,
+                         initial.prec.classical = 1/9,
+                         initial.prec.imp = 1)
 
 summary(birthweight_model)
 

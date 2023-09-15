@@ -115,19 +115,19 @@ In the `fit_inlami` function we also need to specify the likelihood for
 the model of interest, which in this case is Gaussian.
 
 ``` r
-simple_model <- fit_inlami(formula_moi = main_formula,
-                           formula_imp = imputation_formula,
-                           family_moi = "gaussian",
-                           data = simple_data, 
-                           error_type = c("classical", "berkson", "missing"),
-                           prior.prec.y = c(10, 9),
-                           prior.prec.u_b = c(10, 9),
-                           prior.prec.u_c = c(10, 9),
-                           prior.prec.r = c(10, 9),
-                           initial.prec.y = 1,
-                           initial.prec.u_b = 1,
-                           initial.prec.u_c = 1,
-                           initial.prec.r = 1)
+simple_model <- fit_inlami(data = simple_data, 
+                         formula_moi = main_formula, 
+                         formula_imp = imputation_formula, 
+                         family_moi = "gaussian",
+                         error_type = c("berkson", "classical"),
+                         prior.prec.moi = c(10, 9),
+                         prior.prec.berkson = c(10, 9), 
+                         prior.prec.classical = c(10, 9),
+                         prior.prec.imp = c(10, 9),
+                         initial.prec.moi = 1,
+                         initial.prec.berkson = 1,
+                         initial.prec.classical = 1,
+                         initial.prec.imp = 1)
 ```
 
 Once we have fit the model, we can view the summary:
@@ -141,33 +141,33 @@ summary(simple_model)
 #> x ~ z
 #> 
 #> Error types: 
-#> [1] "classical" "berkson"   "missing"  
+#> [1] "berkson"   "classical"
 #> 
 #> Fixed effects for model of interest: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode          kld
-#> beta.0 1.049766 0.2307057  0.5987941 1.069235   1.474536   NA 9.231512e-07
-#> beta.z 1.957366 0.4183594  1.1893109 2.007415   2.724339   NA 4.942542e-05
+#> beta.0 1.043220 0.2124403  0.6356073 1.043788   1.463736   NA 1.630568e-07
+#> beta.z 1.939786 0.3776542  1.2496757 1.946568   2.705101   NA 8.641776e-06
 #> 
 #> Coefficient for error prone variable: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode
-#> beta.x 1.945794 0.1770709   1.609578 1.941043   2.306161   NA
+#> beta.x 1.940827 0.1769273   1.601524 1.937251   2.299834   NA
 #> 
 #> Fixed effects for imputation model: 
 #>             mean         sd 0.025quant 0.5quant 0.975quant mode          kld
-#> alpha.0 1.033068 0.05062367  0.9337341 1.033078   1.132343   NA 4.072216e-12
-#> alpha.z 2.024735 0.05228890  1.9222275 2.024712   2.127369   NA 1.835395e-11
+#> alpha.0 1.033071 0.05062282  0.9337409 1.033080   1.132348   NA 3.379187e-12
+#> alpha.z 2.024728 0.05228673  1.9222192 2.024707   2.127353   NA 1.494428e-11
 #> 
 #> Model hyperparameters (apart from beta.x): 
 #>                                                 mean        sd 0.025quant
-#> Precision for the Gaussian observations    1.1385229 0.3706237  0.5583780
-#> Precision for the Gaussian observations[2] 1.0785718 0.3007463  0.6287398
-#> Precision for the Gaussian observations[3] 0.9396607 0.1040588  0.7482838
-#> Precision for the Gaussian observations[4] 0.9571751 0.1074529  0.7683211
+#> Precision for the Gaussian observations    1.1348399 0.3469250  0.5811453
+#> Precision for the Gaussian observations[2] 1.0492040 0.2794852  0.6201420
+#> Precision for the Gaussian observations[3] 0.9400527 0.1102513  0.7362982
+#> Precision for the Gaussian observations[4] 0.9599192 0.1204817  0.7501751
 #>                                             0.5quant 0.975quant mode
-#> Precision for the Gaussian observations    1.0903383   2.002451   NA
-#> Precision for the Gaussian observations[2] 1.0308621   1.801556   NA
-#> Precision for the Gaussian observations[3] 0.9352054   1.157525   NA
-#> Precision for the Gaussian observations[4] 0.9491929   1.190726   NA
+#> Precision for the Gaussian observations    1.0930371   1.934834   NA
+#> Precision for the Gaussian observations[2] 1.0085920   1.714990   NA
+#> Precision for the Gaussian observations[3] 0.9355375   1.170696   NA
+#> Precision for the Gaussian observations[4] 0.9502789   1.224720   NA
 ```
 
 And we can use the default plot function to see a plot of the fixed

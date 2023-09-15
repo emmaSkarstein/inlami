@@ -10,15 +10,16 @@ fit_inlami(
   family_moi,
   data,
   error_type = "classical",
+  repeated_observations = FALSE,
   classical_error_scaling = NULL,
-  prior.prec.y = NULL,
-  prior.prec.u_b = NULL,
-  prior.prec.u_c = NULL,
-  prior.prec.r = NULL,
-  initial.prec.y = NULL,
-  initial.prec.u_b = NULL,
-  initial.prec.u_c = NULL,
-  initial.prec.r = NULL,
+  prior.prec.moi = NULL,
+  prior.prec.berkson = NULL,
+  prior.prec.classical = NULL,
+  prior.prec.imp = NULL,
+  initial.prec.moi = NULL,
+  initial.prec.berkson = NULL,
+  initial.prec.classical = NULL,
+  initial.prec.imp = NULL,
   control.family = NULL,
   control.predictor = NULL,
   ...
@@ -35,23 +36,25 @@ fit_inlami(
 
 \item{error_type}{type of error (one or more of "classical", "berkson", "missing")}
 
+\item{repeated_observations}{Does the variable with measurement error and/or missingness have repeated observations? If so, set this to "TRUE". In that case, when specifying the formula, use the name of the variable without any numbers, but when specifying the data, make sure that the repeated measurements end in a number, i.e "sbp1" and "sbp2".}
+
 \item{classical_error_scaling}{can be specified if the classical measurement error varies across observations. Must be a vector of the same length as the data.}
 
-\item{prior.prec.y}{a string containing the parameters for the prior for the precision of the residual term for the model of interest.}
+\item{prior.prec.moi}{a string containing the parameters for the prior for the precision of the residual term for the model of interest.}
 
-\item{prior.prec.u_b}{a string containing the parameters for the prior for the precision of the error term for the Berkson error model.}
+\item{prior.prec.berkson}{a string containing the parameters for the prior for the precision of the error term for the Berkson error model.}
 
-\item{prior.prec.u_c}{a string containing the parameters for the prior for the precision of the error term for the classical error model.}
+\item{prior.prec.classical}{a string containing the parameters for the prior for the precision of the error term for the classical error model.}
 
-\item{prior.prec.r}{a string containing the parameters for the precision of the latent variable r, which is the variable being described in the imputation model.}
+\item{prior.prec.imp}{a string containing the parameters for the precision of the latent variable r, which is the variable being described in the imputation model.}
 
-\item{initial.prec.y}{the initial value for the precision of the residual term for the model of interest.}
+\item{initial.prec.moi}{the initial value for the precision of the residual term for the model of interest.}
 
-\item{initial.prec.u_b}{the initial value for the precision of the residual term for the Berkson error term.}
+\item{initial.prec.berkson}{the initial value for the precision of the residual term for the Berkson error term.}
 
-\item{initial.prec.u_c}{the initial value for the precision of the residual term for the classical error term.}
+\item{initial.prec.classical}{the initial value for the precision of the residual term for the classical error term.}
 
-\item{initial.prec.r}{the initial value for the precision of the residual term for the latent variable r.}
+\item{initial.prec.imp}{the initial value for the precision of the residual term for the latent variable r.}
 
 \item{control.family}{control.family for use in inla (can be provided directly instead of passing the "prior.prec...." and "initial.prec..." arguments.}
 
@@ -75,12 +78,12 @@ simple_model <- fit_inlami(data = simple_data,
                            formula_imp = simple_imp,
                            family_moi = "gaussian",
                            error_type = c("berkson", "classical"),
-                           prior.prec.y = c(0.5, 0.5),
-                           prior.prec.u_b = c(10, 9),
-                           prior.prec.u_c = c(10, 9),
-                           prior.prec.r = c(0.5, 0.5),
-                           initial.prec.y = 1,
-                           initial.prec.u_b = 1,
-                           initial.prec.u_c = 1,
-                           initial.prec.r = 1)
+                           prior.prec.moi = c(10, 9),
+                           prior.prec.berkson = c(10, 9),
+                           prior.prec.classical = c(10, 9),
+                           prior.prec.imp = c(10, 9),
+                           initial.prec.moi = 1,
+                           initial.prec.berkson = 1,
+                           initial.prec.classical = 1,
+                           initial.prec.imp = 1)
 }
