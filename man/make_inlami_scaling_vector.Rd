@@ -4,10 +4,14 @@
 \alias{make_inlami_scaling_vector}
 \title{Construct scaling vector to scale the precision of non-mismeasured observations}
 \usage{
-make_inlami_scaling_vector(data, error_type, classical_error_scaling = NULL)
+make_inlami_scaling_vector(
+  inlami_stack,
+  error_type,
+  classical_error_scaling = NULL
+)
 }
 \arguments{
-\item{data}{a data frame containing the variables in the model.}
+\item{inlami_stack}{an object of class inlami.data.stack containing data structured}
 
 \item{error_type}{one of "classical", "berkson" or "missing".}
 
@@ -20,6 +24,10 @@ A vector reflecting the scaling factor for the residual terms in each model leve
 Construct scaling vector to scale the precision of non-mismeasured observations
 }
 \examples{
-make_inlami_scaling_vector(simple_data,
+stacks <- make_inlami_stacks(data = simple_data,
+                             formula_moi = y ~ x + z,
+                             formula_imp = x ~ z,
+                             error_type = c("classical", "berkson"))
+make_inlami_scaling_vector(stacks,
                            error_type = c("classical", "berkson"))
 }
