@@ -26,6 +26,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure oc coronary heart disease</a>
     <a class="dropdown-item" href="../articles/Visualize_model_structure.html">Visualize model structure</a>
     <a class="dropdown-item" href="../articles/simulated_examples.html">Simulated examples</a>
   </div>
@@ -91,14 +92,14 @@
 <span class="r-in"><span>                           formula_imp <span class="op">=</span> <span class="va">simple_imp</span>,</span></span>
 <span class="r-in"><span>                           family_moi <span class="op">=</span> <span class="st">"gaussian"</span>,</span></span>
 <span class="r-in"><span>                           error_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"berkson"</span>, <span class="st">"classical"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                           prior.prec.y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                           prior.prec.u_b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                           prior.prec.u_c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                           prior.prec.r <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                           initial.prec.y <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                           initial.prec.u_b <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                           initial.prec.u_c <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                           initial.prec.r <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                           prior.prec.moi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           prior.prec.berkson <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           prior.prec.classical <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           prior.prec.imp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           initial.prec.moi <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                           initial.prec.berkson <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                           initial.prec.classical <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                           initial.prec.imp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">simple_model</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Formula for model of interest: </span>
@@ -112,32 +113,32 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Fixed effects for model of interest: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mean        sd 0.025quant 0.5quant 0.975quant     mode          kld</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> beta.0 1.299922 0.1524261  0.9888535 1.293392   1.675375 1.296692 1.622932e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> beta.z 2.442129 0.2510324  1.8282706 2.426326   3.154458 2.436069 9.303793e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> beta.0 1.031603 0.2185178  0.6126049 1.030761   1.443718 1.027510 1.190474e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> beta.z 1.914153 0.3872442  1.2232656 1.907285   2.574555 1.914287 1.994473e-04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coefficient for error prone variable: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mean        sd 0.025quant 0.5quant 0.975quant     mode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> beta.x 1.974873 0.5496711   1.029277 1.936514   3.170983 1.745369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> beta.x 1.972449 0.2004445   1.574932 1.973444   2.364152 1.977597</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Fixed effects for imputation model: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             mean         sd 0.025quant 0.5quant 0.975quant     mode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.0 1.032987 0.05086686   0.933197 1.032995   1.132733 1.032995</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.z 2.024916 0.05253640   1.921921 2.024899   2.128007 2.024899</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.0 1.033079 0.05060191  0.9338064 1.033088   1.132305 1.033088</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.z 2.024709 0.05226505  1.9222491 2.024691   2.127272 2.024691</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  kld</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.0 2.490833e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.z 4.521243e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.0 3.143523e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.z 5.397437e-11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model hyperparameters (apart from beta.x): </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                 mean         sd 0.025quant</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations    3.0066829 11.5864806  0.0805214</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[2] 1.0919118  0.3599105  0.5305386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[3] 0.9629996  0.3490437  0.3946832</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[4] 1.0114290  0.3493085  0.5550580</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                 mean        sd 0.025quant</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations    1.1257693 0.3651076  0.5557479</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[2] 1.1254722 0.3452627  0.5928618</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[3] 0.9252364 0.1084378  0.7312648</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[4] 0.9780738 0.1249463  0.7544509</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                             0.5quant 0.975quant      mode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations    0.7976207  19.704970 0.1801122</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[2] 1.0433474   1.930744 0.9546813</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[3] 0.9223088   1.736981 0.8456264</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[4] 0.9407014   1.900116 0.7955567</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations    1.0767307   1.976590 0.9870758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[2] 1.0770531   1.938486 0.9868759</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[3] 0.9185744   1.157627 0.9046790</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[4] 0.9704542   1.245556 0.9558743</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

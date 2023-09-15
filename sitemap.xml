@@ -10,6 +10,9 @@
     <loc>https://emmaskarstein.github.io/inlami/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://emmaskarstein.github.io/inlami/articles/Framingham_heart_study.html</loc>
+  </url>
+  <url>
     <loc>https://emmaskarstein.github.io/inlami/articles/Visualize_model_structure.html</loc>
   </url>
   <url>
@@ -29,6 +32,9 @@
   </url>
   <url>
     <loc>https://emmaskarstein.github.io/inlami/reference/fit_inlami.html</loc>
+  </url>
+  <url>
+    <loc>https://emmaskarstein.github.io/inlami/reference/framingham.html</loc>
   </url>
   <url>
     <loc>https://emmaskarstein.github.io/inlami/reference/index.html</loc>
