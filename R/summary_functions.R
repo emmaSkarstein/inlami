@@ -211,11 +211,11 @@ show_data_structure <- function(stack){
 
   # Put it all together
   all_effect_matrices <- paste0(effect_matrices, collapse = " + ")
-  all_of_it <- paste0(underbrace_response, "\n = \n", all_effect_matrices)
+  all_of_it <- paste0("$$", underbrace_response, "\n = \n", all_effect_matrices, "$$")
 
   all_of_it_verb <- gsub("NA", "\\\\texttt{NA}", all_of_it)
 
-  message("Make sure to include '\\usepackage{amsmath}', as this is required to display the matrices correctly.")
+  # message("Make sure to include '\\usepackage{amsmath}', as this is required to display the matrices correctly.")
 
   return(list(response_df = response,
               effects_df = effects,
