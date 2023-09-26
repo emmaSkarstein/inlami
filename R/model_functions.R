@@ -229,13 +229,13 @@ make_inlami_matrices <- function(data,
 #' @examples
 #' f_moi <- y ~ x + z
 #' f_imp <- x ~ z
-#' make_inlami_stacks(data = simple_data,
-#'               formula_moi = f_moi,
-#'               formula_imp = f_imp,
-#'               error_type = "classical")
-make_inlami_stacks <- function(data,
-                               formula_moi,
+#' make_inlami_stacks(formula_moi = f_moi,
+#'                    formula_imp = f_imp,
+#'                    data = simple_data,
+#'                    error_type = "classical")
+make_inlami_stacks <- function(formula_moi,
                                formula_imp,
+                               data,
                                error_type = "classical",
                                repeated_observations = FALSE){
 
@@ -263,8 +263,24 @@ make_inlami_stacks <- function(data,
     stop("It looks like you may have repeated measurements of the variable with measurement error or missingness. If this is correct, specify the argument 'repeated_observations = TRUE' to ensure correct analysis.")
   }
 
-  # Set some sizes
-  n <- nrow(data)
+  # Defining sizes -------------------------------------------------------------
+  # Number of observations is length of first covariate
+  if(inherits(data, "data.frame")){
+    n <- nrow(data)
+  }else{
+    n <- length(data[[vars$covariates_error_free[1]]])
+  }
+
+  # Number of response columns = #error models + 2
+  n_model_levels <- length(setdiff(error_type, c("missing"))) + 2
+
+  # Location of classical error model
+  classical_location <- n_model_levels - 1
+
+  # NA list for the response
+  NA_matrix <- matrix(nrow = n, ncol = n_model_levels)
+  NA_list <- lapply(seq_len(ncol(NA_matrix)), function(i) NA_matrix[,i])
+
 
   # Model of interest stack  ---------------------------------------------------
 
@@ -297,10 +313,14 @@ make_inlami_stacks <- function(data,
   eval(parse(text = moi_code))
 
   # Response
+  moi_r <- NA_list
+  moi_r[[1]] <- as.matrix(data[vars$response_moi])
+  response_moi_ <- list(Y = moi_r)
+
   if("berkson" %in% error_type){
-    response_moi <- list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA, NA))
+   response_moi <- list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA, NA))
   }else{
-    response_moi <- list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA))
+   response_moi <- list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA))
   }
 
   # y = x + z...
@@ -314,7 +334,12 @@ make_inlami_stacks <- function(data,
 
   if("berkson" %in% error_type){
     # 0 = -x_true + r + u_b
-    stk_b <- INLA::inla.stack(data = list(Y = cbind(NA, rep(0, n), NA, NA)),
+    berkson_r <- NA_list
+    berkson_r[[2]] <- rep(0, n)
+    response_berkson <- list(Y = berkson_r)
+    response_berkson <- list(Y = cbind(NA, rep(0, n), NA, NA))
+
+    stk_b <- INLA::inla.stack(data = response_berkson,
                               A = list(1),
                               effects = list(
                                 list(id.x = 1:n,
@@ -341,6 +366,10 @@ make_inlami_stacks <- function(data,
 
   # Response
   classical_response <- as.matrix(utils::stack(data[error_var_list])[1])
+
+  classical_r <- NA_list
+  classical_r[[classical_location]] <- classical_response
+  response_classical <- list(Y = classical_r)
 
   if("berkson" %in% error_type){
     response_classical <- list(Y = cbind(NA, NA, classical_response, NA))
@@ -392,10 +421,14 @@ make_inlami_stacks <- function(data,
 
 
   # Response
+  imp_r <- NA_list
+  imp_r[[n_model_levels]] <- rep(0, n)
+  response_imputation <- list(Y = imp_r)
+
   if("berkson" %in% error_type){
-    response_imputation <- list(Y = cbind(NA, NA, NA, rep(0, n)))
+   response_imputation <- list(Y = cbind(NA, NA, NA, rep(0, n)))
   }else{
-    response_imputation <- list(Y = cbind(NA, NA, rep(0, n)))
+   response_imputation <- list(Y = cbind(NA, NA, rep(0, n)))
   }
 
   # r = z + ...
@@ -411,6 +444,9 @@ make_inlami_stacks <- function(data,
   }else{
     stk_full <- INLA::inla.stack(stk_moi, stk_c, stk_imp, compress = FALSE)
   }
+
+  #names(stk_full$data$data) <- c("Y.1", "Y.2", "Y.3", "Y.4")
+  #stk_full$data$ncol <- 4
 
   return(stk_full)
 }
@@ -490,7 +526,7 @@ make_inlami_scaling_vector <- function(inlami_stack,
 #' @param formula_moi an object of class "formula", describing the main model to be fitted.
 #' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
 #' @param family_moi a string indicating the likelihood family for the model of interest (the main model).
-#' @param data a data frame containing the variables in the model.
+#' @param data an object of class data.frame or list containing the variables in the model.
 #' @param error_type type of error (one or more of "classical", "berkson", "missing")
 #' @param repeated_observations Does the variable with measurement error and/or missingness have repeated observations? If so, set this to "TRUE". In that case, when specifying the formula, use the name of the variable without any numbers, but when specifying the data, make sure that the repeated measurements end in a number, i.e "sbp1" and "sbp2".
 #' @param classical_error_scaling can be specified if the classical measurement error varies across observations. Must be a vector of the same length as the data.
@@ -548,6 +584,11 @@ fit_inlami <- function(formula_moi,
 
   # Some checks ----------------------------------------------------------------
 
+  # Check if family.moi == weibull.surv but data is not of class list
+  if(family_moi == "weibull.surv" && !inherits(data, "list")){
+    stop("When fitting a survival model, the data must be formatted as a list, where one of the entries (the response) should be an inla.surv object named 'surv'.")
+  }
+
   # Make formula from sub-models -----------------------------------------------
   formula_full <- make_inlami_formula(formula_moi = formula_moi,
                                formula_imp = formula_imp,
@@ -558,9 +599,9 @@ fit_inlami <- function(formula_moi,
   model_levels_without_moi <- c(error_type_without_missing, "imp")
 
   # Make the stacks for the joint model ----------------------------------------
-  data_stack <- make_inlami_stacks(data = data,
-                                   formula_moi = formula_moi,
+  data_stack <- make_inlami_stacks(formula_moi = formula_moi,
                                    formula_imp = formula_imp,
+                                   data = data,
                                    error_type = error_type,
                                    repeated_observations = repeated_observations)
 
@@ -571,7 +612,7 @@ fit_inlami <- function(formula_moi,
     classical_error_scaling = classical_error_scaling)
 
   # Append scaling vector and data size to the matrices to pass to inla() ------
-  n <- nrow(data) # Define number of observations
+  n <- length(data_stack$data$index$moi) # Define number of observations
   data_for_inla <- INLA::inla.stack.data(data_stack,
                                          n = n,
                                          scaling_vec = scaling_vec,

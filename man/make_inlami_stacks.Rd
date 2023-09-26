@@ -5,19 +5,19 @@
 \title{Make data stacks for joint model specification in INLA}
 \usage{
 make_inlami_stacks(
-  data,
   formula_moi,
   formula_imp,
+  data,
   error_type = "classical",
   repeated_observations = FALSE
 )
 }
 \arguments{
-\item{data}{A data frame with response and covariate variables for the main model and the imputation model.}
-
 \item{formula_moi}{an object of class "formula", describing the main model to be fitted.}
 
 \item{formula_imp}{an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.}
+
+\item{data}{A data frame with response and covariate variables for the main model and the imputation model.}
 
 \item{error_type}{Type of error (one or more of "classical", "berkson", "missing")}
 
@@ -32,8 +32,8 @@ Make data stacks for joint model specification in INLA
 \examples{
 f_moi <- y ~ x + z
 f_imp <- x ~ z
-make_inlami_stacks(data = simple_data,
-              formula_moi = f_moi,
-              formula_imp = f_imp,
-              error_type = "classical")
+make_inlami_stacks(formula_moi = f_moi,
+                   formula_imp = f_imp,
+                   data = simple_data,
+                   error_type = "classical")
 }

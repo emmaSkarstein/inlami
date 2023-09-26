@@ -32,7 +32,7 @@ fit_inlami(
 
 \item{family_moi}{a string indicating the likelihood family for the model of interest (the main model).}
 
-\item{data}{a data frame containing the variables in the model.}
+\item{data}{an object of class data.frame or list containing the variables in the model.}
 
 \item{error_type}{type of error (one or more of "classical", "berkson", "missing")}
 

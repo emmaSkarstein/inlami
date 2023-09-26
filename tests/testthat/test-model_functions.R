@@ -12,7 +12,7 @@ test_that("make_inlami_stacks works", {
   # Some checks with simulated data, stacks with berkson level
   simple_moi <- y ~ x + z
   simple_imp <- x ~ z
-  simple_stacks_cb <- make_inlami_stacks(simple_data, simple_moi, simple_imp,
+  simple_stacks_cb <- make_inlami_stacks(simple_moi, simple_imp, simple_data,
                                       error_type = c("classical", "berkson"))
 
   # Check rows and columns of "data"
