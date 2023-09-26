@@ -41,8 +41,9 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure oc coronary heart disease</a>
+    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure on coronary heart disease</a>
     <a class="dropdown-item" href="../articles/Visualize_model_structure.html">Visualize model structure</a>
+    <a class="dropdown-item" href="../articles/nhanes_survival.html">Survival data with repeated systolic blood pressure measurements</a>
     <a class="dropdown-item" href="../articles/simulated_examples.html">Simulated examples</a>
   </div>
 </li>
@@ -169,83 +170,19 @@ effects on the left hand side: <span class="math display">\[
 <code>show_data_structure</code> function:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">classical_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/show_data_structure.html">show_data_structure</a></span><span class="op">(</span><span class="va">classical_stack</span><span class="op">)</span></span></code></pre></div>
-<p>TODO: Figure out how to display these directly in this document
-automatically.</p>
+<p>The LaTeX code is stored in
+<code>classical_summary$matrix_string</code>. If you want to display the
+matrices in an rmarkdown document, you can use the <code>cat</code>
+function, and just remember to set <code>results = 'asis'</code> as the
+chunk option:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>```{r, results='asis'}</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cat("$$\n")</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>cat(classical_summary$matrix_string)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>cat("\n$$")</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>```</span></code></pre></div>
 <p><span class="math display">\[
-\underbrace{\begin{bmatrix}
-10.81 &amp; \texttt{NA} &amp; \texttt{NA}\\
-\vdots &amp; \vdots &amp; \vdots\\
-6.18 &amp; \texttt{NA} &amp; \texttt{NA}\\
-\texttt{NA} &amp; 4.98 &amp; \texttt{NA}\\
-\vdots &amp; \vdots &amp; \vdots\\
-\texttt{NA} &amp; 1.46 &amp; \texttt{NA}\\
-\texttt{NA} &amp; \texttt{NA} &amp; 0\\
-\vdots &amp; \vdots &amp; \vdots\\
-\texttt{NA} &amp; \texttt{NA} &amp; 0\\
-\end{bmatrix}}_{\texttt{Y}}
-=
-\beta_{0}\underbrace{\begin{bmatrix}
-1\\
-\vdots\\
-1\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix}
-1\\
-\vdots\\
-1000\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix}
-0.98\\
-\vdots\\
-0.77\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.z}} + \underbrace{\begin{bmatrix}
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1000\\
--1\\
-\vdots\\
--1000\\
-\end{bmatrix}}_{\texttt{id.x}} + \alpha_{0}\underbrace{\begin{bmatrix}
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1\\
-\end{bmatrix}}_{\texttt{alpha.0}} +
-\alpha_{z}\underbrace{\begin{bmatrix}
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-0.98\\
-\vdots\\
-0.77\\
-\end{bmatrix}}_{\texttt{alpha.z}}
+\]</span><em>{} = </em>{0}<em>{} + </em>{x}<em>{} + </em>{z}<em>{} +
+</em>{} + <em>{0}</em>{} + <em>{z}</em>{}<span class="math display">\[
 \]</span></p>
 </div>
 <div class="section level2">
@@ -296,123 +233,17 @@ added.</p>
 \tau_r\boldsymbol{I}) \ .
 \end{align}
 \]</span> Just like above, we construct the stacks:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">berkson_stack</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_inlami_stacks.html">make_inlami_stacks</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">simple_data</span>,</span>
 <span>              formula_moi <span class="op">=</span> <span class="va">f_moi</span>,</span>
 <span>              formula_imp <span class="op">=</span> <span class="va">f_imp</span>,</span>
 <span>              error_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"classical"</span>, <span class="st">"berkson"</span>, <span class="st">"missing"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>and then visualize the resulting matrices:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">berkson_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/show_data_structure.html">show_data_structure</a></span><span class="op">(</span><span class="va">berkson_stack</span><span class="op">)</span></span></code></pre></div>
 <p><span class="math display">\[
-\underbrace{\begin{bmatrix}
-10.81 &amp; \texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA}\\
-\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
-6.18 &amp; \texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA}\\
-\texttt{NA} &amp; 0 &amp; \texttt{NA} &amp; \texttt{NA}\\
-\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
-\texttt{NA} &amp; 0 &amp; \texttt{NA} &amp; \texttt{NA}\\
-\texttt{NA} &amp; \texttt{NA} &amp; 4.98 &amp; \texttt{NA}\\
-\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
-\texttt{NA} &amp; \texttt{NA} &amp; 1.46 &amp; \texttt{NA}\\
-\texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA} &amp; 0\\
-\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
-\texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA} &amp; 0\\
-\end{bmatrix}}_{\texttt{Y}}
-=
-\beta_{0}\underbrace{\begin{bmatrix}
-1\\
-\vdots\\
-1\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix}
-1\\
-\vdots\\
-1000\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix}
-0.98\\
-\vdots\\
-0.77\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.z}} + \underbrace{\begin{bmatrix}
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
--1\\
-\vdots\\
--1000\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{id.x}} + \underbrace{\begin{bmatrix}
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1000\\
-1\\
-\vdots\\
-1000\\
--1\\
-\vdots\\
--1000\\
-\end{bmatrix}}_{\texttt{id.r}} + \alpha_{0}\underbrace{\begin{bmatrix}
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1\\
-\end{bmatrix}}_{\texttt{alpha.0}} +
-\alpha_{z}\underbrace{\begin{bmatrix}
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-0.98\\
-\vdots\\
-0.77\\
-\end{bmatrix}}_{\texttt{alpha.z}}
+\]</span><em>{} = </em>{0}<em>{} + </em>{x}<em>{} + </em>{z}<em>{} +
+</em>{} + <em>{} + </em>{0}<em>{} + </em>{z}_{}<span class="math display">\[
 \]</span></p>
 <p>As you see, the only things that change is that there is added
 another model level, which leads to another column in the response
@@ -427,7 +258,7 @@ inside <code>fit_inlami</code> is also returned with the
 <code>inlami</code> model object, so you don’t need to run
 <code>make_inlami_stacks</code> yourself. This is how to access the
 stacks from the model object:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inlami_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_inlami.html">fit_inlami</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">simple_data</span>,</span>
 <span>                           formula_moi <span class="op">=</span> <span class="va">f_moi</span>,</span>
 <span>                           formula_imp <span class="op">=</span> <span class="va">f_imp</span>,</span>
@@ -442,43 +273,35 @@ stacks from the model object:</p>
 <span>                           initial.prec.classical <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                           initial.prec.imp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/show_data_structure.html">show_data_structure</a></span><span class="op">(</span><span class="va">inlami_model</span><span class="op">$</span><span class="va">stack_data</span><span class="op">)</span></span></code></pre></div>
-<p>$response_df Y.1 Y.2 Y.3 Y.4 1 10.81 <na><na><na> 2 \vdots \vdots
-\vdots \vdots 1000 6.18 <na><na><na> 1001 <na> 0 <na><na> 5 \vdots
-\vdots \vdots \vdots 2000 <na> 0 <na><na> 2001 <na><na> 4.98 <na> 8
-\vdots \vdots \vdots \vdots 3000 <na><na> 1.46 <na> 3001 <na><na><na>
-0 11 \vdots \vdots \vdots \vdots 4000 <na><na><na> 0</na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></p>
-<p>$effects_df beta.0 beta.x beta.z id.x weight.x id.r weight.r alpha.0
-alpha.z 1 1 1 0.98 <na><na><na><na><na><na> 2 \vdots \vdots \vdots
-\vdots \vdots \vdots \vdots \vdots \vdots 1000 1 1000 0.77 <na><na><na><na><na><na> 1001 <na><na><na> -1 -1 1 1 <na><na> 5 \vdots
-\vdots \vdots \vdots \vdots \vdots \vdots \vdots \vdots 2000 <na><na><na> -1000 -1 1000 1 <na><na> 2001 <na><na><na><na><na> 1 1 <na><na> 8 \vdots \vdots \vdots \vdots \vdots \vdots \vdots \vdots \vdots
-3000 <na><na><na><na><na> 1000 1 <na><na> 3001 <na><na><na><na><na> -1 -1 1 0.98 11 \vdots \vdots \vdots \vdots \vdots \vdots \vdots
-\vdots \vdots 4000 <na><na><na><na><na> -1000 -1 1 0.77</na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></na></p>
-<p>$matrix_string [1] “\underbrace{\begin{bmatrix} &amp; \texttt{NA}
-&amp; \texttt{NA} &amp; \texttt{NA}\\\vdots &amp; \vdots &amp; \vdots
-&amp; \vdots\\ &amp; \texttt{NA} &amp; \texttt{NA} &amp;
-\texttt{NA}\\\texttt{NA} &amp; 0 &amp; \texttt{NA} &amp;
-\texttt{NA}\\\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\\texttt{NA}
-&amp; 0 &amp; \texttt{NA} &amp; \texttt{NA}\\\texttt{NA} &amp;
-\texttt{NA} &amp; 4.98 &amp; \texttt{NA}\\\vdots &amp; \vdots &amp;
-\vdots &amp; \vdots\\\texttt{NA} &amp; \texttt{NA} &amp; 1.46 &amp;
-\texttt{NA}\\\texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA} &amp;
-0\\\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\\texttt{NA} &amp;
-\texttt{NA} &amp; \texttt{NA} &amp; 0\\\end{bmatrix}}<em>{\texttt{Y}}=
-\beta</em>{0}\underbrace{\begin{bmatrix}
-\\\vdots\\\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\end{bmatrix}}<em>{\texttt{beta.0}}
-+ \beta</em>{x}\underbrace{\begin{bmatrix}
-\\\vdots\\\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\end{bmatrix}}<em>{\texttt{beta.x}}
-+ \beta</em>{z}\underbrace{\begin{bmatrix}
-\\\vdots\\\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\end{bmatrix}}<em>{\texttt{beta.z}}
-+ \underbrace{\begin{bmatrix}
-\texttt{NA}\\\vdots\\\texttt{NA}\\\\\vdots\\\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\end{bmatrix}}</em>{\texttt{id.x}}
-+ \underbrace{\begin{bmatrix}
-\texttt{NA}\\\vdots\\\texttt{NA}\\\\\vdots\\\\\\\vdots\\\\\\\vdots\\\\\end{bmatrix}}<em>{\texttt{id.r}}
-+ \alpha</em>{0}\underbrace{\begin{bmatrix}
-\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\\\vdots\\\\\end{bmatrix}}<em>{\texttt{alpha.0}}
-+ \alpha</em>{z}\underbrace{\begin{bmatrix}
-\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\texttt{NA}\\\vdots\\\texttt{NA}\\\\\vdots\\\\\end{bmatrix}}_{\texttt{alpha.z}}”</p>
+<span><span class="fu"><a href="../reference/show_data_structure.html">show_data_structure</a></span><span class="op">(</span><span class="va">inlami_model</span><span class="op">$</span><span class="va">stack_data</span><span class="op">)</span><span class="op">$</span><span class="va">matrix_string</span></span></code></pre></div>
+<p>[1] “<span class="math display">\[\\underbrace{\\begin{bmatrix}
+\n10.81 &amp; \\texttt{NA} &amp; \\texttt{NA} &amp;
+\\texttt{NA}\\\\\n\\vdots &amp; \\vdots &amp; \\vdots &amp;
+\\vdots\\\\\n6.18 &amp; \\texttt{NA} &amp; \\texttt{NA} &amp;
+\\texttt{NA}\\\\\n\\texttt{NA} &amp; 0 &amp; \\texttt{NA} &amp;
+\\texttt{NA}\\\\\n\\vdots &amp; \\vdots &amp; \\vdots &amp;
+\\vdots\\\\\n\\texttt{NA} &amp; 0 &amp; \\texttt{NA} &amp;
+\\texttt{NA}\\\\\n\\texttt{NA} &amp; \\texttt{NA} &amp; 4.98 &amp;
+\\texttt{NA}\\\\\n\\vdots &amp; \\vdots &amp; \\vdots &amp;
+\\vdots\\\\\n\\texttt{NA} &amp; \\texttt{NA} &amp; 1.46 &amp;
+\\texttt{NA}\\\\\n\\texttt{NA} &amp; \\texttt{NA} &amp; \\texttt{NA}
+&amp; 0\\\\\n\\vdots &amp; \\vdots &amp; \\vdots &amp;
+\\vdots\\\\\n\\texttt{NA} &amp; \\texttt{NA} &amp; \\texttt{NA} &amp;
+0\\\\\n\\end{bmatrix}}_{\\texttt{Y}}\n =
+\n\\beta_{0}\\underbrace{\\begin{bmatrix}
+\n1\\\\\n\\vdots\\\\\n1\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\end{bmatrix}}_{\\texttt{beta.0}}
++ \\beta_{x}\\underbrace{\\begin{bmatrix}
+\n1\\\\\n\\vdots\\\\\n1000\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\end{bmatrix}}_{\\texttt{beta.x}}
++ \\beta_{z}\\underbrace{\\begin{bmatrix}
+\n0.98\\\\\n\\vdots\\\\\n0.77\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\end{bmatrix}}_{\\texttt{beta.z}}
++ \\underbrace{\\begin{bmatrix}
+\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n-1\\\\\n\\vdots\\\\\n-1000\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\end{bmatrix}}_{\\texttt{id.x}}
++ \\underbrace{\\begin{bmatrix}
+\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n1\\\\\n\\vdots\\\\\n1000\\\\\n1\\\\\n\\vdots\\\\\n1000\\\\\n-1\\\\\n\\vdots\\\\\n-1000\\\\\n\\end{bmatrix}}_{\\texttt{id.r}}
++ \\alpha_{0}\\underbrace{\\begin{bmatrix}
+\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n1\\\\\n\\vdots\\\\\n1\\\\\n\\end{bmatrix}}_{\\texttt{alpha.0}}
++ \\alpha_{z}\\underbrace{\\begin{bmatrix}
+\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n0.98\\\\\n\\vdots\\\\\n0.77\\\\\n\\end{bmatrix}}_{\\texttt{alpha.z}}\]</span>”</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

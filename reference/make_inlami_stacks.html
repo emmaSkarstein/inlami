@@ -24,8 +24,9 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure oc coronary heart disease</a>
+    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure on coronary heart disease</a>
     <a class="dropdown-item" href="../articles/Visualize_model_structure.html">Visualize model structure</a>
+    <a class="dropdown-item" href="../articles/nhanes_survival.html">Survival data with repeated systolic blood pressure measurements</a>
     <a class="dropdown-item" href="../articles/simulated_examples.html">Simulated examples</a>
   </div>
 </li>
@@ -51,9 +52,9 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_inlami_stacks</span><span class="op">(</span></span>
-<span>  <span class="va">data</span>,</span>
 <span>  <span class="va">formula_moi</span>,</span>
 <span>  <span class="va">formula_imp</span>,</span>
+<span>  <span class="va">data</span>,</span>
 <span>  error_type <span class="op">=</span> <span class="st">"classical"</span>,</span>
 <span>  repeated_observations <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -61,16 +62,16 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>data</dt>
-<dd><p>A data frame with response and covariate variables for the main model and the imputation model.</p></dd>
-
-
-<dt>formula_moi</dt>
+    <dl><dt>formula_moi</dt>
 <dd><p>an object of class "formula", describing the main model to be fitted.</p></dd>
 
 
 <dt>formula_imp</dt>
 <dd><p>an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.</p></dd>
+
+
+<dt>data</dt>
+<dd><p>A data frame with response and covariate variables for the main model and the imputation model.</p></dd>
 
 
 <dt>error_type</dt>
@@ -92,10 +93,10 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">f_moi</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span></span></span>
 <span class="r-in"><span><span class="va">f_imp</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">~</span> <span class="va">z</span></span></span>
-<span class="r-in"><span><span class="fu">make_inlami_stacks</span><span class="op">(</span>data <span class="op">=</span> <span class="va">simple_data</span>,</span></span>
-<span class="r-in"><span>              formula_moi <span class="op">=</span> <span class="va">f_moi</span>,</span></span>
-<span class="r-in"><span>              formula_imp <span class="op">=</span> <span class="va">f_imp</span>,</span></span>
-<span class="r-in"><span>              error_type <span class="op">=</span> <span class="st">"classical"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">make_inlami_stacks</span><span class="op">(</span>formula_moi <span class="op">=</span> <span class="va">f_moi</span>,</span></span>
+<span class="r-in"><span>                   formula_imp <span class="op">=</span> <span class="va">f_imp</span>,</span></span>
+<span class="r-in"><span>                   data <span class="op">=</span> <span class="va">simple_data</span>,</span></span>
+<span class="r-in"><span>                   error_type <span class="op">=</span> <span class="st">"classical"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $A</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3000 x 3000 sparse Matrix of class "dgCMatrix"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                               </span>

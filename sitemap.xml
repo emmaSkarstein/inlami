@@ -19,6 +19,9 @@
     <loc>https://emmaskarstein.github.io/inlami/articles/index.html</loc>
   </url>
   <url>
+    <loc>https://emmaskarstein.github.io/inlami/articles/nhanes_survival.html</loc>
+  </url>
+  <url>
     <loc>https://emmaskarstein.github.io/inlami/articles/simulated_examples.html</loc>
   </url>
   <url>
@@ -50,6 +53,9 @@
   </url>
   <url>
     <loc>https://emmaskarstein.github.io/inlami/reference/make_inlami_stacks.html</loc>
+  </url>
+  <url>
+    <loc>https://emmaskarstein.github.io/inlami/reference/nhanes_survival.html</loc>
   </url>
   <url>
     <loc>https://emmaskarstein.github.io/inlami/reference/plot.inlami.html</loc>

@@ -26,8 +26,9 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure oc coronary heart disease</a>
+    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure on coronary heart disease</a>
     <a class="dropdown-item" href="../articles/Visualize_model_structure.html">Visualize model structure</a>
+    <a class="dropdown-item" href="../articles/nhanes_survival.html">Survival data with repeated systolic blood pressure measurements</a>
     <a class="dropdown-item" href="../articles/simulated_examples.html">Simulated examples</a>
   </div>
 </li>
@@ -113,32 +114,32 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Fixed effects for model of interest: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mean        sd 0.025quant 0.5quant 0.975quant     mode          kld</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> beta.0 1.031603 0.2185178  0.6126049 1.030761   1.443718 1.027510 1.190474e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> beta.z 1.914153 0.3872442  1.2232656 1.907285   2.574555 1.914287 1.994473e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> beta.0 1.039294 0.2186568  0.6221076 1.041224   1.449787 1.038997 1.243794e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> beta.z 1.929998 0.3878203  1.2474386 1.931068   2.587251 1.932088 1.787546e-04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coefficient for error prone variable: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mean        sd 0.025quant 0.5quant 0.975quant     mode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> beta.x 1.972449 0.2004445   1.574932 1.973444   2.364152 1.977597</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> beta.x 1.972164 0.2034544    1.57433  1.97124   2.375401 1.967383</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Fixed effects for imputation model: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             mean         sd 0.025quant 0.5quant 0.975quant     mode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.0 1.033079 0.05060191  0.9338064 1.033088   1.132305 1.033088</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.z 2.024709 0.05226505  1.9222491 2.024691   2.127272 2.024691</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.0 1.033068 0.05058945    0.93382 1.033076   1.132270 1.033076</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.z 2.024734 0.05225150    1.92230 2.024717   2.127269 2.024717</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  kld</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.0 3.143523e-11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.z 5.397437e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.0 3.062649e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha.z 5.213181e-11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model hyperparameters (apart from beta.x): </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                 mean        sd 0.025quant</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations    1.1257693 0.3651076  0.5557479</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[2] 1.1254722 0.3452627  0.5928618</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[3] 0.9252364 0.1084378  0.7312648</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[4] 0.9780738 0.1249463  0.7544509</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations    1.1226845 0.3587280  0.5584126</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[2] 1.1272101 0.3541668  0.5923687</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[3] 0.9280261 0.1116322  0.7262249</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[4] 0.9763251 0.1264111  0.7534150</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                             0.5quant 0.975quant      mode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations    1.0767307   1.976590 0.9870758</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[2] 1.0770531   1.938486 0.9868759</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[3] 0.9185744   1.157627 0.9046790</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[4] 0.9704542   1.245556 0.9558743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations    1.0758001   1.954778 0.9904945</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[2] 1.0739213   1.972069 0.9742140</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[3] 0.9218943   1.165071 0.9107396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Precision for the Gaussian observations[4] 0.9674845   1.250303 0.9486332</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

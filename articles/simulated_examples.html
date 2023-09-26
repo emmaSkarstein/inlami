@@ -41,8 +41,9 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure oc coronary heart disease</a>
+    <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure on coronary heart disease</a>
     <a class="dropdown-item" href="../articles/Visualize_model_structure.html">Visualize model structure</a>
+    <a class="dropdown-item" href="../articles/nhanes_survival.html">Survival data with repeated systolic blood pressure measurements</a>
     <a class="dropdown-item" href="../articles/simulated_examples.html">Simulated examples</a>
   </div>
 </li>
@@ -182,32 +183,32 @@ scenario.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
 <span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant     mode          kld</span></span>
-<span><span class="co">#&gt; beta.0 1.031053 0.2193059  0.6125066 1.029462   1.445577 1.026535 1.231736e-06</span></span>
-<span><span class="co">#&gt; beta.z 1.912971 0.3888116  1.2253402 1.904965   2.578712 1.913268 2.081860e-04</span></span>
+<span><span class="co">#&gt; beta.0 1.037960 0.2196621   0.621323 1.039339   1.449891 1.038183 1.633454e-06</span></span>
+<span><span class="co">#&gt; beta.z 1.926603 0.3899306   1.242995 1.929371   2.590315 1.931663 1.966045e-04</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
-<span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; beta.x 1.973243 0.2020505   1.573197 1.974021   2.368742 1.977266</span></span>
+<span><span class="co">#&gt;           mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
+<span><span class="co">#&gt; beta.x 1.97209 0.2084487   1.565645 1.970752   2.386378 1.965143</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
 <span><span class="co">#&gt;             mean         sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; alpha.0 1.033082 0.05059152  0.9338288 1.033090   1.132287 1.033090</span></span>
-<span><span class="co">#&gt; alpha.z 2.024704 0.05225416  1.9222657 2.024686   2.127246 2.024686</span></span>
+<span><span class="co">#&gt; alpha.0 1.033085 0.05059673  0.9338214 1.033093    1.13230 1.033093</span></span>
+<span><span class="co">#&gt; alpha.z 2.024697 0.05225973  1.9222485 2.024679    2.12725 2.024679</span></span>
 <span><span class="co">#&gt;                  kld</span></span>
-<span><span class="co">#&gt; alpha.0 3.173008e-11</span></span>
-<span><span class="co">#&gt; alpha.z 5.472876e-11</span></span>
+<span><span class="co">#&gt; alpha.0 3.217892e-11</span></span>
+<span><span class="co">#&gt; alpha.z 5.520492e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters (apart from beta.x): </span></span>
 <span><span class="co">#&gt;                                                 mean        sd 0.025quant</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    1.1250762 0.3598163  0.5607554</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.1249202 0.3479141  0.5903727</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9263902 0.1094371  0.7300473</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9775672 0.1256390  0.7533649</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations    1.1225350 0.3607569  0.5621111</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.1287132 0.3653682  0.5828286</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9276612 0.1135249  0.7227764</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9760073 0.1285591  0.7495424</span></span>
 <span><span class="co">#&gt;                                             0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    1.0775410   1.961417 0.9908376</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.0754571   1.946109 0.9833097</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9198666   1.160318 0.9067114</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9696804   1.247192 0.9542508</span></span></code></pre></div>
+<span><span class="co">#&gt; Precision for the Gaussian observations    1.0732178   1.966503 0.9826365</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.0719630   2.005197 0.9662284</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9213124   1.169039 0.9097472</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9669395   1.254840 0.9477473</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simple.truth</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span>
 <span>  <span class="op">~</span><span class="st">"coefficient_name"</span>, <span class="op">~</span><span class="st">"value"</span>,</span>
