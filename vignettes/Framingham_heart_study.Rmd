@@ -1,8 +1,8 @@
 ---
-title: "Influence of systolic blood pressure oc coronary heart disease"
+title: "Influence of systolic blood pressure on coronary heart disease"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Framingham_heart_study}
+  %\VignetteIndexEntry{Influence of systolic blood pressure on coronary heart disease}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,23 +16,18 @@ knitr::opts_chunk$set(
 
 |Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
 |:-----------|:----------|:--------|:----------|:------------|
-|Classical | Binomial | $y$ | $w_1$, $w_2$ | $z$ |
+|Classical | Binomial | `disease` | `sbp1`, `sbp2` | `smoking` |
 
 
 ```{r setup}
 library(inlami)
 ```
 
+
 ```{r}
 prior.beta <- c(0, 0.01)
 prior.alpha0 <- c(0, 1)
 prior.alphaz <- c(0, 1)
-prior.prec.x <- c(10, 1)
-prior.prec.u <- c(100, 1)
-
-# initial values (mean of prior)
-prec.u <- 100
-prec.x <- 10
 
 framingham_model <- fit_inlami(formula_moi = disease ~ sbp + smoking,
                                formula_imp = sbp ~ smoking,
@@ -40,14 +35,28 @@ framingham_model <- fit_inlami(formula_moi = disease ~ sbp + smoking,
                                data = framingham,
                                error_type = "classical", 
                                repeated_observations = TRUE,
-                               prior.prec.imp = c(10, 1),
                                prior.prec.classical = c(100, 1),
-                               initial.prec.imp = 10,
-                               initial.prec.classical = 100)
-
-
-framingham_stacks <- show_data_structure(framingham_model$stack_data)
-cat(framingham_stacks$matrix_string)
+                               prior.prec.imp = c(10, 1),
+                               initial.prec.classical = 100,
+                               initial.prec.imp = 10)
 ```
+
+```{r, echo = FALSE, results='asis'}
+framingham_stacks <- show_data_structure(framingham_model$stack_data)
+cat("$$\n")
+cat(framingham_stacks$matrix_string)
+cat("\n$$")
+```
+
+
+```{r}
+summary(framingham_model)
+```
+
+```{r}
+plot(framingham_model)
+```
+
+
 
 

@@ -5,8 +5,6 @@ vignette: >
   %\VignetteIndexEntry{Visualize model structure}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-header-includes:
-- \usepackage{amsmath}
 ---
 
 ```{r, include = FALSE}
@@ -81,90 +79,22 @@ and then we can visualize the data in these stacks with the `show_data_structure
 classical_summary <- show_data_structure(classical_stack)
 ```
 
+The LaTeX code is stored in `classical_summary$matrix_string`. If you want to display the matrices in an rmarkdown document, you can use the `cat` function, and just remember to set `results = 'asis'` as the chunk option:
 
-```{r, results='asis', echo = FALSE, eval = FALSE}
+````{verbatim}
+```{r, results='asis'}
+cat("$$\n")
+cat(classical_summary$matrix_string)
+cat("\n$$")
+```
+````
+
+```{r, echo = FALSE, results='asis'}
 cat("$$\n")
 cat(classical_summary$matrix_string)
 cat("\n$$")
 ```
 
-TODO: Figure out how to display these directly in this document automatically.
-
-$$
-\underbrace{\begin{bmatrix} 
-10.81 & \texttt{NA} & \texttt{NA}\\
-\vdots & \vdots & \vdots\\
-6.18 & \texttt{NA} & \texttt{NA}\\
-\texttt{NA} & 4.98 & \texttt{NA}\\
-\vdots & \vdots & \vdots\\
-\texttt{NA} & 1.46 & \texttt{NA}\\
-\texttt{NA} & \texttt{NA} & 0\\
-\vdots & \vdots & \vdots\\
-\texttt{NA} & \texttt{NA} & 0\\
-\end{bmatrix}}_{\texttt{Y}}
- = 
-\beta_{0}\underbrace{\begin{bmatrix} 
-1\\
-\vdots\\
-1\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix} 
-1\\
-\vdots\\
-1000\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix} 
-0.98\\
-\vdots\\
-0.77\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.z}} + \underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1000\\
--1\\
-\vdots\\
--1000\\
-\end{bmatrix}}_{\texttt{id.x}} + \alpha_{0}\underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1\\
-\end{bmatrix}}_{\texttt{alpha.0}} + \alpha_{z}\underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-0.98\\
-\vdots\\
-0.77\\
-\end{bmatrix}}_{\texttt{alpha.z}}
-$$
 
 ## Structure for Berkson and classical measurement error model
 Next, we consider a case where we have Berkson measurement error, along with either classical ME, missingness or both in the same covariate (whether it is classical ME, missingness or both makes no difference for this example, as that only affects the scaling of the measurement error precision).
@@ -212,121 +142,12 @@ berkson_summary <- show_data_structure(berkson_stack)
 ```
 
 
-```{r, results='asis', echo = FALSE, eval = FALSE}
+```{r, echo = FALSE, results='asis'}
 cat("$$\n")
 cat(berkson_summary$matrix_string)
 cat("\n$$")
 ```
 
-$$
-\underbrace{\begin{bmatrix} 
-10.81 & \texttt{NA} & \texttt{NA} & \texttt{NA}\\
-\vdots & \vdots & \vdots & \vdots\\
-6.18 & \texttt{NA} & \texttt{NA} & \texttt{NA}\\
-\texttt{NA} & 0 & \texttt{NA} & \texttt{NA}\\
-\vdots & \vdots & \vdots & \vdots\\
-\texttt{NA} & 0 & \texttt{NA} & \texttt{NA}\\
-\texttt{NA} & \texttt{NA} & 4.98 & \texttt{NA}\\
-\vdots & \vdots & \vdots & \vdots\\
-\texttt{NA} & \texttt{NA} & 1.46 & \texttt{NA}\\
-\texttt{NA} & \texttt{NA} & \texttt{NA} & 0\\
-\vdots & \vdots & \vdots & \vdots\\
-\texttt{NA} & \texttt{NA} & \texttt{NA} & 0\\
-\end{bmatrix}}_{\texttt{Y}}
- = 
-\beta_{0}\underbrace{\begin{bmatrix} 
-1\\
-\vdots\\
-1\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix} 
-1\\
-\vdots\\
-1000\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix} 
-0.98\\
-\vdots\\
-0.77\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{beta.z}} + \underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
--1\\
-\vdots\\
--1000\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\end{bmatrix}}_{\texttt{id.x}} + \underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1000\\
-1\\
-\vdots\\
-1000\\
--1\\
-\vdots\\
--1000\\
-\end{bmatrix}}_{\texttt{id.r}} + \alpha_{0}\underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-1\\
-\vdots\\
-1\\
-\end{bmatrix}}_{\texttt{alpha.0}} + \alpha_{z}\underbrace{\begin{bmatrix} 
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-\texttt{NA}\\
-\vdots\\
-\texttt{NA}\\
-0.98\\
-\vdots\\
-0.77\\
-\end{bmatrix}}_{\texttt{alpha.z}}
-$$
 
 As you see, the only things that change is that there is added another model level, which leads to another column in the response matrix, and we additionally have a new column for the latent effect $\boldsymbol{r}$.
 
@@ -349,6 +170,6 @@ inlami_model <- fit_inlami(data = simple_data,
                            initial.prec.classical = 1,
                            initial.prec.imp = 1)
 
-show_data_structure(inlami_model$stack_data)
+show_data_structure(inlami_model$stack_data)$matrix_string
 ```
 
