@@ -64,6 +64,13 @@ test_that("make_inlami_stacks works", {
                                   formula_imp = sbp ~ smoking,
                                   error_type = "classical"))
 
+  # Check if variables in formula are in data (but not sensitive to repeated measurements)
+  expect_error(make_inlami_stacks(
+    formula_moi = inla.surv(t, d) ~ sbp + aged + smoking + sex + diabetes,
+    formula_imp = sbp ~ age + smoke + sex + diabetes,
+    data = nhanes_survival,
+    error_type = c("classical", "missing"))
+  )
 
 })
 

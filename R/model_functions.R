@@ -285,6 +285,18 @@ make_inlami_stacks <- function(formula_moi,
     stop("It looks like you may have repeated measurements of the variable with measurement error or missingness. If this is correct, specify the argument 'repeated_observations = TRUE' to ensure correct analysis.")
   }
 
+  # Check that all variables in formula exist in data
+  formula_vars <- union(all.vars(formula_moi), all.vars(formula_imp))
+  data_vars <- names(data)
+  if(repeated_observations){
+    formula_vars <- setdiff(formula_vars, vars$error_variable)
+  }
+  diff_vars <- setdiff(formula_vars, data_vars) # vars in formula but not in data
+  if(length(diff_vars)>0){
+    stop(paste0("It looks like the following variable(s) are in the formula but not the data: ", diff_vars))
+  }
+
+
   # Defining sizes -------------------------------------------------------------
   n <- nrow(data)
 
