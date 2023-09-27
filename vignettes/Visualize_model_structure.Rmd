@@ -83,16 +83,12 @@ The LaTeX code is stored in `classical_summary$matrix_string`. If you want to di
 
 ````{verbatim}
 ```{r, results='asis'}
-cat("$$\n")
 cat(classical_summary$matrix_string)
-cat("\n$$")
 ```
 ````
 
 ```{r, echo = FALSE, results='asis'}
-cat("$$\n")
 cat(classical_summary$matrix_string)
-cat("\n$$")
 ```
 
 
@@ -143,9 +139,7 @@ berkson_summary <- show_data_structure(berkson_stack)
 
 
 ```{r, echo = FALSE, results='asis'}
-cat("$$\n")
 cat(berkson_summary$matrix_string)
-cat("\n$$")
 ```
 
 
