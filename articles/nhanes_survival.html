@@ -89,20 +89,21 @@
 <span><span class="co">#&gt; This is INLA_23.09.09 built 2023-09-09 13:43:09 UTC.</span></span>
 <span><span class="co">#&gt;  - See www.r-inla.org/contact-us for how to get help.</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">surv_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="va">nhanes_survival</span><span class="op">)</span></span>
-<span><span class="va">surv_list</span><span class="op">$</span><span class="va">surv</span> <span class="op">&lt;-</span> <span class="fu">INLA</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/surv.html" class="external-link">inla.surv</a></span><span class="op">(</span>time <span class="op">=</span> <span class="va">nhanes_survival</span><span class="op">$</span><span class="va">t</span><span class="op">/</span><span class="fl">10</span>, event <span class="op">=</span> <span class="va">nhanes_survival</span><span class="op">$</span><span class="va">d</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># Priors for measurement error variance and true x-value</span></span>
+<span><span class="va">prior.prec.u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span> <span class="co"># Gamma(0.5, 0.5) (same as Keogh&amp;Bartlett)</span></span>
+<span><span class="va">prior.prec.x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span> <span class="co"># Gamma(0.5, 0.5) (same as K&amp;B)</span></span>
+<span><span class="va">prec.u</span> <span class="op">&lt;-</span> <span class="fl">2.8</span></span>
+<span><span class="va">prec.x</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
 <span></span>
-<span><span class="va">survival_stacks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/make_inlami_stacks.html">make_inlami_stacks</a></span><span class="op">(</span>formula_moi <span class="op">=</span> <span class="va">surv</span> <span class="op">~</span> <span class="va">sbp</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">smoking</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">diabetes</span>,</span>
-<span>  formula_imp <span class="op">=</span> <span class="va">sbp</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">smoking</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">diabetes</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">surv_list</span>,</span>
-<span>  error_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"classical"</span>, <span class="st">"missing"</span><span class="op">)</span>,</span>
-<span>  repeated_observations <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">survival_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_inlami.html">fit_inlami</a></span><span class="op">(</span></span>
-<span>  formula_moi <span class="op">=</span> <span class="va">surv</span> <span class="op">~</span> <span class="va">sbp</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">smoking</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">diabetes</span>,</span>
-<span>  formula_imp <span class="op">=</span> <span class="va">sbp</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">smoking</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">diabetes</span>,</span>
+<span><span class="co"># Prior for shape parameter of the Weibull survival model</span></span>
+<span><span class="va">prior.exp</span> <span class="op">&lt;-</span> <span class="fl">0.01</span> <span class="co"># Gamma(1, 0.001) ~ Exp(0.001) (INLA sets prior on theta, r~Exp(0.1*theta))</span></span>
+<span><span class="va">exp.init</span> <span class="op">&lt;-</span> <span class="fl">1.4</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">survival_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_inlami.html">fit_inlami</a></span><span class="op">(</span></span>
+<span>  formula_moi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/INLA/man/surv.html" class="external-link">inla.surv</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">d</span><span class="op">)</span> <span class="op">~</span> <span class="va">sbp</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">smoke</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">diabetes</span>,</span>
+<span>  formula_imp <span class="op">=</span> <span class="va">sbp</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">smoke</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">diabetes</span>,</span>
 <span>  family_moi <span class="op">=</span> <span class="st">"weibull.surv"</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">surv_list</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">nhanes_survival</span>,</span>
 <span>  error_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"classical"</span>, <span class="st">"missing"</span><span class="op">)</span>,</span>
 <span>  repeated_observations <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  control.family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -115,7 +116,61 @@
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>hyper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>initial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">prec.x</span><span class="op">)</span>,</span>
 <span>                                  param <span class="op">=</span> <span class="va">prior.prec.x</span>,</span>
 <span>                                  fixed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  control.predictor<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>link<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  control.predictor<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>link<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="co"># Why 3?</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">survival_model</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Formula for model of interest: </span></span>
+<span><span class="co">#&gt; inla.surv(t, d) ~ sbp + age + smoke + sex + diabetes</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula for imputation model: </span></span>
+<span><span class="co">#&gt; sbp ~ age + smoke + sex + diabetes</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Error types: </span></span>
+<span><span class="co">#&gt; [1] "classical" "missing"  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
+<span><span class="co">#&gt;                     mean         sd 0.025quant   0.5quant 0.975quant       mode</span></span>
+<span><span class="co">#&gt; beta.0        -5.4452691 0.13798641 -5.7128075 -5.4419527 -5.1857724 -5.4157052</span></span>
+<span><span class="co">#&gt; beta.age       0.9045962 0.04988970  0.8068884  0.9045697  1.0024326  0.9045641</span></span>
+<span><span class="co">#&gt; beta.smoke     0.2696728 0.08460126  0.1037697  0.2696756  0.4355600  0.2696757</span></span>
+<span><span class="co">#&gt; beta.sex       0.4450932 0.07886730  0.2904378  0.4450946  0.5997407  0.4450947</span></span>
+<span><span class="co">#&gt; beta.diabetes  0.5914813 0.09300372  0.4090876  0.5914893  0.7738298  0.5914894</span></span>
+<span><span class="co">#&gt;                        kld</span></span>
+<span><span class="co">#&gt; beta.0        4.902474e-07</span></span>
+<span><span class="co">#&gt; beta.age      1.489778e-09</span></span>
+<span><span class="co">#&gt; beta.smoke    5.344821e-11</span></span>
+<span><span class="co">#&gt; beta.sex      5.299581e-11</span></span>
+<span><span class="co">#&gt; beta.diabetes 5.695188e-11</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
+<span><span class="co">#&gt;               mean         sd 0.025quant  0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; beta.sbp 0.1125493 0.04851567 0.01639057 0.1127708  0.2074138 0.1136949</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
+<span><span class="co">#&gt;                        mean         sd  0.025quant     0.5quant 0.975quant</span></span>
+<span><span class="co">#&gt; alpha.0         0.006405894 0.04312004 -0.07815452  0.006405734 0.09096723</span></span>
+<span><span class="co">#&gt; alpha.age       0.322547016 0.02956484  0.26457137  0.322546080 0.38052800</span></span>
+<span><span class="co">#&gt; alpha.smoke     0.004835540 0.05062605 -0.09444553  0.004835719 0.10411559</span></span>
+<span><span class="co">#&gt; alpha.sex      -0.061806975 0.04701926 -0.15401363 -0.061807255 0.03040128</span></span>
+<span><span class="co">#&gt; alpha.diabetes  0.137921460 0.06224321  0.01586273  0.137920135 0.25998775</span></span>
+<span><span class="co">#&gt;                        mode          kld</span></span>
+<span><span class="co">#&gt; alpha.0         0.006405734 1.134300e-11</span></span>
+<span><span class="co">#&gt; alpha.age       0.322546079 1.182438e-11</span></span>
+<span><span class="co">#&gt; alpha.smoke     0.004835720 1.144761e-11</span></span>
+<span><span class="co">#&gt; alpha.sex      -0.061807257 1.141326e-11</span></span>
+<span><span class="co">#&gt; alpha.diabetes  0.137920134 1.144809e-11</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model hyperparameters (apart from beta.sbp): </span></span>
+<span><span class="co">#&gt;                                                mean         sd 0.025quant</span></span>
+<span><span class="co">#&gt; alpha parameter for weibullsurv            1.377497 0.04133262  1.3009207</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.843124 0.26005555  2.3547563</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.026934 0.04965497  0.9336561</span></span>
+<span><span class="co">#&gt;                                            0.5quant 0.975quant     mode</span></span>
+<span><span class="co">#&gt; alpha parameter for weibullsurv            1.375893   1.463553 1.370348</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.834989   3.377554 2.826594</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.025393   1.129124 1.021580</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">survival_model</span>, plot_intercepts <span class="op">=</span> <span class="cn">FALSE</span>, plot_imp <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="nhanes_survival_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
   </main>
 </div>
 

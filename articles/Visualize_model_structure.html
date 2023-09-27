@@ -176,14 +176,82 @@ matrices in an rmarkdown document, you can use the <code>cat</code>
 function, and just remember to set <code>results = 'asis'</code> as the
 chunk option:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>```{r, results='asis'}</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cat("$$\n")</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>cat(classical_summary$matrix_string)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>cat("\n$$")</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>```</span></code></pre></div>
-<p><span class="math display">\[
-\]</span><em>{} = </em>{0}<em>{} + </em>{x}<em>{} + </em>{z}<em>{} +
-</em>{} + <em>{0}</em>{} + <em>{z}</em>{}<span class="math display">\[
-\]</span></p>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cat(classical_summary$matrix_string)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>```</span></code></pre></div>
+<p><span class="math display">\[\underbrace{\begin{bmatrix}
+10.81 &amp; \texttt{NA} &amp; \texttt{NA}\\
+\vdots &amp; \vdots &amp; \vdots\\
+6.18 &amp; \texttt{NA} &amp; \texttt{NA}\\
+\texttt{NA} &amp; 4.98 &amp; \texttt{NA}\\
+\vdots &amp; \vdots &amp; \vdots\\
+\texttt{NA} &amp; 1.46 &amp; \texttt{NA}\\
+\texttt{NA} &amp; \texttt{NA} &amp; 0\\
+\vdots &amp; \vdots &amp; \vdots\\
+\texttt{NA} &amp; \texttt{NA} &amp; 0\\
+\end{bmatrix}}_{\texttt{Y}}
+=
+\beta_{0}\underbrace{\begin{bmatrix}
+1\\
+\vdots\\
+1\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix}
+1\\
+\vdots\\
+1000\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix}
+0.98\\
+\vdots\\
+0.77\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.z}} + \underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+1\\
+\vdots\\
+1000\\
+-1\\
+\vdots\\
+-1000\\
+\end{bmatrix}}_{\texttt{id.x}} + \alpha_{0}\underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+1\\
+\vdots\\
+1\\
+\end{bmatrix}}_{\texttt{alpha.0}} +
+\alpha_{z}\underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+0.98\\
+\vdots\\
+0.77\\
+\end{bmatrix}}_{\texttt{alpha.z}}\]</span></p>
 </div>
 <div class="section level2">
 <h2 id="structure-for-berkson-and-classical-measurement-error-model">Structure for Berkson and classical measurement error model<a class="anchor" aria-label="anchor" href="#structure-for-berkson-and-classical-measurement-error-model"></a>
@@ -241,10 +309,114 @@ added.</p>
 <p>and then visualize the resulting matrices:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">berkson_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/show_data_structure.html">show_data_structure</a></span><span class="op">(</span><span class="va">berkson_stack</span><span class="op">)</span></span></code></pre></div>
-<p><span class="math display">\[
-\]</span><em>{} = </em>{0}<em>{} + </em>{x}<em>{} + </em>{z}<em>{} +
-</em>{} + <em>{} + </em>{0}<em>{} + </em>{z}_{}<span class="math display">\[
-\]</span></p>
+<p><span class="math display">\[\underbrace{\begin{bmatrix}
+10.81 &amp; \texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+6.18 &amp; \texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA}\\
+\texttt{NA} &amp; 0 &amp; \texttt{NA} &amp; \texttt{NA}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+\texttt{NA} &amp; 0 &amp; \texttt{NA} &amp; \texttt{NA}\\
+\texttt{NA} &amp; \texttt{NA} &amp; 4.98 &amp; \texttt{NA}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+\texttt{NA} &amp; \texttt{NA} &amp; 1.46 &amp; \texttt{NA}\\
+\texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA} &amp; 0\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+\texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA} &amp; 0\\
+\end{bmatrix}}_{\texttt{Y}}
+=
+\beta_{0}\underbrace{\begin{bmatrix}
+1\\
+\vdots\\
+1\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix}
+1\\
+\vdots\\
+1000\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix}
+0.98\\
+\vdots\\
+0.77\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.z}} + \underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+-1\\
+\vdots\\
+-1000\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{id.x}} + \underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+1\\
+\vdots\\
+1000\\
+1\\
+\vdots\\
+1000\\
+-1\\
+\vdots\\
+-1000\\
+\end{bmatrix}}_{\texttt{id.r}} + \alpha_{0}\underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+1\\
+\vdots\\
+1\\
+\end{bmatrix}}_{\texttt{alpha.0}} +
+\alpha_{z}\underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+0.98\\
+\vdots\\
+0.77\\
+\end{bmatrix}}_{\texttt{alpha.z}}\]</span></p>
 <p>As you see, the only things that change is that there is added
 another model level, which leads to another column in the response
 matrix, and we additionally have a new column for the latent effect
