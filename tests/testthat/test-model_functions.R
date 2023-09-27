@@ -3,6 +3,9 @@ test_that("extract_variables_from_formula works", {
   simple_imp <- x ~ z
   expected <- extract_variables_from_formula(formula_moi = simple_moi, formula_imp = simple_imp)
 
+  # Check that all elements are characters
+  expect_true(all(sapply(expected, class) == "character"))
+
   # Catching errors -----------------------------------------------------------
   expect_error(extract_variables_from_formula(formula_moi = "string", formula_imp = simple_imp))
 
@@ -12,8 +15,10 @@ test_that("make_inlami_stacks works", {
   # Some checks with simulated data, stacks with berkson level
   simple_moi <- y ~ x + z
   simple_imp <- x ~ z
-  simple_stacks_cb <- make_inlami_stacks(simple_moi, simple_imp, simple_data,
-                                      error_type = c("classical", "berkson"))
+  simple_stacks_cb <- make_inlami_stacks(formula_moi = simple_moi,
+                                         formula_imp = simple_imp,
+                                         data = simple_data,
+                                         error_type = c("classical", "berkson"))
 
   # Check rows and columns of "data"
   expect_equal(nrow(simple_stacks_cb$data$data), 4*1000)

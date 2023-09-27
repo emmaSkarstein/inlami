@@ -20,14 +20,16 @@ extract_variables_from_formula <- function(formula_moi,
     stop("One of the input objects is not of class 'formula'")
   }
   # Model of interest variables --
+  moi_components <- as.list(formula_moi)
+
   ## Extract name of response:
-  response_moi <- all.vars(formula_moi)[1]
+  response_moi <- all.vars(moi_components[[2]])
 
   ## Covariates in moi:
-  covariates_moi <- all.vars(formula_moi)[-1]
+  covariates_moi <- all.vars(moi_components[[3]])
 
   ## Identify error prone variable:
-  error_variable <- all.vars(formula_imp)[1]
+  error_variable <- rlang::as_string(as.list(formula_imp)[[2]])
 
   ## Extract index of error variable in formula:
   error_var_index <- which(covariates_moi == error_variable)
@@ -36,8 +38,9 @@ extract_variables_from_formula <- function(formula_moi,
   covariates_error_free <- covariates_moi[-error_var_index]
 
   # Imputation model variables --
-  response_imp <- all.vars(formula_imp)[1]
-  covariates_imp <- all.vars(formula_imp)[-1]
+  imp_components <- as.list(formula_imp)
+  response_imp <- error_variable
+  covariates_imp <- all.vars(imp_components[[3]])
 
   return(list(response_moi = response_moi,
               covariates_moi = covariates_moi,
@@ -52,6 +55,7 @@ extract_variables_from_formula <- function(formula_moi,
 #'
 #' @param formula_moi an object of class "formula", describing the main model to be fitted.
 #' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
+#' @param family_moi a string indicating the likelihood family for the model of interest (the main model).
 #' @param error_type Type of error (one of "classical", "berkson", "missing")
 #'
 #' @return An object of class "formula".
@@ -62,8 +66,9 @@ extract_variables_from_formula <- function(formula_moi,
 #' f_imp <- x ~ z
 #' make_inlami_formula(formula_moi = f_moi, formula_imp = f_imp, error_type = "classical")
 make_inlami_formula <- function(formula_moi,
-                              formula_imp,
-                              error_type = "classical"){
+                                formula_imp,
+                                family_moi = "gaussian",
+                                error_type = "classical"){
 
   # Weaknesses:
   # Fixed prior for beta.x
@@ -88,8 +93,21 @@ make_inlami_formula <- function(formula_moi,
 
   copy_term2 <- "f(id.x, weight.x, model='iid', values = 1:n, hyper = list(prec = list(initial = -15, fixed=TRUE)))"
 
+  # Setting up the response formula
+  if(!family_moi %in% inla_survival_families()){
+    y_moi <- "y_moi, "
+  }else{
+    y_moi <- "inla.surv(time = y_time, event = y_event), "
+  }
+  if("berkson" %in% error_type){
+    y_berkson <- "y_berkson, "
+  }else{
+    y_berkson <- ""
+  }
 
-  formula <- paste("Y ~ -1",
+  response_list <- paste0("list(", y_moi, y_berkson, "y_classical, ", "y_imp)")
+
+  formula_RHS <- paste("-1",
                    "beta.0",
                    paste(covariates_error_free_string, collapse = " + "),
                    "alpha.0",
@@ -100,8 +118,10 @@ make_inlami_formula <- function(formula_moi,
 
   if("berkson" %in% error_type){
     r_term <- "f(id.r, weight.r, model='iid', values = 1:n, hyper = list(prec = list(initial = -15, fixed = TRUE)))"
-    formula <- paste(formula, "+", r_term)
+    formula_RHS <- paste(formula_RHS, "+", r_term)
   }
+
+  formula <- paste(response_list, "~", formula_RHS)
 
   return(stats::as.formula(formula))
 }
@@ -217,9 +237,10 @@ make_inlami_matrices <- function(data,
 
 #' Make data stacks for joint model specification in INLA
 #'
-#' @param data A data frame with response and covariate variables for the main model and the imputation model.
 #' @param formula_moi an object of class "formula", describing the main model to be fitted.
 #' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
+#' @param family_moi a string indicating the likelihood family for the model of interest (the main model).
+#' @param data A data frame with response and covariate variables for the main model and the imputation model.
 #' @param error_type Type of error (one or more of "classical", "berkson", "missing")
 #' @param repeated_observations Does the variable with measurement error and/or missingness have repeated observations? If so, set this to "TRUE". In that case, when specifying the formula, use the name of the variable without any numbers, but when specifying the data, make sure that the repeated measurements end in a number, i.e "sbp1" and "sbp2".
 #'
@@ -235,6 +256,7 @@ make_inlami_matrices <- function(data,
 #'                    error_type = "classical")
 make_inlami_stacks <- function(formula_moi,
                                formula_imp,
+                               family_moi = "gaussian",
                                data,
                                error_type = "classical",
                                repeated_observations = FALSE){
@@ -264,23 +286,7 @@ make_inlami_stacks <- function(formula_moi,
   }
 
   # Defining sizes -------------------------------------------------------------
-  # Number of observations is length of first covariate
-  if(inherits(data, "data.frame")){
-    n <- nrow(data)
-  }else{
-    n <- length(data[[vars$covariates_error_free[1]]])
-  }
-
-  # Number of response columns = #error models + 2
-  n_model_levels <- length(setdiff(error_type, c("missing"))) + 2
-
-  # Location of classical error model
-  classical_location <- n_model_levels - 1
-
-  # NA list for the response
-  NA_matrix <- matrix(nrow = n, ncol = n_model_levels)
-  NA_list <- lapply(seq_len(ncol(NA_matrix)), function(i) NA_matrix[,i])
-
+  n <- nrow(data)
 
   # Model of interest stack  ---------------------------------------------------
 
@@ -313,16 +319,15 @@ make_inlami_stacks <- function(formula_moi,
   eval(parse(text = moi_code))
 
   # Response
-  moi_r <- NA_list
-  moi_r[[1]] <- as.matrix(data[vars$response_moi])
-  response_moi_ <- list(Y = moi_r)
-
-  if("berkson" %in% error_type){
-   response_moi <- list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA, NA))
-  }else{
-   response_moi <- list(Y = cbind(as.matrix(data[vars$response_moi]), NA, NA))
+  ## if survival model, structure the response accordingly
+  if(family_moi %in% inla_survival_families()){
+    time_var <- vars$response_moi[1]
+    event_var <- vars$response_moi[2]
+    response_moi <- list(y_time = as.matrix(data[time_var]),
+                         y_event = as.matrix(data[event_var]))
+  }else{ ## otherwise response is just one vector
+    response_moi <- list(y_moi = as.matrix(data[vars$response_moi]))
   }
-
   # y = x + z...
   stk_moi <- INLA::inla.stack(data = response_moi,
                         A = list(1),
@@ -334,10 +339,7 @@ make_inlami_stacks <- function(formula_moi,
 
   if("berkson" %in% error_type){
     # 0 = -x_true + r + u_b
-    berkson_r <- NA_list
-    berkson_r[[2]] <- rep(0, n)
-    response_berkson <- list(Y = berkson_r)
-    response_berkson <- list(Y = cbind(NA, rep(0, n), NA, NA))
+    response_berkson <- list(y_berkson = rep(0, n))
 
     stk_b <- INLA::inla.stack(data = response_berkson,
                               A = list(1),
@@ -367,15 +369,7 @@ make_inlami_stacks <- function(formula_moi,
   # Response
   classical_response <- as.matrix(utils::stack(data[error_var_list])[1])
 
-  classical_r <- NA_list
-  classical_r[[classical_location]] <- classical_response
-  response_classical <- list(Y = classical_r)
-
-  if("berkson" %in% error_type){
-    response_classical <- list(Y = cbind(NA, NA, classical_response, NA))
-  }else{
-    response_classical <- list(Y = cbind(NA, classical_response, NA))
-  }
+  response_classical <- list(y_classical = classical_response)
 
   # x = r + u_c
   stk_c <- INLA::inla.stack(data = response_classical,
@@ -421,15 +415,7 @@ make_inlami_stacks <- function(formula_moi,
 
 
   # Response
-  imp_r <- NA_list
-  imp_r[[n_model_levels]] <- rep(0, n)
-  response_imputation <- list(Y = imp_r)
-
-  if("berkson" %in% error_type){
-   response_imputation <- list(Y = cbind(NA, NA, NA, rep(0, n)))
-  }else{
-   response_imputation <- list(Y = cbind(NA, NA, rep(0, n)))
-  }
+  response_imputation <- list(y_imp = rep(0, n))
 
   # r = z + ...
   stk_imp <- INLA::inla.stack(data = response_imputation,
@@ -444,9 +430,6 @@ make_inlami_stacks <- function(formula_moi,
   }else{
     stk_full <- INLA::inla.stack(stk_moi, stk_c, stk_imp, compress = FALSE)
   }
-
-  #names(stk_full$data$data) <- c("Y.1", "Y.2", "Y.3", "Y.4")
-  #stk_full$data$ncol <- 4
 
   return(stk_full)
 }
@@ -584,14 +567,11 @@ fit_inlami <- function(formula_moi,
 
   # Some checks ----------------------------------------------------------------
 
-  # Check if family.moi == weibull.surv but data is not of class list
-  if(family_moi == "weibull.surv" && !inherits(data, "list")){
-    stop("When fitting a survival model, the data must be formatted as a list, where one of the entries (the response) should be an inla.surv object named 'surv'.")
-  }
 
   # Make formula from sub-models -----------------------------------------------
   formula_full <- make_inlami_formula(formula_moi = formula_moi,
                                formula_imp = formula_imp,
+                               family_moi = family_moi,
                                error_type = error_type)
 
   # Define some sizes ----------------------------------------------------------
@@ -601,6 +581,7 @@ fit_inlami <- function(formula_moi,
   # Make the stacks for the joint model ----------------------------------------
   data_stack <- make_inlami_stacks(formula_moi = formula_moi,
                                    formula_imp = formula_imp,
+                                   family_moi = family_moi,
                                    data = data,
                                    error_type = error_type,
                                    repeated_observations = repeated_observations)
