@@ -165,7 +165,7 @@ summary(simple_model)
 
 # Regression model of interest
 # y = beta.0 + beta.x*x_true + beta.z*z + e
-stk_moi <- inla.stack(data = list(Y = cbind(y, NA, NA, NA)),
+stk_moi <- inla.stack(data = list(y_moi = y),
                       A = list(1),
                       effects = list(
                         list(beta.0 = rep(1, n),
@@ -175,7 +175,7 @@ stk_moi <- inla.stack(data = list(Y = cbind(y, NA, NA, NA)),
 
 # Berkson measurement error model
 # 0 = -x_true + r + u_b
-stk_b <- inla.stack(data = list(Y = cbind(NA, rep(0, n), NA, NA)),
+stk_b <- inla.stack(data = list(y_berksonrep(0, n)),
                     A = list(1),
                     effects = list(
                       list(id.x = 1:n,
@@ -186,7 +186,7 @@ stk_b <- inla.stack(data = list(Y = cbind(NA, rep(0, n), NA, NA)),
 
 # Classical measurement error model
 # x = r + u_c
-stk_c <- inla.stack(data = list(Y = cbind(NA, NA, x, NA)),
+stk_c <- inla.stack(data = list(y_classical = x),
                     A = list(1),
                     effects = list(
                       list(id.r = 1:n,
@@ -195,7 +195,7 @@ stk_c <- inla.stack(data = list(Y = cbind(NA, NA, x, NA)),
 
 # Imputation/exposure model
 # 0 = r + alpha.0 + alpha.z + e_r
-stk_imp <- inla.stack(data = list(Y = cbind(NA, NA, NA, rep(0, n))),
+stk_imp <- inla.stack(data = list(y_imp = rep(0, n)),
                       A = list(1),
                       effects = list(
                         list(id.r = 1:n,
@@ -207,7 +207,7 @@ stk_imp <- inla.stack(data = list(Y = cbind(NA, NA, NA, rep(0, n))),
 # Stack them on top of each other
 stk_full <- inla.stack(stk_moi, stk_b, stk_c, stk_imp)
 
-formula <- Y ~ - 1 + beta.0 + beta.z +
+formula <- list(y_moi, y_berkson, y_classical, y_imp) ~ - 1 + beta.0 + beta.z +
   f(beta.x, copy = "id.x",
     hyper = list(beta = list(param = prior.beta, fixed = FALSE))) +
   f(id.x, weight.x, model = "iid", values = 1:n,
