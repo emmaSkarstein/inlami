@@ -34,7 +34,6 @@ When using the `inlami` package, the user specifies two formulas, one for the ma
 
 In practice, this can be done either through manually constructed matrices (see for instance https://emmaskarstein.github.io/Missing-data-and-measurement-error/simulation_example.html for a detailed explanation of that), or one can use the `inla.stack` function to specify the modules for each sub-model separately, and then stack them together. For the `inlami` package, I structure the data using `inla.stacks`. The outcome is the same, but it just makes the construction a bit more generalizable. The stack construction is done in the function `make_inlami_stacks`, which is then called by `fit_inlami`, so this is not a function the user would typically need to interact with. 
 
-TODO: return the stack-data in fit_inlami as well?
 
 The function `show_data_structure` converts the stack object to LaTeX matrices, and only shows the first and last row for each sub-model, making it easier to get a clear overview over the structure of the model. Now, we will take a look at these matrices for two different models: one with Berkson measurement error, and one without.
 
@@ -118,10 +117,10 @@ Rewritten for R-INLA:
 
 $$
 \begin{align}
-  \boldsymbol{y} &= \beta_0 + \beta_x \boldsymbol{x} + \beta_z \boldsymbol{z} + \boldsymbol{\varepsilon} \ , \quad &\boldsymbol{\varepsilon} \sim N(\boldsymbol{0}, \tau_y\boldsymbol{I}) \ , \\
-  \boldsymbol{0} &= -\boldsymbol{x} + \boldsymbol{r} + \boldsymbol{u}_b \ , \quad & \boldsymbol{u}_b \sim N(\boldsymbol{0}, \tau_{u_b}\boldsymbol{I}) \ , \\
-  \boldsymbol{w} &= \boldsymbol{r} + \boldsymbol{u}_c \ , \quad &\boldsymbol{u}_c \sim N(\boldsymbol{0}, \tau_{u_c}\boldsymbol{I}) \ , \\
-  \boldsymbol{0} &= -\boldsymbol{r} + \alpha_0 + \alpha_z \boldsymbol{z} + \boldsymbol{\varepsilon}_r \ , \quad &\boldsymbol{\varepsilon}_r \sim N(\boldsymbol{0}, \tau_r\boldsymbol{I}) \ .
+  \boldsymbol{y} &= \beta_0 + \beta_x \boldsymbol{x} + \beta_z \boldsymbol{z} + \boldsymbol{\varepsilon} \ , \quad &\boldsymbol{\varepsilon} &\sim N(\boldsymbol{0}, \tau_y\boldsymbol{I}) \ , \\
+  \boldsymbol{0} &= -\boldsymbol{x} + \boldsymbol{r} + \boldsymbol{u}_b \ , \quad & \boldsymbol{u}_b &\sim N(\boldsymbol{0}, \tau_{u_b}\boldsymbol{I}) \ , \\
+  \boldsymbol{w} &= \boldsymbol{r} + \boldsymbol{u}_c \ , \quad &\boldsymbol{u}_c &\sim N(\boldsymbol{0}, \tau_{u_c}\boldsymbol{I}) \ , \\
+  \boldsymbol{0} &= -\boldsymbol{r} + \alpha_0 + \alpha_z \boldsymbol{z} + \boldsymbol{\varepsilon}_r \ , \quad &\boldsymbol{\varepsilon}_r &\sim N(\boldsymbol{0}, \tau_r\boldsymbol{I}) \ .
 \end{align}
 $$
 Just like above, we construct the stacks:
@@ -164,6 +163,6 @@ inlami_model <- fit_inlami(data = simple_data,
                            initial.prec.classical = 1,
                            initial.prec.imp = 1)
 
-show_data_structure(inlami_model$stack_data)$matrix_string
+cat(show_data_structure(inlami_model$stack_data)$matrix_string)
 ```
 
