@@ -1,4 +1,4 @@
-# Exploring survival stacks
+# Exploring how to specify a measurement error model with survival moi
 
 library(INLA)
 
@@ -14,10 +14,9 @@ data <- data.frame(t, d, x, z)
 
 # Regression model of interest
 # eta = beta.0 + beta.x*x + beta.z*z
-Y.surv <- inla.surv(data$t, data$d)
 
 stk_moi <- inla.stack(
-    data = list(Y = list(Y.surv, rep(NA, n), rep(NA, n))), # THIS FAILS
+    data = list(y_time = data$t, y_event = data$d),
     A = list(1),
     effects = list(
       list(beta.0 = rep(1, n),
@@ -27,7 +26,7 @@ stk_moi <- inla.stack(
 
 # Classical measurement error model
 # x_obs = x + u_c
-stk_c <- inla.stack(data = list(Y = cbind(NA, data$x, NA)),
+stk_c <- inla.stack(data = list(y_classical = data$x),
                     A = list(1),
                     effects = list(
                       list(id.x = 1:n,
@@ -36,7 +35,7 @@ stk_c <- inla.stack(data = list(Y = cbind(NA, data$x, NA)),
 
 # Imputation/exposure model
 # 0 = x + alpha.0 + alpha.z + e_x
-stk_imp <- inla.stack(data = list(Y = cbind(NA, NA, rep(0, n))),
+stk_imp <- inla.stack(data = list(y_imp = rep(0, n)),
                       A = list(1),
                       effects = list(
                         list(id.x = 1:n,
@@ -49,7 +48,7 @@ stk_imp <- inla.stack(data = list(Y = cbind(NA, NA, rep(0, n))),
 stk_full <- inla.stack(stk_moi, stk_c, stk_imp)
 
 # Formula
-formula <- Y ~ - 1 + beta.0 + beta.z +
+formula <- list(inla.surv(time = y_time, event = y_event), y_classical, y_imputation) ~ - 1 + beta.0 + beta.z +
   f(beta.x, copy = "id.x",
     hyper = list(beta = list(param = c(0, 0.01), fixed = FALSE))) +
   f(id.x, weight.x, model = "iid", values = 1:n,
