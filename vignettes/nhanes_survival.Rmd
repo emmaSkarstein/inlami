@@ -19,22 +19,25 @@ library(inlami)
 library(INLA)
 ```
 
+```{r}
+# Priors for measurement error variance and true x-value
+prior.prec.u <- c(0.5, 0.5) # Gamma(0.5, 0.5) (same as Keogh&Bartlett)
+prior.prec.x <- c(0.5, 0.5) # Gamma(0.5, 0.5) (same as K&B)
+prec.u <- 2.8
+prec.x <- 1
 
-```{r, eval = FALSE}
-surv_list <- as.list(nhanes_survival)
-surv_list$surv <- INLA::inla.surv(time = nhanes_survival$t/10, event = nhanes_survival$d)
+# Prior for shape parameter of the Weibull survival model
+prior.exp <- 0.01 # Gamma(1, 0.001) ~ Exp(0.001) (INLA sets prior on theta, r~Exp(0.1*theta))
+exp.init <- 1.4
+```
 
-survival_stacks <- make_inlami_stacks(formula_moi = surv ~ sbp + age + smoking + sex + diabetes,
-  formula_imp = sbp ~ age + smoking + sex + diabetes,
-  data = surv_list,
-  error_type = c("classical", "missing"),
-  repeated_observations = TRUE)
 
+```{r}
 survival_model <- fit_inlami(
-  formula_moi = surv ~ sbp + age + smoking + sex + diabetes,
-  formula_imp = sbp ~ age + smoking + sex + diabetes,
+  formula_moi = inla.surv(t, d) ~ sbp + age + smoke + sex + diabetes,
+  formula_imp = sbp ~ age + smoke + sex + diabetes,
   family_moi = "weibull.surv",
-  data = surv_list,
+  data = nhanes_survival,
   error_type = c("classical", "missing"),
   repeated_observations = TRUE,
   control.family = list(
@@ -47,8 +50,14 @@ survival_model <- fit_inlami(
     list(hyper = list(prec = list(initial = log(prec.x),
                                   param = prior.prec.x,
                                   fixed = FALSE)))),
-  control.predictor=list(link=3))
+  control.predictor=list(link=3)) # Why 3?
 ```
+
+```{r}
+summary(survival_model)
+plot(survival_model, plot_intercepts = FALSE, plot_imp = FALSE)
+```
+
 
 
 
