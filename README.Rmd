@@ -45,7 +45,18 @@ The model itself must be of the class of models that is possible to fit with R-I
 
 The package is unfortunately not able to adjust for measurement error or missingness in multiple covariates, though this could be implemented, it just hasn't yet. Feel free to get in touch if that is functionality that would be of interest for your research!
 
-## How can I use this package?
+## Overview of examples
+
+Examples of how to use the package can be found in the vignettes. 
+
+|Vignette name | Likelihood for MOI | Error type | Other features |
+|:-----------|:----------|:--------|:----------|
+|[Influence of systolic blood pressure on coronary heart disease](https://emmaskarstein.github.io/inlami/articles/Framingham_heart_study.html) | Binomial | Classical | Repeated measurements of error prone variable |
+|[Survival data with repeated systolic blood pressure measurements](https://emmaskarstein.github.io/inlami/articles/nhanes_survival.html) | Weibull survival | Classical, missing | Repeated measurements of error prone variable|
+| [Simulated examples (multiple examples)](https://emmaskarstein.github.io/inlami/articles/simulated_examples.html) | Gaussian, Binomial | Berkson, classical, missing | |
+
+
+## Quick guide: How can I use this package?
 
 The dataset `simple_data` is included in the package, and is a very simple simulated data set, used to illustrate the package. In this data set, we have a response variable $y$, an error free covariate $z$, and a covariate that is observed with classical error, Berkson error and missingness, called $x$. We wish to fit the model 
 

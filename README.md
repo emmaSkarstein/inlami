@@ -56,7 +56,17 @@ missingness in multiple covariates, though this could be implemented, it
 just hasn’t yet. Feel free to get in touch if that is functionality that
 would be of interest for your research!
 
-## How can I use this package?
+## Overview of examples
+
+Examples of how to use the package can be found in the vignettes.
+
+| Vignette name                                                                                                                                 | Likelihood for MOI | Error type                  | Other features                                |
+|:----------------------------------------------------------------------------------------------------------------------------------------------|:-------------------|:----------------------------|:----------------------------------------------|
+| [Influence of systolic blood pressure on coronary heart disease](https://emmaskarstein.github.io/inlami/articles/Framingham_heart_study.html) | Binomial           | Classical                   | Repeated measurements of error prone variable |
+| [Survival data with repeated systolic blood pressure measurements](https://emmaskarstein.github.io/inlami/articles/nhanes_survival.html)      | Weibull survival   | Classical, missing          | Repeated measurements of error prone variable |
+| [Simulated examples (multiple examples)](https://emmaskarstein.github.io/inlami/articles/simulated_examples.html)                             | Gaussian, Binomial | Berkson, classical, missing |                                               |
+
+## Quick guide: How can I use this package?
 
 The dataset `simple_data` is included in the package, and is a very
 simple simulated data set, used to illustrate the package. In this data
@@ -145,29 +155,29 @@ summary(simple_model)
 #> 
 #> Fixed effects for model of interest: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode          kld
-#> beta.0 1.043220 0.2124403  0.6356073 1.043788   1.463736   NA 1.630568e-07
-#> beta.z 1.939786 0.3776542  1.2496757 1.946568   2.705101   NA 8.641776e-06
+#> beta.0 1.032688 0.2147901  0.6202465 1.033195   1.442295   NA 1.066851e-07
+#> beta.z 1.918256 0.3807597  1.2307767 1.914602   2.629893   NA 6.438468e-05
 #> 
 #> Coefficient for error prone variable: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode
-#> beta.x 1.940827 0.1769273   1.601524 1.937251   2.299834   NA
+#> beta.x 1.971446 0.1846909   1.608791 1.971138   2.335602   NA
 #> 
 #> Fixed effects for imputation model: 
 #>             mean         sd 0.025quant 0.5quant 0.975quant mode          kld
-#> alpha.0 1.033071 0.05062282  0.9337409 1.033080   1.132348   NA 3.379187e-12
-#> alpha.z 2.024728 0.05228673  1.9222192 2.024707   2.127353   NA 1.494428e-11
+#> alpha.0 1.033042 0.05072850  0.9335129 1.033050   1.132531   NA 2.092415e-12
+#> alpha.z 2.024792 0.05239427  1.9220592 2.024776   2.127613   NA 8.897442e-12
 #> 
 #> Model hyperparameters (apart from beta.x): 
-#>                                                 mean        sd 0.025quant
-#> Precision for the Gaussian observations    1.1348399 0.3469250  0.5811453
-#> Precision for the Gaussian observations[2] 1.0492040 0.2794852  0.6201420
-#> Precision for the Gaussian observations[3] 0.9400527 0.1102513  0.7362982
-#> Precision for the Gaussian observations[4] 0.9599192 0.1204817  0.7501751
+#>                                                 mean         sd 0.025quant
+#> Precision for the Gaussian observations    1.1136386 0.33147478  0.5697404
+#> Precision for the Gaussian observations[2] 1.1159830 0.31853335  0.6211750
+#> Precision for the Gaussian observations[3] 0.9175456 0.09845129  0.7442560
+#> Precision for the Gaussian observations[4] 0.9790551 0.11577565  0.7715105
 #>                                             0.5quant 0.975quant mode
-#> Precision for the Gaussian observations    1.0930371   1.934834   NA
-#> Precision for the Gaussian observations[2] 1.0085920   1.714990   NA
-#> Precision for the Gaussian observations[3] 0.9355375   1.170696   NA
-#> Precision for the Gaussian observations[4] 0.9502789   1.224720   NA
+#> Precision for the Gaussian observations    1.0789975   1.861736   NA
+#> Precision for the Gaussian observations[2] 1.0721826   1.863480   NA
+#> Precision for the Gaussian observations[3] 0.9103045   1.131228   NA
+#> Precision for the Gaussian observations[4] 0.9720551   1.226787   NA
 ```
 
 And we can use the default plot function to see a plot of the fixed
