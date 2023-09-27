@@ -7,6 +7,7 @@
 make_inlami_stacks(
   formula_moi,
   formula_imp,
+  family_moi = "gaussian",
   data,
   error_type = "classical",
   repeated_observations = FALSE
@@ -16,6 +17,8 @@ make_inlami_stacks(
 \item{formula_moi}{an object of class "formula", describing the main model to be fitted.}
 
 \item{formula_imp}{an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.}
+
+\item{family_moi}{a string indicating the likelihood family for the model of interest (the main model).}
 
 \item{data}{A data frame with response and covariate variables for the main model and the imputation model.}
 

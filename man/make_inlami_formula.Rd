@@ -4,12 +4,19 @@
 \alias{make_inlami_formula}
 \title{Make formula for measurement error and missing data model}
 \usage{
-make_inlami_formula(formula_moi, formula_imp, error_type = "classical")
+make_inlami_formula(
+  formula_moi,
+  formula_imp,
+  family_moi = "gaussian",
+  error_type = "classical"
+)
 }
 \arguments{
 \item{formula_moi}{an object of class "formula", describing the main model to be fitted.}
 
 \item{formula_imp}{an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.}
+
+\item{family_moi}{a string indicating the likelihood family for the model of interest (the main model).}
 
 \item{error_type}{Type of error (one of "classical", "berkson", "missing")}
 }
