@@ -19,14 +19,24 @@ extract_variables_from_formula <- function(formula_moi,
   if(!(methods::is(formula_moi, "formula") & methods::is(formula_imp, "formula"))){
     stop("One of the input objects is not of class 'formula'")
   }
+
   # Model of interest variables --
   moi_components <- as.list(formula_moi)
 
   ## Extract name of response:
   response_moi <- all.vars(moi_components[[2]])
 
-  ## Covariates in moi:
-  covariates_moi <- all.vars(moi_components[[3]])
+  ## Check for random effects in moi:
+  reff_moi_index <- which(grepl("f\\((.*)\\)", moi_components[[3]]))
+  reff_vars_moi <- ""
+  reff_moi <- ""
+  if(length(reff_moi_index) > 0){
+    reff_vars_moi <- setdiff(all.names(moi_components[[3]][reff_moi_index]), "f")
+    reff_moi <- as.character(moi_components[[3]][reff_moi_index])
+  }
+
+  ## Covariates in moi (select variables that are NOT random effects)
+  covariates_moi <- setdiff(all.vars(moi_components[[3]]), reff_vars_moi)
 
   ## Identify error prone variable:
   error_variable <- rlang::as_string(as.list(formula_imp)[[2]])
@@ -40,14 +50,29 @@ extract_variables_from_formula <- function(formula_moi,
   # Imputation model variables --
   imp_components <- as.list(formula_imp)
   response_imp <- error_variable
-  covariates_imp <- all.vars(imp_components[[3]])
+
+  ## Check for random effects in imp:
+  reff_imp_index <- which(grepl("f\\((.*)\\)", imp_components[[3]]))
+  reff_imp <- ""
+  reff_vars_imp <- ""
+  if(length(reff_imp_index) > 0){
+    reff_vars_imp <- setdiff(all.names(imp_components[[3]][reff_imp_index]), "f")
+    reff_imp <- as.character(imp_components[[3]][reff_imp_index])
+  }
+
+  ## Imputation model covariates:
+  covariates_imp <- setdiff(all.vars(imp_components[[3]]), reff_vars_imp)
 
   return(list(response_moi = response_moi,
               covariates_moi = covariates_moi,
+              random_effects_moi = reff_moi,
+              random_effect_variables_moi = reff_vars_moi,
               error_variable = error_variable,
               covariates_error_free = covariates_error_free,
               response_imp = response_imp,
-              covariates_imp = covariates_imp))
+              covariates_imp = covariates_imp,
+              random_effects_imp = reff_imp,
+              random_effect_variables_imp = reff_vars_imp))
 }
 
 
@@ -83,7 +108,12 @@ make_inlami_formula <- function(formula_moi,
   covariates_error_free_string <- paste0("beta.", vars$covariates_error_free)
 
   # Covariates for imputation model:
-  covariates_imp_string <- paste0("alpha.", vars$covariates_imp)
+  if(length(vars$covariates_imp) > 0){
+    covariates_imp_string <- paste0("alpha.", vars$covariates_imp)
+  }else{
+    covariates_imp_string <- ""
+  }
+
 
   # The copy term to ensure the mismeasured variable is copied correctly through the models
   copy_term1 <- paste0("f(", paste0("beta.", vars$response_imp),
@@ -107,19 +137,35 @@ make_inlami_formula <- function(formula_moi,
 
   response_list <- paste0("list(", y_moi, y_berkson, "y_classical, ", "y_imp)")
 
-  formula_RHS <- paste("-1",
-                   "beta.0",
-                   paste(covariates_error_free_string, collapse = " + "),
-                   "alpha.0",
-                   paste(covariates_imp_string, collapse = " + "),
-                   copy_term1,
-                   copy_term2,
-                   sep = " + ")
+  formula_RHS <- paste(
+    # Remove default intercept
+    "-1",
+    # MOI covariates
+    "beta.0",
+    paste(covariates_error_free_string, collapse = " + "),
+    # MOI random effects
+    paste(vars$random_effects_moi, collapse = " + "),
+    # Imputation model covariates
+    "alpha.0",
+    paste(covariates_imp_string, collapse = " + "),
+    # Imputation model random effects
+    paste(vars$random_effects_imp, collapse = " + "),
+    # Copy terms
+    copy_term1,
+    copy_term2,
+    # Between each term add a "+"
+    sep = " + ")
 
+  # Remove duplicate "+"'s
+  formula_RHS <- gsub(pattern = "((\\+)( *)){2,}", replacement = "+ ",
+                      formula_RHS)
+
+  # Optionally add Berkson layer
   if("berkson" %in% error_type){
     r_term <- "f(id.r, weight.r, model='iid', values = 1:n, hyper = list(prec = list(initial = -15, fixed = TRUE)))"
     formula_RHS <- paste(formula_RHS, "+", r_term)
   }
+
 
   formula <- paste(response_list, "~", formula_RHS)
 
@@ -135,15 +181,6 @@ make_inlami_formula <- function(formula_moi,
 #' @param error_type Type of error (one or more of "classical", "berkson", "missing")
 #'
 #' @return A data frame with all the data needed for the model, structured in the right way for INLA.
-#' @export
-#'
-#' @examples
-#' f_moi <- y ~ x + z
-#' f_imp <- x ~ z
-#' make_inlami_matrices(data = simple_data,
-#'               formula_moi = f_moi,
-#'               formula_imp = f_imp,
-#'               error_type = "classical")
 make_inlami_matrices <- function(data,
                           formula_moi,
                           formula_imp,
@@ -322,6 +359,16 @@ make_inlami_stacks <- function(formula_moi,
   moi_effects <- paste0(c("beta.0", beta.error_variable, cov_moi_names), " = ",
                              c("beta.0", beta.error_variable, cov_moi_names), collapse = ", ")
 
+  # Add (optional) random effect variable
+  if(nchar(vars$random_effects_moi) > 0){
+    # "list", "-" and "c" will be recognized as variables... so remove them
+    reff_moi_names <- setdiff(vars$random_effect_variables_moi, c("list", "-", "c"))
+    assign(reff_moi_names, as.matrix(data[reff_moi_names]))
+
+    reff_list_moi <- paste0(reff_moi_names, " = ", reff_moi_names)
+    moi_effects <- paste0(moi_effects, ", ", reff_list_moi)
+  }
+
   moi_effects_list <- NULL # Assign NULL to moi_effects_list, just to avoid notes when running checks.
 
   # A string containing the code needed to define a list of all the objects:
@@ -407,6 +454,15 @@ make_inlami_stacks <- function(formula_moi,
   # The names of the variables that change based on the covariate names:
   imp_effects <- paste0(c("alpha.0", cov_imp_names), " = ",
                         c("alpha.0", cov_imp_names), collapse = ", ")
+
+  # Add (optional) random effect variable
+  if(nchar(vars$random_effects_imp) > 0){
+    reff_imp_names <- setdiff(vars$random_effect_variables_imp, c("list", "-", "c"))
+    assign(reff_imp_names, as.matrix(data[reff_imp_names]))
+
+    reff_list_imp <- paste0(reff_imp_names, " = ", reff_imp_names)
+    imp_effects <- paste0(imp_effects, ", ", reff_list_imp)
+  }
 
   imp_effects_list <- NULL # Assign NULL to imp_effects_list, just to avoid notes when running checks.
 
@@ -586,9 +642,9 @@ fit_inlami <- function(formula_moi,
                                family_moi = family_moi,
                                error_type = error_type)
 
-  # Define some sizes ----------------------------------------------------------
-  error_type_without_missing <- setdiff(error_type, c("missing"))
-  model_levels_without_moi <- c(error_type_without_missing, "imp")
+  # Define some stuff ----------------------------------------------------------
+  model_levels_without_moi <- union(error_type, c("classical", "imp")) # Always need classical
+  model_levels_without_moi_and_missing <- setdiff(model_levels_without_moi, "missing")
 
   # Make the stacks for the joint model ----------------------------------------
   data_stack <- make_inlami_stacks(formula_moi = formula_moi,
@@ -627,9 +683,9 @@ fit_inlami <- function(formula_moi,
 
     # Set defaults for necessary priors that have not been specified
     for(component in which_need_defaults){
-      warning(paste0("Using default prior Gamma(10, 9) for the precision of the ",
-                     component, " model, and the initial value is set to 1 for the same term. This should be given a better value by specifying 'prior.prec.",
-                     component, "' and 'initial.prec.", component, "'.\n"))
+      #warning(paste0("Using default prior Gamma(10, 9) for the precision of the ",
+      #               component, " model, and the initial value is set to 1 for the same term. This should be given a better value by specifying 'prior.prec.",
+      #               component, "' and 'initial.prec.", component, "'.\n"))
       prior_code <- paste0("prior.prec.", component, " <- c(10, 9); ",
                            "initial.prec.", component, " <- 1")
       eval(parse(text = prior_code))
@@ -640,30 +696,40 @@ fit_inlami <- function(formula_moi,
       control.family.moi <- list(hyper = list())
     }
     if(family_moi == "gaussian"){
+      # Check if default is needed
+      if(any(is.null(initial.prec.moi), is.null(prior.prec.moi))){
+        warning("Using default prior Gamma(10, 9) for the precision of the model of interest, and the initial value is set to 1 for the same term. This should be given a better value by specifying 'prior.prec.moi' and 'initial.prec.moi'.\n")
+        prior.prec.moi <- c(10, 9)
+        initial.prec.moi <- 1
+      }
       control.family.moi <- list(hyper = list(prec = list(initial = log(initial.prec.moi),
                                                         param = prior.prec.moi,
                                                         fixed = FALSE)))
     }
-    # What if poisson of survival?
+    # What if poisson or survival?
+
     control.family <- list(control.family.moi)
 
     # Optionally define control.family.berkson
     if("berkson" %in% error_type){
-      control.family.berkson <- list(hyper = list(prec = list(initial = log(initial.prec.berkson),
-                                                          param = prior.prec.berkson,
-                                                          fixed = FALSE)))
+      control.family.berkson <- list(hyper = list(
+        prec = list(initial = log(initial.prec.berkson),
+                    param = prior.prec.berkson,
+                    fixed = FALSE)))
       control.family <- append(control.family, list(control.family.berkson))
     }
 
     # Define control.family.classical and control.family.imp
-    control.family.classical <- list(hyper = list(prec = list(initial = log(initial.prec.classical),
-                                                        param = prior.prec.classical,
-                                                        fixed = FALSE)))
+    control.family.classical <- list(hyper = list(
+      prec = list(initial = log(initial.prec.classical),
+                  param = prior.prec.classical,
+                  fixed = FALSE)))
     control.family <- append(control.family, list(control.family.classical))
 
-    control.family.imp <- list(hyper = list(prec = list(initial = log(initial.prec.imp),
-                                                      param = prior.prec.imp,
-                                                      fixed = FALSE)))
+    control.family.imp <- list(hyper = list(
+      prec = list(initial = log(initial.prec.imp),
+                  param = prior.prec.imp,
+                  fixed = FALSE)))
     control.family <- append(control.family, list(control.family.imp))
   }
 
@@ -675,7 +741,7 @@ fit_inlami <- function(formula_moi,
   # Run everything in the "inla"-function --------------------------------------
   inlami_model <- INLA::inla(
     formula = formula_full,
-    family = c(family_moi, rep("gaussian", length(model_levels_without_moi))),
+    family = c(family_moi, rep("gaussian", length(model_levels_without_moi_and_missing))),
     data = data_for_inla,
     scale = scaling_vec,
     control.family = control.family,
