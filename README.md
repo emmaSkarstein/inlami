@@ -60,11 +60,12 @@ would be of interest for your research!
 
 Examples of how to use the package can be found in the vignettes.
 
-| Vignette name                                                                                                                                 | Likelihood for MOI | Error type                  | Other features                                |
-|:----------------------------------------------------------------------------------------------------------------------------------------------|:-------------------|:----------------------------|:----------------------------------------------|
-| [Influence of systolic blood pressure on coronary heart disease](https://emmaskarstein.github.io/inlami/articles/Framingham_heart_study.html) | Binomial           | Classical                   | Repeated measurements of error prone variable |
-| [Survival data with repeated systolic blood pressure measurements](https://emmaskarstein.github.io/inlami/articles/nhanes_survival.html)      | Weibull survival   | Classical, missing          | Repeated measurements of error prone variable |
-| [Simulated examples (multiple examples)](https://emmaskarstein.github.io/inlami/articles/simulated_examples.html)                             | Gaussian, Binomial | Berkson, classical, missing |                                               |
+| Vignette name                                                                                                                                 | Likelihood for MOI | Error type                  | Other features                                                                   |
+|:----------------------------------------------------------------------------------------------------------------------------------------------|:-------------------|:----------------------------|:---------------------------------------------------------------------------------|
+| [Influence of systolic blood pressure on coronary heart disease](https://emmaskarstein.github.io/inlami/articles/Framingham_heart_study.html) | Binomial           | Classical                   | Repeated measurements of error prone variable                                    |
+| [Survival data with repeated systolic blood pressure measurements](https://emmaskarstein.github.io/inlami/articles/nhanes_survival.html)      | Weibull survival   | Classical, missing          | Repeated measurements of error prone variable                                    |
+| [Simulated examples (multiple examples)](https://emmaskarstein.github.io/inlami/articles/simulated_examples.html)                             | Gaussian, Binomial | Berkson, classical, missing |                                                                                  |
+| [Visualize model structure](https://emmaskarstein.github.io/inlami/articles/Visualize_model_structure.html)                                   |                    |                             | A deep dive into how the data is structured in order to correctly fit the model. |
 
 ## Quick guide: How can I use this package?
 
@@ -154,30 +155,30 @@ summary(simple_model)
 #> [1] "berkson"   "classical"
 #> 
 #> Fixed effects for model of interest: 
-#>            mean        sd 0.025quant 0.5quant 0.975quant mode          kld
-#> beta.0 1.032688 0.2147901  0.6202465 1.033195   1.442295   NA 1.066851e-07
-#> beta.z 1.918256 0.3807597  1.2307767 1.914602   2.629893   NA 6.438468e-05
+#>           mean        sd 0.025quant 0.5quant 0.975quant mode          kld
+#> beta.0 1.01689 0.2219628  0.5894168 1.021245   1.442325   NA 1.358364e-06
+#> beta.z 1.88815 0.3975073  1.1735210 1.905647   2.637368   NA 1.032643e-05
 #> 
 #> Coefficient for error prone variable: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode
-#> beta.x 1.971446 0.1846909   1.608791 1.971138   2.335602   NA
+#> beta.x 1.966046 0.1712093   1.622101 1.968371   2.297676   NA
 #> 
 #> Fixed effects for imputation model: 
 #>             mean         sd 0.025quant 0.5quant 0.975quant mode          kld
-#> alpha.0 1.033042 0.05072850  0.9335129 1.033050   1.132531   NA 2.092415e-12
-#> alpha.z 2.024792 0.05239427  1.9220592 2.024776   2.127613   NA 8.897442e-12
+#> alpha.0 1.033081 0.05061214  0.9337674 1.033092   1.132334   NA 4.442473e-12
+#> alpha.z 2.024705 0.05227708  1.9222232 2.024681   2.127321   NA 2.023098e-11
 #> 
 #> Model hyperparameters (apart from beta.x): 
-#>                                                 mean         sd 0.025quant
-#> Precision for the Gaussian observations    1.1136386 0.33147478  0.5697404
-#> Precision for the Gaussian observations[2] 1.1159830 0.31853335  0.6211750
-#> Precision for the Gaussian observations[3] 0.9175456 0.09845129  0.7442560
-#> Precision for the Gaussian observations[4] 0.9790551 0.11577565  0.7715105
+#>                                                 mean        sd 0.025quant
+#> Precision for the Gaussian observations    1.1439551 0.3638825  0.5898076
+#> Precision for the Gaussian observations[2] 1.1058827 0.2934160  0.6294660
+#> Precision for the Gaussian observations[3] 0.9288501 0.1004393  0.7488019
+#> Precision for the Gaussian observations[4] 0.9729314 0.1179177  0.7590142
 #>                                             0.5quant 0.975quant mode
-#> Precision for the Gaussian observations    1.0789975   1.861736   NA
-#> Precision for the Gaussian observations[2] 1.0721826   1.863480   NA
-#> Precision for the Gaussian observations[3] 0.9103045   1.131228   NA
-#> Precision for the Gaussian observations[4] 0.9720551   1.226787   NA
+#> Precision for the Gaussian observations    1.0906528   2.008818   NA
+#> Precision for the Gaussian observations[2] 1.0721691   1.779555   NA
+#> Precision for the Gaussian observations[3] 0.9226115   1.144381   NA
+#> Precision for the Gaussian observations[4] 0.9667093   1.223440   NA
 ```
 
 And we can use the default plot function to see a plot of the fixed

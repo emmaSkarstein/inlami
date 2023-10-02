@@ -111,6 +111,147 @@ plot(simple_model, plot_intercepts = FALSE) +
     geom_point(data = simple.truth, aes(x = value))
 
 ```
+# Missing data only 
+
+```{r}
+set.seed(2024)
+n <- 1000
+
+# Covariate without missingness:
+z <- rnorm(n, mean = 0, sd = 1)
+
+# Covariate that will have missingness:
+alpha.0 <- 1; alpha.z <- 2
+x <- rnorm(n, mean = alpha.0 + alpha.z*z, sd = 1)
+
+# Response:
+beta.0 <- 1; beta.x <- 2; beta.z <- 2
+y <- beta.0 + beta.x*x + beta.z*z + rnorm(n)
+
+# Missingness:
+m_pred <- -1.5 - 0.5*z # This gives a mean probability of missing of ca 0.2.
+m_prob <- exp(m_pred)/(1 + exp(m_pred))
+
+m_index <- as.logical(rbinom(n, 1, prob = m_prob)) # MAR
+# m_index <- sample(1:n, 0.2*n, replace = FALSE) # MCAR
+x_obs <- x
+x_obs[m_index] <- NA
+
+missing_data <- data.frame(y = y, x = x_obs, z = z)
+```
+
+
+```{r}
+naive_model <- inla(formula = y ~ x + z, family = "gaussian", data = missing_data)
+
+naive_model$summary.fixed
+naive_model$summary.hyperpar
+```
+
+```{r}
+missing_model <- fit_inlami(formula_moi = y ~ x + z,
+                            formula_imp = x ~ z,
+                            family_moi = "gaussian",
+                            data = missing_data, 
+                            error_type = "missing", 
+                            prior.prec.moi = c(2, 1),
+                            prior.prec.imp = c(2, 1),
+                            initial.prec.moi = 1,
+                            initial.prec.imp = 1)
+
+summary(missing_model)
+```
+```{r}
+missing_truth <- tibble::tribble(
+  ~"coefficient_name", ~"value",
+  "beta.0", beta.0,
+  "beta.x",  beta.x, 
+  "beta.z",  beta.z,
+  "alpha.0", alpha.0,
+  "alpha.z", alpha.z
+)
+
+plot(missing_model) +
+    geom_point(data = missing_truth, aes(x = value))
+```
+
+
+# Random effect in the main model
+In this example, we simulate data that is grouped in such a way that it should be modelled with a random effect in the model of interest.
+
+|Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
+|:-----------|:----------|:--------|:----------|:------------|
+|Classical | Gaussian | $y$ | $x$ | $z$, random effect $w$ |
+
+## Generating the data
+
+```{r}
+m <- 10 # number of groups
+n <- 100 # number of observations per group
+N <- m*n # total number of observations
+
+sd_y <- 3 # sd for the noise
+sd_w <- 2 # sd for random effect
+sd_x <- 2 # sd for covariate without error
+sd_u <- 1 # sd for measurement error
+
+# Covariate without error
+z <- rnorm(N, 0, 2)
+
+# Covariate with error
+x <- rnorm(N, 0, sd_x) # Independent of z, but can change that here
+x_obs <- x + rnorm(N, 0, sd_u)
+
+# Random effect
+w_per_group <- rnorm(m, 0, sd_w)
+w <- rep(w_per_group, each = n)
+
+# Response
+y <- 1 + 2*x + 2*z + w + rnorm(N, 0, sd_y)
+
+reff_data <- data.frame(y = y, id = rep(1:m, each = n), x = x_obs, z = z)
+```
+
+## Fitting the model
+
+Firstly, if we ignored the measurement error, we might fit a model like this:
+
+```{r}
+naive_model <- inla(y ~ x + z + f(id, model = "iid"),
+                    data = reff_data,
+                    family = "gaussian")
+summary(naive_model)
+```
+
+```{r}
+# curve(dgamma(x, shape = 1.5, rate = 2), to = 2)
+
+reff_model <- fit_inlami(formula_moi = y ~ x + z + 
+                         f(id, model = "iid", hyper = list(prec = list(initial = -15, param = c(2, 2)))),
+                       formula_imp = x ~ 1,
+                       family_moi = "gaussian",
+                       error_type = "classical",
+                       data = reff_data,
+                       initial.prec.moi = 1/4, 
+                       initial.prec.classical = 1, 
+                       initial.prec.imp = 1/4,
+                       prior.prec.moi = c(1, 4),
+                       prior.prec.classical = c(10, 10),
+                       prior.prec.imp = c(1, 4))
+
+summary(reff_model)
+
+reff.truth <- tibble::tribble(
+  ~"coefficient_name", ~"value",
+  "beta.x",  2, 
+  "beta.z",  2, 
+  "beta.0",  1, 
+  "alpha.0", 0
+)
+
+plot(reff_model) +
+    geom_point(data = reff.truth, aes(x = value))
+```
 
 
 
