@@ -21,11 +21,3 @@ A data frame with all the data needed for the model, structured in the right way
 \description{
 Make matrices for joint model specification in INLA
 }
-\examples{
-f_moi <- y ~ x + z
-f_imp <- x ~ z
-make_inlami_matrices(data = simple_data,
-              formula_moi = f_moi,
-              formula_imp = f_imp,
-              error_type = "classical")
-}
