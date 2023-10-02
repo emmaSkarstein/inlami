@@ -112,7 +112,6 @@ construction a bit more generalizable. The stack construction is done in
 the function <code>make_inlami_stacks</code>, which is then called by
 <code>fit_inlami</code>, so this is not a function the user would
 typically need to interact with.</p>
-<p>TODO: return the stack-data in fit_inlami as well?</p>
 <p>The function <code>show_data_structure</code> converts the stack
 object to LaTeX matrices, and only shows the first and last row for each
 sub-model, making it easier to get a clear overview over the structure
@@ -287,17 +286,17 @@ added.</p>
 \begin{align}
   \boldsymbol{y} &amp;= \beta_0 + \beta_x \boldsymbol{x} + \beta_z
 \boldsymbol{z} + \boldsymbol{\varepsilon} \ , \quad
-&amp;\boldsymbol{\varepsilon} \sim N(\boldsymbol{0},
+&amp;\boldsymbol{\varepsilon} &amp;\sim N(\boldsymbol{0},
 \tau_y\boldsymbol{I}) \ , \\
   \boldsymbol{0} &amp;= -\boldsymbol{x} + \boldsymbol{r} +
-\boldsymbol{u}_b \ , \quad &amp; \boldsymbol{u}_b \sim N(\boldsymbol{0},
-\tau_{u_b}\boldsymbol{I}) \ , \\
+\boldsymbol{u}_b \ , \quad &amp; \boldsymbol{u}_b &amp;\sim
+N(\boldsymbol{0}, \tau_{u_b}\boldsymbol{I}) \ , \\
   \boldsymbol{w} &amp;= \boldsymbol{r} + \boldsymbol{u}_c \ , \quad
-&amp;\boldsymbol{u}_c \sim N(\boldsymbol{0}, \tau_{u_c}\boldsymbol{I}) \
-, \\
+&amp;\boldsymbol{u}_c &amp;\sim N(\boldsymbol{0},
+\tau_{u_c}\boldsymbol{I}) \ , \\
   \boldsymbol{0} &amp;= -\boldsymbol{r} + \alpha_0 + \alpha_z
 \boldsymbol{z} + \boldsymbol{\varepsilon}_r \ , \quad
-&amp;\boldsymbol{\varepsilon}_r \sim N(\boldsymbol{0},
+&amp;\boldsymbol{\varepsilon}_r &amp;\sim N(\boldsymbol{0},
 \tau_r\boldsymbol{I}) \ .
 \end{align}
 \]</span> Just like above, we construct the stacks:</p>
@@ -445,35 +444,115 @@ stacks from the model object:</p>
 <span>                           initial.prec.classical <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                           initial.prec.imp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/show_data_structure.html">show_data_structure</a></span><span class="op">(</span><span class="va">inlami_model</span><span class="op">$</span><span class="va">stack_data</span><span class="op">)</span><span class="op">$</span><span class="va">matrix_string</span></span></code></pre></div>
-<p>[1] “<span class="math display">\[\\underbrace{\\begin{bmatrix}
-\n10.81 &amp; \\texttt{NA} &amp; \\texttt{NA} &amp;
-\\texttt{NA}\\\\\n\\vdots &amp; \\vdots &amp; \\vdots &amp;
-\\vdots\\\\\n6.18 &amp; \\texttt{NA} &amp; \\texttt{NA} &amp;
-\\texttt{NA}\\\\\n\\texttt{NA} &amp; 0 &amp; \\texttt{NA} &amp;
-\\texttt{NA}\\\\\n\\vdots &amp; \\vdots &amp; \\vdots &amp;
-\\vdots\\\\\n\\texttt{NA} &amp; 0 &amp; \\texttt{NA} &amp;
-\\texttt{NA}\\\\\n\\texttt{NA} &amp; \\texttt{NA} &amp; 4.98 &amp;
-\\texttt{NA}\\\\\n\\vdots &amp; \\vdots &amp; \\vdots &amp;
-\\vdots\\\\\n\\texttt{NA} &amp; \\texttt{NA} &amp; 1.46 &amp;
-\\texttt{NA}\\\\\n\\texttt{NA} &amp; \\texttt{NA} &amp; \\texttt{NA}
-&amp; 0\\\\\n\\vdots &amp; \\vdots &amp; \\vdots &amp;
-\\vdots\\\\\n\\texttt{NA} &amp; \\texttt{NA} &amp; \\texttt{NA} &amp;
-0\\\\\n\\end{bmatrix}}_{\\texttt{Y}}\n =
-\n\\beta_{0}\\underbrace{\\begin{bmatrix}
-\n1\\\\\n\\vdots\\\\\n1\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\end{bmatrix}}_{\\texttt{beta.0}}
-+ \\beta_{x}\\underbrace{\\begin{bmatrix}
-\n1\\\\\n\\vdots\\\\\n1000\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\end{bmatrix}}_{\\texttt{beta.x}}
-+ \\beta_{z}\\underbrace{\\begin{bmatrix}
-\n0.98\\\\\n\\vdots\\\\\n0.77\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\end{bmatrix}}_{\\texttt{beta.z}}
-+ \\underbrace{\\begin{bmatrix}
-\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n-1\\\\\n\\vdots\\\\\n-1000\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\end{bmatrix}}_{\\texttt{id.x}}
-+ \\underbrace{\\begin{bmatrix}
-\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n1\\\\\n\\vdots\\\\\n1000\\\\\n1\\\\\n\\vdots\\\\\n1000\\\\\n-1\\\\\n\\vdots\\\\\n-1000\\\\\n\\end{bmatrix}}_{\\texttt{id.r}}
-+ \\alpha_{0}\\underbrace{\\begin{bmatrix}
-\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n1\\\\\n\\vdots\\\\\n1\\\\\n\\end{bmatrix}}_{\\texttt{alpha.0}}
-+ \\alpha_{z}\\underbrace{\\begin{bmatrix}
-\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n\\texttt{NA}\\\\\n\\vdots\\\\\n\\texttt{NA}\\\\\n0.98\\\\\n\\vdots\\\\\n0.77\\\\\n\\end{bmatrix}}_{\\texttt{alpha.z}}\]</span>”</p>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="../reference/show_data_structure.html">show_data_structure</a></span><span class="op">(</span><span class="va">inlami_model</span><span class="op">$</span><span class="va">stack_data</span><span class="op">)</span><span class="op">$</span><span class="va">matrix_string</span><span class="op">)</span></span></code></pre></div>
+<p><span class="math display">\[\underbrace{\begin{bmatrix}
+10.81 &amp; \texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+6.18 &amp; \texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA}\\
+\texttt{NA} &amp; 0 &amp; \texttt{NA} &amp; \texttt{NA}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+\texttt{NA} &amp; 0 &amp; \texttt{NA} &amp; \texttt{NA}\\
+\texttt{NA} &amp; \texttt{NA} &amp; 4.98 &amp; \texttt{NA}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+\texttt{NA} &amp; \texttt{NA} &amp; 1.46 &amp; \texttt{NA}\\
+\texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA} &amp; 0\\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots\\
+\texttt{NA} &amp; \texttt{NA} &amp; \texttt{NA} &amp; 0\\
+\end{bmatrix}}_{\texttt{Y}}
+=
+\beta_{0}\underbrace{\begin{bmatrix}
+1\\
+\vdots\\
+1\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.0}} + \beta_{x}\underbrace{\begin{bmatrix}
+1\\
+\vdots\\
+1000\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.x}} + \beta_{z}\underbrace{\begin{bmatrix}
+0.98\\
+\vdots\\
+0.77\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{beta.z}} + \underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+-1\\
+\vdots\\
+-1000\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\end{bmatrix}}_{\texttt{id.x}} + \underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+1\\
+\vdots\\
+1000\\
+1\\
+\vdots\\
+1000\\
+-1\\
+\vdots\\
+-1000\\
+\end{bmatrix}}_{\texttt{id.r}} + \alpha_{0}\underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+1\\
+\vdots\\
+1\\
+\end{bmatrix}}_{\texttt{alpha.0}} +
+\alpha_{z}\underbrace{\begin{bmatrix}
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+\texttt{NA}\\
+\vdots\\
+\texttt{NA}\\
+0.98\\
+\vdots\\
+0.77\\
+\end{bmatrix}}_{\texttt{alpha.z}}\]</span></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
