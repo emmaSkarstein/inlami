@@ -14,7 +14,6 @@ data <- data.frame(t, d, x, z)
 
 # Regression model of interest
 # eta = beta.0 + beta.x*x + beta.z*z
-
 stk_moi <- inla.stack(
     data = list(y_time = data$t, y_event = data$d),
     A = list(1),
@@ -48,7 +47,7 @@ stk_imp <- inla.stack(data = list(y_imp = rep(0, n)),
 stk_full <- inla.stack(stk_moi, stk_c, stk_imp)
 
 # Formula
-formula <- list(inla.surv(time = y_time, event = y_event), y_classical, y_imputation) ~ - 1 + beta.0 + beta.z +
+formula <- list(inla.surv(time = y_time, event = y_event), y_classical, y_imp) ~ - 1 + beta.0 + beta.z +
   f(beta.x, copy = "id.x",
     hyper = list(beta = list(param = c(0, 0.01), fixed = FALSE))) +
   f(id.x, weight.x, model = "iid", values = 1:n,
