@@ -27,13 +27,13 @@ library(dplyr)
 
 This vignette shows how to fit measurement error and imputation models using the `inlami` package for a few different simple simulated data sets. Note that although the data sets describe realistic situations, they are all completely fictitious, and created purely to illustrate how to fit models in different situations.
 
-# Simple example
-This is a simple simulation with Berkson and classical error as well as missing data, to check that the package works as expected in that scenario.
+# Simple example with missingness and two types of measurement error
 
 |Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
 |:-----------|:----------|:--------|:----------|:------------|
 |Berkson, classical, missing values | Gaussian | $y$ | $x$ | $z$ |
 
+This is a simple simulation with Berkson and classical error as well as missing data, to check that the package works as expected in that scenario.
 
 ## Generating the data
 
@@ -111,7 +111,16 @@ plot(simple_model, plot_intercepts = FALSE) +
     geom_point(data = simple.truth, aes(x = value))
 
 ```
+
 # Missing data only 
+
+|Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
+|:-----------|:----------|:--------|:----------|:------------|
+|Missing values | Gaussian | $y$ | $x$ | $z$ |
+
+In this example, we have missingness in one covariate, but no other measurement error, so this shows how to do simple imputation of a missing covariate in R-INLA.
+
+## Generating the data
 
 ```{r}
 set.seed(2024)
@@ -140,14 +149,14 @@ x_obs[m_index] <- NA
 missing_data <- data.frame(y = y, x = x_obs, z = z)
 ```
 
-
+## Model without imputation
 ```{r}
 naive_model <- inla(formula = y ~ x + z, family = "gaussian", data = missing_data)
 
 naive_model$summary.fixed
 naive_model$summary.hyperpar
 ```
-
+## Model with imputation
 ```{r}
 missing_model <- fit_inlami(formula_moi = y ~ x + z,
                             formula_imp = x ~ z,
@@ -177,11 +186,12 @@ plot(missing_model) +
 
 
 # Random effect in the main model
-In this example, we simulate data that is grouped in such a way that it should be modelled with a random effect in the model of interest.
 
 |Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
 |:-----------|:----------|:--------|:----------|:------------|
 |Classical | Gaussian | $y$ | $x$ | $z$, random effect $w$ |
+
+In this example, we simulate data that is grouped in such a way that it should be modelled with a random effect in the model of interest.
 
 ## Generating the data
 
@@ -258,13 +268,11 @@ plot(reff_model) +
 
 # Air pollution example 
 
-In this example, we simulate data from a fictitious, but realistic scenario where we want examine if people in areas with high air pollution seem to have asthma more than in areas with lower air pollution. But the air pollution value for the people in the study canot be observed directly, instead sensors have been placed at certain locations, and the value for a person is set to be the value gathered at the closest sensor. This leads to a Berkson error. In addition to that, we believe that there is some noise in the measurements due to imprecision in the sensor. This corresponds to a classical measurement error. 
-
 |Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
 |:-----------|:----------|:--------|:----------|:------------|
 |Berkson, classical | Binomial | asthma | airpollution | gender, age, district |
 
-Status: doing good
+In this example, we simulate data from a fictitious, but realistic scenario where we want examine if people in areas with high air pollution seem to have asthma more than in areas with lower air pollution. But the air pollution value for the people in the study canot be observed directly, instead sensors have been placed at certain locations, and the value for a person is set to be the value gathered at the closest sensor. This leads to a Berkson error. In addition to that, we believe that there is some noise in the measurements due to imprecision in the sensor. This corresponds to a classical measurement error. 
 
 ## Generating the data
 
@@ -344,12 +352,12 @@ plot(airpollution_model, plot_intercepts = FALSE) +
 
 # Birthweight example
 
-In this example, we construct fictitious data mimicking a scenario where we are interested in studying the birth weight of newborn babies, and how slightly misreported weights of the mother influence the baby's weight. 
-In this example we therefore have the mother's weight as a covariate with classical error, and in addition a few of the weight measurements for the mothers are missing.
-
 |Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
 |:-----------|:----------|:--------|:----------|:------------|
 |Classical, missing values | Gaussian | birthweight | mother's weight | age, gestation time |
+
+In this example, we construct fictitious data mimicking a scenario where we are interested in studying the birth weight of newborn babies, and how slightly misreported weights of the mother influence the baby's weight. 
+In this example we therefore have the mother's weight as a covariate with classical error, and in addition a few of the weight measurements for the mothers are missing.
 
 Status: Occasionally get crash message, this seems to be when the response is a very different scale from the covariates. When I don't get the crash message, I still get the wrong estimate for everything except beta.gestationtime.
 

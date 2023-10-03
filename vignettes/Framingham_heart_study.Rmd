@@ -19,16 +19,44 @@ knitr::opts_chunk$set(
 |Classical | Binomial | `disease` | `sbp1`, `sbp2` | `smoking` |
 
 
-```{r setup}
+```{r, message = FALSE}
 library(inlami)
+library(INLA)
+library(ggplot2)
 ```
 
+The data and model in this example was also used in [Muff et al (2015)](https://arxiv.org/abs/1302.3065), so more information on the measurement error model can be found there. The model is identical, this example just shows how it can be implemented in `inlami`. 
 
+In this example, we fit a logistic regression model for whether or not a patient has heart disease, using systolic blood pressure (SBP) and smoking status as covariates. SBP is measured with error, but we have repeated measurements, and so we would like to feed both measurements of SBP into the model. This can be done easily in the `inlami` package. The data used in this example is also included in the package, simply type `?framingham` for more details.
+
+The formula for the main model of interest will be
+$$
+\texttt{disease}_i = \beta_0 + \beta_{\texttt{sbp}} \texttt{sbp}_i + \beta_{\texttt{smoking}} +  \texttt{smoking}_i + \varepsilon_i,
+$$
+and the formula for the imputation model will be
+
+$$
+\texttt{sbp}_i = \alpha_0 + \alpha_{\texttt{smoking}} \texttt{smoking}_i + \varepsilon_i^{\texttt{sbp}}.
+$$
+In addition, we of course also have the classical measurement error model that describes the actual error in the SBP measurements, and since we have repeated measurements we actually have two:
+$$
+\begin{align}
+\texttt{sbp}^1_i = \texttt{sbp}_i + u_i^{1}, \\
+\texttt{sbp}^2_i = \texttt{sbp}_i + u_i^{2}, 
+\end{align}
+$$
+where $u_i^{1}, u_i^{2} \sim N(0, \tau_u)$ are the measurement error terms. 
+
+TODO: Let user specify these priors.
 ```{r}
 prior.beta <- c(0, 0.01)
 prior.alpha0 <- c(0, 1)
 prior.alphaz <- c(0, 1)
+```
 
+We can then call the `fit_inlami` function directly with the above formulas for the model of interest and imputation model. Also note the repeated measurements argument, which must be set to `TRUE` to ensure that the model is specified correctly. We give the precision for the error term of the measurement error model a \texttt{Gamma(100, 1)} prior, and the error term for the imputation model a \texttt{Gamma(10, 1)} prior.
+
+```{r}
 framingham_model <- fit_inlami(formula_moi = disease ~ sbp + smoking,
                                formula_imp = sbp ~ smoking,
                                family_moi = "binomial", 
@@ -41,13 +69,7 @@ framingham_model <- fit_inlami(formula_moi = disease ~ sbp + smoking,
                                initial.prec.imp = 10)
 ```
 
-```{r, echo = FALSE, results='asis'}
-framingham_stacks <- show_data_structure(framingham_model$stack_data)
-cat("$$\n")
-cat(framingham_stacks$matrix_string)
-cat("\n$$")
-```
-
+Once the model is fit we can look at the summary.
 
 ```{r}
 summary(framingham_model)
@@ -57,6 +79,32 @@ summary(framingham_model)
 plot(framingham_model)
 ```
 
+For a comparison, we can also fit a "naive" model, that is, a model that ignores the measurement error in SBP. For this model, we will take an average of the two SBP measurements and use that as the SBP variable.
+
+```{r}
+framingham$sbp <- (framingham$sbp1 + framingham$sbp2)/2
+naive_model <- inla(formula = disease ~ sbp + smoking,
+                    family = "binomial", 
+                    data = framingham)
+naive_model$summary.fixed
+```
+Then we can compare the estimated coefficients from both models.
+
+```{r}
+naive_result <- naive_model$summary.fixed
+rownames(naive_result) <- c("beta.0", "beta.sbp", "beta.smoking")
+naive_result$variable <- rownames(naive_result)
+me_result <- rbind(summary(framingham_model)$moi_coef[1:6], 
+                   summary(framingham_model)$error_coef[1:6])
+me_result$variable <- rownames(me_result)
+results <- dplyr::bind_rows(naive = naive_result, me_adjusted = me_result, .id = "model")
+
+ggplot(results, aes(x = mean, y = model, color = variable)) +
+  geom_point() +
+  geom_linerange(aes(xmin = `0.025quant`, xmax = `0.975quant`)) +
+  facet_grid(~ variable, scales = "free_x") +
+  theme_bw()
+```
 
 
 

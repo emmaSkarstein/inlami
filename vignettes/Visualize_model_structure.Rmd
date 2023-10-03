@@ -1,8 +1,8 @@
 ---
-title: "Visualize model structure"
+title: "How are the models structured?"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Visualize model structure}
+  %\VignetteIndexEntry{How are the models structured?}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
