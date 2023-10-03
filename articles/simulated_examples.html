@@ -42,7 +42,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Framingham_heart_study.html">Influence of systolic blood pressure on coronary heart disease</a>
-    <a class="dropdown-item" href="../articles/Visualize_model_structure.html">Visualize model structure</a>
+    <a class="dropdown-item" href="../articles/Visualize_model_structure.html">How are the models structured?</a>
     <a class="dropdown-item" href="../articles/nhanes_survival.html">Survival data with repeated systolic blood pressure measurements</a>
     <a class="dropdown-item" href="../articles/simulated_examples.html">Simulated examples</a>
   </div>
@@ -84,11 +84,9 @@ simulated data sets. Note that although the data sets describe realistic
 situations, they are all completely fictitious, and created purely to
 illustrate how to fit models in different situations.</p>
 <div class="section level2">
-<h2 id="simple-example">Simple example<a class="anchor" aria-label="anchor" href="#simple-example"></a>
+<h2 id="simple-example-with-missingness-and-two-types-of-measurement-error">Simple example with missingness and two types of measurement
+error<a class="anchor" aria-label="anchor" href="#simple-example-with-missingness-and-two-types-of-measurement-error"></a>
 </h2>
-<p>This is a simple simulation with Berkson and classical error as well
-as missing data, to check that the package works as expected in that
-scenario.</p>
 <table class="table">
 <colgroup>
 <col width="21%">
@@ -112,6 +110,9 @@ scenario.</p>
 <td align="left"><span class="math inline">\(z\)</span></td>
 </tr></tbody>
 </table>
+<p>This is a simple simulation with Berkson and classical error as well
+as missing data, to check that the package works as expected in that
+scenario.</p>
 <div class="section level3">
 <h3 id="generating-the-data">Generating the data<a class="anchor" aria-label="anchor" href="#generating-the-data"></a>
 </h3>
@@ -183,32 +184,32 @@ scenario.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
 <span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant     mode          kld</span></span>
-<span><span class="co">#&gt; beta.0 1.033990 0.2190362  0.6160298 1.033387   1.445490 1.030430 1.449146e-06</span></span>
-<span><span class="co">#&gt; beta.z 1.918894 0.3884392  1.2342150 1.912741   2.577787 1.919202 1.986331e-04</span></span>
+<span><span class="co">#&gt; beta.0 1.036978 0.2190312  0.6191433 1.037565   1.448408 1.034421 1.262562e-06</span></span>
+<span><span class="co">#&gt; beta.z 1.925478 0.3885133  1.2431997 1.921682   2.583130 1.925451 1.837642e-04</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
 <span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; beta.x 1.972775 0.2039107   1.570245 1.973152   2.373115 1.974714</span></span>
+<span><span class="co">#&gt; beta.x 1.973083 0.2027284   1.574732 1.972823   2.372947 1.971745</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
 <span><span class="co">#&gt;             mean         sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; alpha.0 1.033068 0.05059969  0.9337993 1.033076   1.132289 1.033076</span></span>
-<span><span class="co">#&gt; alpha.z 2.024735 0.05226210  1.9222804 2.024717   2.127291 2.024717</span></span>
+<span><span class="co">#&gt; alpha.0 1.033073 0.05057437  0.9338548 1.033081   1.132245 1.033081</span></span>
+<span><span class="co">#&gt; alpha.z 2.024724 0.05223568  1.9223202 2.024706   2.127227 2.024706</span></span>
 <span><span class="co">#&gt;                  kld</span></span>
-<span><span class="co">#&gt; alpha.0 3.156808e-11</span></span>
-<span><span class="co">#&gt; alpha.z 5.398047e-11</span></span>
+<span><span class="co">#&gt; alpha.0 2.990685e-11</span></span>
+<span><span class="co">#&gt; alpha.z 5.110547e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters (apart from beta.x): </span></span>
 <span><span class="co">#&gt;                                                 mean        sd 0.025quant</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    1.1257676 0.3645523  0.5553316</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.1264970 0.3519692  0.5889728</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9274446 0.1110047  0.7280604</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9762357 0.1265283  0.7518341</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations    1.1230434 0.3548725  0.5572899</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.1231593 0.3488209  0.5926906</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9283892 0.1111620  0.7275402</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9769825 0.1265837  0.7529431</span></span>
 <span><span class="co">#&gt;                                             0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    1.0771960   1.974003 0.9885306</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.0754371   1.960229 0.9802777</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9209083   1.164470 0.9080340</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9678202   1.249162 0.9506156</span></span></code></pre></div>
+<span><span class="co">#&gt; Precision for the Gaussian observations    1.0789730   1.938475 0.9996129</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.0718202   1.951893 0.9757893</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9222480   1.164547 0.9109453</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9684071   1.250496 0.9505977</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simple.truth</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span>
 <span>  <span class="op">~</span><span class="st">"coefficient_name"</span>, <span class="op">~</span><span class="st">"value"</span>,</span>
@@ -221,8 +222,41 @@ scenario.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">simple_model</span>, plot_intercepts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">simple.truth</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="simulated_examples_files/figure-html/unnamed-chunk-4-1.png" width="480" style="display: block; margin: auto;">
-# Missing data only</p>
+<p><img src="simulated_examples_files/figure-html/unnamed-chunk-4-1.png" width="480" style="display: block; margin: auto;"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="missing-data-only">Missing data only<a class="anchor" aria-label="anchor" href="#missing-data-only"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="21%">
+<col width="19%">
+<col width="16%">
+<col width="19%">
+<col width="23%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Error types</th>
+<th align="left">Likelihood</th>
+<th align="left">Response</th>
+<th align="left">Covariate with error</th>
+<th align="left">Other covariate(s)</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td align="left">Missing values</td>
+<td align="left">Gaussian</td>
+<td align="left"><span class="math inline">\(y\)</span></td>
+<td align="left"><span class="math inline">\(x\)</span></td>
+<td align="left"><span class="math inline">\(z\)</span></td>
+</tr></tbody>
+</table>
+<p>In this example, we have missingness in one covariate, but no other
+measurement error, so this shows how to do simple imputation of a
+missing covariate in R-INLA.</p>
+<div class="section level3">
+<h3 id="generating-the-data-1">Generating the data<a class="anchor" aria-label="anchor" href="#generating-the-data-1"></a>
+</h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2024</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
@@ -248,23 +282,31 @@ scenario.</p>
 <span><span class="va">x_obs</span><span class="op">[</span><span class="va">m_index</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
 <span><span class="va">missing_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">y</span>, x <span class="op">=</span> <span class="va">x_obs</span>, z <span class="op">=</span> <span class="va">z</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="model-without-imputation">Model without imputation<a class="anchor" aria-label="anchor" href="#model-without-imputation"></a>
+</h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">naive_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/INLA/man/inla.html" class="external-link">inla</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span>, family <span class="op">=</span> <span class="st">"gaussian"</span>, data <span class="op">=</span> <span class="va">missing_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">naive_model</span><span class="op">$</span><span class="va">summary.fixed</span></span>
 <span><span class="co">#&gt;                 mean         sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; (Intercept) 2.059952 0.07312502  1.9165307 2.059952   2.203373 2.059952</span></span>
-<span><span class="co">#&gt; x           1.060038 0.04847108  0.9649714 1.060038   1.155105 1.060038</span></span>
-<span><span class="co">#&gt; z           4.242952 0.09764706  4.0514358 4.242952   4.434468 4.242952</span></span>
+<span><span class="co">#&gt; (Intercept) 2.059952 0.07313175  1.9165175 2.059952   2.203386 2.059952</span></span>
+<span><span class="co">#&gt; x           1.060038 0.04847554  0.9649627 1.060038   1.155114 1.060038</span></span>
+<span><span class="co">#&gt; z           4.242952 0.09765604  4.0514182 4.242952   4.434486 4.242952</span></span>
 <span><span class="co">#&gt;                      kld</span></span>
-<span><span class="co">#&gt; (Intercept) 1.017362e-11</span></span>
-<span><span class="co">#&gt; x           1.013616e-11</span></span>
-<span><span class="co">#&gt; z           9.967058e-12</span></span>
+<span><span class="co">#&gt; (Intercept) 1.008872e-11</span></span>
+<span><span class="co">#&gt; x           1.015792e-11</span></span>
+<span><span class="co">#&gt; z           9.965225e-12</span></span>
 <span><span class="va">naive_model</span><span class="op">$</span><span class="va">summary.hyperpar</span></span>
 <span><span class="co">#&gt;                                              mean         sd 0.025quant</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations 0.3082829 0.01379349  0.2818483</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations 0.3082825 0.01379375  0.2818478</span></span>
 <span><span class="co">#&gt;                                          0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations 0.3080774  0.3359012 0.3076658</span></span></code></pre></div>
+<span><span class="co">#&gt; Precision for the Gaussian observations 0.3080772  0.3359027 0.3076665</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="model-with-imputation">Model with imputation<a class="anchor" aria-label="anchor" href="#model-with-imputation"></a>
+</h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">missing_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_inlami.html">fit_inlami</a></span><span class="op">(</span>formula_moi <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span>,</span>
 <span>                            formula_imp <span class="op">=</span> <span class="va">x</span> <span class="op">~</span> <span class="va">z</span>,</span>
@@ -288,33 +330,33 @@ scenario.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
 <span><span class="co">#&gt;             mean         sd 0.025quant  0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; beta.0 0.9954202 0.03754318  0.9219738 0.9953577   1.069219 0.9953564</span></span>
-<span><span class="co">#&gt; beta.z 1.9904753 0.04134610  1.9105288 1.9900561   2.072678 1.9900205</span></span>
+<span><span class="co">#&gt; beta.0 0.9547242 0.03658044   0.882622 0.9548465   1.026128 0.9548465</span></span>
+<span><span class="co">#&gt; beta.z 1.9137276 0.03995088   1.832760 1.9145040   1.990088 1.9144673</span></span>
 <span><span class="co">#&gt;                 kld</span></span>
-<span><span class="co">#&gt; beta.0 7.081967e-10</span></span>
-<span><span class="co">#&gt; beta.z 2.210229e-08</span></span>
+<span><span class="co">#&gt; beta.0 2.871799e-09</span></span>
+<span><span class="co">#&gt; beta.z 1.004418e-07</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
 <span><span class="co">#&gt;            mean          sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; beta.x 2.000318 0.006814379   1.985412 2.000814   2.011928 2.003329</span></span>
+<span><span class="co">#&gt; beta.x 2.046504 0.006906041   2.036841 2.045631   2.062833 2.039361</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
 <span><span class="co">#&gt;             mean         sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; alpha.0 1.032290 0.04194303  0.9500436 1.032290   1.114536 1.032290</span></span>
-<span><span class="co">#&gt; alpha.z 1.983185 0.04283119  1.8991971 1.983185   2.067173 1.983185</span></span>
+<span><span class="co">#&gt; alpha.0 1.032628 0.04735151  0.9397766 1.032628   1.125480 1.032628</span></span>
+<span><span class="co">#&gt; alpha.z 1.983123 0.04831738  1.8883770 1.983123   2.077868 1.983123</span></span>
 <span><span class="co">#&gt;                  kld</span></span>
-<span><span class="co">#&gt; alpha.0 5.398928e-11</span></span>
-<span><span class="co">#&gt; alpha.z 5.398232e-11</span></span>
+<span><span class="co">#&gt; alpha.0 5.402120e-11</span></span>
+<span><span class="co">#&gt; alpha.z 5.402298e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters (apart from beta.x): </span></span>
 <span><span class="co">#&gt;                                                 mean          sd 0.025quant</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    0.8936810 0.004703821  0.8867845</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 0.6467683 0.004225741  0.6382784</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.5918085 0.006273252  0.5832763</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations    0.9529895 0.004915136  0.9451943</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.2879141 0.007358143  1.2745086</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.4596150 0.002456724  0.4559908</span></span>
 <span><span class="co">#&gt;                                             0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    0.8932660  0.9047142 0.8900318</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 0.6468249  0.6549159 0.6471045</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.5907901  0.6067118 0.5869497</span></span></code></pre></div>
+<span><span class="co">#&gt; Precision for the Gaussian observations    0.9526218  0.9642274 0.9499006</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.2876459  1.3034705 1.2860856</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.4593880  0.4653612 0.4577336</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">missing_truth</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span>
 <span>  <span class="op">~</span><span class="st">"coefficient_name"</span>, <span class="op">~</span><span class="st">"value"</span>,</span>
@@ -333,8 +375,6 @@ scenario.</p>
 <div class="section level2">
 <h2 id="random-effect-in-the-main-model">Random effect in the main model<a class="anchor" aria-label="anchor" href="#random-effect-in-the-main-model"></a>
 </h2>
-<p>In this example, we simulate data that is grouped in such a way that
-it should be modelled with a random effect in the model of interest.</p>
 <table class="table">
 <colgroup>
 <col width="21%">
@@ -361,8 +401,10 @@ it should be modelled with a random effect in the model of interest.</p>
 </td>
 </tr></tbody>
 </table>
+<p>In this example, we simulate data that is grouped in such a way that
+it should be modelled with a random effect in the model of interest.</p>
 <div class="section level3">
-<h3 id="generating-the-data-1">Generating the data<a class="anchor" aria-label="anchor" href="#generating-the-data-1"></a>
+<h3 id="generating-the-data-2">Generating the data<a class="anchor" aria-label="anchor" href="#generating-the-data-2"></a>
 </h3>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">10</span> <span class="co"># number of groups</span></span>
@@ -419,26 +461,26 @@ like this:</p>
 <span><span class="co">#&gt;    silent = silent, ", " inla.mode = inla.mode, safe = FALSE, debug = </span></span>
 <span><span class="co">#&gt;    debug, .parent.frame = .parent.frame)" ) </span></span>
 <span><span class="co">#&gt; Time used:</span></span>
-<span><span class="co">#&gt;     Pre = 0.397, Running = 0.341, Post = 0.0239, Total = 0.762 </span></span>
+<span><span class="co">#&gt;     Pre = 0.334, Running = 0.288, Post = 0.0198, Total = 0.642 </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              mean    sd 0.025quant 0.5quant 0.975quant  mode kld</span></span>
-<span><span class="co">#&gt; (Intercept) 0.197 0.506     -0.809    0.197      1.203 0.197   0</span></span>
-<span><span class="co">#&gt; x           1.625 0.049      1.528    1.625      1.721 1.625   0</span></span>
-<span><span class="co">#&gt; z           1.884 0.055      1.775    1.884      1.992 1.884   0</span></span>
+<span><span class="co">#&gt; (Intercept) 0.197 0.120     -0.038    0.197      0.432 0.197   0</span></span>
+<span><span class="co">#&gt; x           1.633 0.053      1.529    1.633      1.737 1.633   0</span></span>
+<span><span class="co">#&gt; z           1.904 0.060      1.787    1.904      2.021 1.904   0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;   Name     Model</span></span>
 <span><span class="co">#&gt;     id IID model</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters:</span></span>
-<span><span class="co">#&gt;                                          mean    sd 0.025quant 0.5quant</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations 0.083 0.004      0.076    0.083</span></span>
-<span><span class="co">#&gt; Precision for id                        0.554 0.291      0.199    0.487</span></span>
-<span><span class="co">#&gt;                                         0.975quant  mode</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations       0.09 0.083</span></span>
-<span><span class="co">#&gt; Precision for id                              1.30 0.381</span></span>
+<span><span class="co">#&gt;                                             mean       sd 0.025quant 0.5quant</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations     0.07 3.00e-03      0.064     0.07</span></span>
+<span><span class="co">#&gt; Precision for id                        20922.83 2.32e+04   1271.944 13576.66</span></span>
+<span><span class="co">#&gt;                                         0.975quant    mode</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations   7.60e-02    0.07</span></span>
+<span><span class="co">#&gt; Precision for id                          8.24e+04 3406.81</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Marginal log-Likelihood:  -2716.93 </span></span>
+<span><span class="co">#&gt; Marginal log-Likelihood:  -2775.71 </span></span>
 <span><span class="co">#&gt;  is computed </span></span>
 <span><span class="co">#&gt; Posterior summaries for the linear predictor and the fitted values are computed</span></span>
 <span><span class="co">#&gt; (Posterior marginals needs also 'control.compute=list(return.marginals.predictor=TRUE)')</span></span></code></pre></div>
@@ -471,33 +513,33 @@ like this:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
 <span><span class="co">#&gt;             mean         sd 0.025quant  0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; beta.0 0.1948257 0.47660591 -0.7506097 0.1948261   1.140273 0.1948284</span></span>
-<span><span class="co">#&gt; beta.z 1.8849891 0.05549421  1.7761182 1.8850004   1.993795 1.8850002</span></span>
+<span><span class="co">#&gt; beta.0 0.1948042 0.48202021  -0.763801 0.1947979   1.153456 0.1948005</span></span>
+<span><span class="co">#&gt; beta.z 1.8846329 0.05543124   1.775876 1.8846481   1.993304 1.8846481</span></span>
 <span><span class="co">#&gt;                 kld</span></span>
-<span><span class="co">#&gt; beta.0 5.947537e-08</span></span>
-<span><span class="co">#&gt; beta.z 1.633105e-11</span></span>
+<span><span class="co">#&gt; beta.0 1.066799e-08</span></span>
+<span><span class="co">#&gt; beta.z 2.233008e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
-<span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; beta.x 2.045961 0.1788173   1.699918 2.043938   2.403964 2.035334</span></span>
+<span><span class="co">#&gt;            mean       sd 0.025quant 0.5quant 0.975quant     mode</span></span>
+<span><span class="co">#&gt; beta.x 2.049431 0.180782   1.700733 2.047011   2.412482 2.036652</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
-<span><span class="co">#&gt;                mean         sd 0.025quant    0.5quant 0.975quant        mode</span></span>
-<span><span class="co">#&gt; alpha.0 0.004009127 0.07161228 -0.1364413 0.004009126  0.1444596 0.004009126</span></span>
-<span><span class="co">#&gt;                  kld</span></span>
-<span><span class="co">#&gt; alpha.0 2.159647e-12</span></span>
+<span><span class="co">#&gt;                mean        sd 0.025quant    0.5quant 0.975quant        mode</span></span>
+<span><span class="co">#&gt; alpha.0 0.004009128 0.0715577 -0.1363336 0.004009128  0.1443518 0.004009128</span></span>
+<span><span class="co">#&gt;                 kld</span></span>
+<span><span class="co">#&gt; alpha.0 1.93325e-12</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters (apart from beta.x): </span></span>
 <span><span class="co">#&gt;                                                 mean         sd 0.025quant</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    0.1183107 0.02070776 0.08340773</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.0035840 0.33086332 0.49669894</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.2475583 0.02453796 0.20342494</span></span>
-<span><span class="co">#&gt; Precision for id                           0.5488558 0.23208640 0.22247530</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations    0.1186452 0.02100051 0.08344104</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 0.9986095 0.33144535 0.48998666</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.2480493 0.02484016 0.20349772</span></span>
+<span><span class="co">#&gt; Precision for id                           0.5355822 0.22832797 0.21236983</span></span>
 <span><span class="co">#&gt;                                             0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    0.1163322  0.1646887 0.1121475</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 0.9561640  1.7840723 0.8687212</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.2461314  0.2999483 0.2428570</span></span>
-<span><span class="co">#&gt; Precision for id                           0.5069738  1.1184986 0.4315233</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations    0.1165767  0.1658631 0.1121496</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 0.9513714  1.7793714 0.8643723</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.2465632  0.3012079 0.2431075</span></span>
+<span><span class="co">#&gt; Precision for id                           0.4949754  1.0936628 0.4209920</span></span>
 <span></span>
 <span><span class="va">reff.truth</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span>
 <span>  <span class="op">~</span><span class="st">"coefficient_name"</span>, <span class="op">~</span><span class="st">"value"</span>,</span>
@@ -515,16 +557,6 @@ like this:</p>
 <div class="section level2">
 <h2 id="air-pollution-example">Air pollution example<a class="anchor" aria-label="anchor" href="#air-pollution-example"></a>
 </h2>
-<p>In this example, we simulate data from a fictitious, but realistic
-scenario where we want examine if people in areas with high air
-pollution seem to have asthma more than in areas with lower air
-pollution. But the air pollution value for the people in the study canot
-be observed directly, instead sensors have been placed at certain
-locations, and the value for a person is set to be the value gathered at
-the closest sensor. This leads to a Berkson error. In addition to that,
-we believe that there is some noise in the measurements due to
-imprecision in the sensor. This corresponds to a classical measurement
-error.</p>
 <table class="table">
 <colgroup>
 <col width="21%">
@@ -548,9 +580,18 @@ error.</p>
 <td align="left">gender, age, district</td>
 </tr></tbody>
 </table>
-<p>Status: doing good</p>
+<p>In this example, we simulate data from a fictitious, but realistic
+scenario where we want examine if people in areas with high air
+pollution seem to have asthma more than in areas with lower air
+pollution. But the air pollution value for the people in the study canot
+be observed directly, instead sensors have been placed at certain
+locations, and the value for a person is set to be the value gathered at
+the closest sensor. This leads to a Berkson error. In addition to that,
+we believe that there is some noise in the measurements due to
+imprecision in the sensor. This corresponds to a classical measurement
+error.</p>
 <div class="section level3">
-<h3 id="generating-the-data-2">Generating the data<a class="anchor" aria-label="anchor" href="#generating-the-data-2"></a>
+<h3 id="generating-the-data-3">Generating the data<a class="anchor" aria-label="anchor" href="#generating-the-data-3"></a>
 </h3>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2034</span><span class="op">)</span></span>
@@ -626,12 +667,6 @@ error.</p>
 <div class="section level2">
 <h2 id="birthweight-example">Birthweight example<a class="anchor" aria-label="anchor" href="#birthweight-example"></a>
 </h2>
-<p>In this example, we construct fictitious data mimicking a scenario
-where we are interested in studying the birth weight of newborn babies,
-and how slightly misreported weights of the mother influence the baby’s
-weight. In this example we therefore have the mother’s weight as a
-covariate with classical error, and in addition a few of the weight
-measurements for the mothers are missing.</p>
 <table class="table">
 <colgroup>
 <col width="21%">
@@ -655,12 +690,18 @@ measurements for the mothers are missing.</p>
 <td align="left">age, gestation time</td>
 </tr></tbody>
 </table>
+<p>In this example, we construct fictitious data mimicking a scenario
+where we are interested in studying the birth weight of newborn babies,
+and how slightly misreported weights of the mother influence the baby’s
+weight. In this example we therefore have the mother’s weight as a
+covariate with classical error, and in addition a few of the weight
+measurements for the mothers are missing.</p>
 <p>Status: Occasionally get crash message, this seems to be when the
 response is a very different scale from the covariates. When I don’t get
 the crash message, I still get the wrong estimate for everything except
 beta.gestationtime.</p>
 <div class="section level3">
-<h3 id="generating-the-data-3">Generating the data<a class="anchor" aria-label="anchor" href="#generating-the-data-3"></a>
+<h3 id="generating-the-data-4">Generating the data<a class="anchor" aria-label="anchor" href="#generating-the-data-4"></a>
 </h3>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2024</span><span class="op">)</span></span>
