@@ -64,8 +64,8 @@ Examples of how to use the package can be found in the vignettes.
 |:----------------------------------------------------------------------------------------------------------------------------------------------|:-------------------|:----------------------------|:---------------------------------------------------------------------------------|
 | [Influence of systolic blood pressure on coronary heart disease](https://emmaskarstein.github.io/inlami/articles/Framingham_heart_study.html) | Binomial           | Classical                   | Repeated measurements of error prone variable                                    |
 | [Survival data with repeated systolic blood pressure measurements](https://emmaskarstein.github.io/inlami/articles/nhanes_survival.html)      | Weibull survival   | Classical, missing          | Repeated measurements of error prone variable                                    |
-| [Simulated examples (multiple examples)](https://emmaskarstein.github.io/inlami/articles/simulated_examples.html)                             | Gaussian, Binomial | Berkson, classical, missing |                                                                                  |
-| [Visualize model structure](https://emmaskarstein.github.io/inlami/articles/Visualize_model_structure.html)                                   |                    |                             | A deep dive into how the data is structured in order to correctly fit the model. |
+| [Simulated examples (multiple examples)](https://emmaskarstein.github.io/inlami/articles/simulated_examples.html)                             | Gaussian, Binomial | Berkson, classical, missing | Random effect(s) in the model of interest                                        |
+| [How are the models structured?](https://emmaskarstein.github.io/inlami/articles/Visualize_model_structure.html)                              |                    |                             | A deep dive into how the data is structured in order to correctly fit the model. |
 
 ## Quick guide: How can I use this package?
 
@@ -130,7 +130,7 @@ simple_model <- fit_inlami(data = simple_data,
                          formula_moi = main_formula, 
                          formula_imp = imputation_formula, 
                          family_moi = "gaussian",
-                         error_type = c("berkson", "classical"),
+                         error_type = c("berkson", "classical", "missing"),
                          prior.prec.moi = c(10, 9),
                          prior.prec.berkson = c(10, 9), 
                          prior.prec.classical = c(10, 9),
@@ -152,33 +152,33 @@ summary(simple_model)
 #> x ~ z
 #> 
 #> Error types: 
-#> [1] "berkson"   "classical"
+#> [1] "berkson"   "classical" "missing"  
 #> 
 #> Fixed effects for model of interest: 
-#>           mean        sd 0.025quant 0.5quant 0.975quant mode          kld
-#> beta.0 1.01689 0.2219628  0.5894168 1.021245   1.442325   NA 1.358364e-06
-#> beta.z 1.88815 0.3975073  1.1735210 1.905647   2.637368   NA 1.032643e-05
+#>            mean        sd 0.025quant 0.5quant 0.975quant mode          kld
+#> beta.0 1.034330 0.2263730  0.6043257 1.045291   1.461791   NA 1.863033e-06
+#> beta.z 1.922222 0.4072509  1.2067566 1.964587   2.676866   NA 1.147397e-05
 #> 
 #> Coefficient for error prone variable: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant mode
-#> beta.x 1.966046 0.1712093   1.622101 1.968371   2.297676   NA
+#> beta.x 1.931857 0.1724726   1.593721 1.931025   2.274265   NA
 #> 
 #> Fixed effects for imputation model: 
 #>             mean         sd 0.025quant 0.5quant 0.975quant mode          kld
-#> alpha.0 1.033081 0.05061214  0.9337674 1.033092   1.132334   NA 4.442473e-12
-#> alpha.z 2.024705 0.05227708  1.9222232 2.024681   2.127321   NA 2.023098e-11
+#> alpha.0 1.033066 0.05061246  0.9337548 1.033076   1.132319   NA 3.922328e-12
+#> alpha.z 2.024740 0.05227671  1.9222559 2.024718   2.127349   NA 1.755001e-11
 #> 
 #> Model hyperparameters (apart from beta.x): 
 #>                                                 mean        sd 0.025quant
-#> Precision for the Gaussian observations    1.1439551 0.3638825  0.5898076
-#> Precision for the Gaussian observations[2] 1.1058827 0.2934160  0.6294660
-#> Precision for the Gaussian observations[3] 0.9288501 0.1004393  0.7488019
-#> Precision for the Gaussian observations[4] 0.9729314 0.1179177  0.7590142
+#> Precision for the Gaussian observations    1.1512050 0.3731690  0.5697345
+#> Precision for the Gaussian observations[2] 1.0722138 0.3082185  0.6027874
+#> Precision for the Gaussian observations[3] 0.9429485 0.1056632  0.7501488
+#> Precision for the Gaussian observations[4] 0.9563592 0.1082409  0.7652814
 #>                                             0.5quant 0.975quant mode
-#> Precision for the Gaussian observations    1.0906528   2.008818   NA
-#> Precision for the Gaussian observations[2] 1.0721691   1.779555   NA
-#> Precision for the Gaussian observations[3] 0.9226115   1.144381   NA
-#> Precision for the Gaussian observations[4] 0.9667093   1.223440   NA
+#> Precision for the Gaussian observations    1.1011717   2.025993   NA
+#> Precision for the Gaussian observations[2] 1.0263249   1.806385   NA
+#> Precision for the Gaussian observations[3] 0.9377501   1.166294   NA
+#> Precision for the Gaussian observations[4] 0.9485817   1.191246   NA
 ```
 
 And we can use the default plot function to see a plot of the fixed
