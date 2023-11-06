@@ -150,14 +150,14 @@ simple_model <- fit_inlami(data = data,
                            formula_imp = simple_imp,
                            family_moi = "gaussian",
                            error_type = c("berkson", "classical"),
-                           prior.prec.y = prior.prec.y,
-                           prior.prec.u_b = prior.prec.u_b,
-                           prior.prec.u_c = prior.prec.u_c,
-                           prior.prec.r = prior.prec.r,
-                           initial.prec.y = initial.prec.y,
-                           initial.prec.u_b = initial.prec.u_b,
-                           initial.prec.u_c = initial.prec.u_c,
-                           initial.prec.r = initial.prec.r)
+                           prior.prec.moi = prior.prec.y,
+                           prior.prec.berkson = prior.prec.u_b,
+                           prior.prec.classical = prior.prec.u_c,
+                           prior.prec.imp = prior.prec.r,
+                           initial.prec.moi = initial.prec.y,
+                           initial.prec.berkson = initial.prec.u_b,
+                           initial.prec.classical = initial.prec.u_c,
+                           initial.prec.imp = initial.prec.r)
 summary(simple_model)
 
 
@@ -175,7 +175,7 @@ stk_moi <- inla.stack(data = list(y_moi = y),
 
 # Berkson measurement error model
 # 0 = -x_true + r + u_b
-stk_b <- inla.stack(data = list(y_berksonrep(0, n)),
+stk_b <- inla.stack(data = list(y_berkson = rep(0, n)),
                     A = list(1),
                     effects = list(
                       list(id.x = 1:n,
