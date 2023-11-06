@@ -135,6 +135,7 @@ simple_model <- fit_inlami(data = simple_data,
                          prior.prec.berkson = c(10, 9), 
                          prior.prec.classical = c(10, 9),
                          prior.prec.imp = c(10, 9),
+                         prior.beta.error = c(0, 1/1000),
                          initial.prec.moi = 1,
                          initial.prec.berkson = 1,
                          initial.prec.classical = 1,
@@ -155,30 +156,33 @@ summary(simple_model)
 #> [1] "berkson"   "classical" "missing"  
 #> 
 #> Fixed effects for model of interest: 
-#>            mean        sd 0.025quant 0.5quant 0.975quant mode          kld
-#> beta.0 1.034330 0.2263730  0.6043257 1.045291   1.461791   NA 1.863033e-06
-#> beta.z 1.922222 0.4072509  1.2067566 1.964587   2.676866   NA 1.147397e-05
+#>            mean        sd 0.025quant 0.5quant 0.975quant     mode          kld
+#> beta.0 1.032704 0.2192166  0.6137157 1.031401   1.447328 1.027929 1.081872e-06
+#> beta.z 1.916506 0.3886175  1.2284307 1.908203   2.581477 1.915849 2.014284e-04
 #> 
 #> Coefficient for error prone variable: 
-#>            mean        sd 0.025quant 0.5quant 0.975quant mode
-#> beta.x 1.931857 0.1724726   1.593721 1.931025   2.274265   NA
+#>            mean        sd 0.025quant 0.5quant 0.975quant     mode
+#> beta.x 1.973528 0.2005449   1.576926 1.974143   2.366543 1.976701
 #> 
 #> Fixed effects for imputation model: 
-#>             mean         sd 0.025quant 0.5quant 0.975quant mode          kld
-#> alpha.0 1.033066 0.05061246  0.9337548 1.033076   1.132319   NA 3.922328e-12
-#> alpha.z 2.024740 0.05227671  1.9222559 2.024718   2.127349   NA 1.755001e-11
+#>             mean         sd 0.025quant 0.5quant 0.975quant     mode
+#> alpha.0 1.033081 0.05059543  0.9338211 1.033089   1.132294 1.033089
+#> alpha.z 2.024705 0.05225807  1.9222584 2.024687   2.127253 2.024687
+#>                  kld
+#> alpha.0 3.116138e-11
+#> alpha.z 5.317572e-11
 #> 
 #> Model hyperparameters (apart from beta.x): 
 #>                                                 mean        sd 0.025quant
-#> Precision for the Gaussian observations    1.1512050 0.3731690  0.5697345
-#> Precision for the Gaussian observations[2] 1.0722138 0.3082185  0.6027874
-#> Precision for the Gaussian observations[3] 0.9429485 0.1056632  0.7501488
-#> Precision for the Gaussian observations[4] 0.9563592 0.1082409  0.7652814
-#>                                             0.5quant 0.975quant mode
-#> Precision for the Gaussian observations    1.1011717   2.025993   NA
-#> Precision for the Gaussian observations[2] 1.0263249   1.806385   NA
-#> Precision for the Gaussian observations[3] 0.9377501   1.166294   NA
-#> Precision for the Gaussian observations[4] 0.9485817   1.191246   NA
+#> Precision for the Gaussian observations    1.1256171 0.3616641  0.5549841
+#> Precision for the Gaussian observations[2] 1.1223166 0.3440037  0.5934569
+#> Precision for the Gaussian observations[3] 0.9259914 0.1090604  0.7302314
+#> Precision for the Gaussian observations[4] 0.9777175 0.1254844  0.7537948
+#>                                             0.5quant 0.975quant      mode
+#> Precision for the Gaussian observations    1.0788756   1.962409 0.9940443
+#> Precision for the Gaussian observations[2] 1.0734918   1.934221 0.9823583
+#> Precision for the Gaussian observations[3] 0.9195217   1.159024 0.9064963
+#> Precision for the Gaussian observations[4] 0.9698390   1.247017 0.9544026
 ```
 
 And we can use the default plot function to see a plot of the fixed
