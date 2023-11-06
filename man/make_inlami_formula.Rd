@@ -8,7 +8,8 @@ make_inlami_formula(
   formula_moi,
   formula_imp,
   family_moi = "gaussian",
-  error_type = "classical"
+  error_type = "classical",
+  prior.beta.error
 )
 }
 \arguments{
@@ -18,7 +19,9 @@ make_inlami_formula(
 
 \item{family_moi}{a string indicating the likelihood family for the model of interest (the main model).}
 
-\item{error_type}{Type of error (one of "classical", "berkson", "missing")}
+\item{error_type}{type of error (one of "classical", "berkson", "missing")}
+
+\item{prior.beta.error}{parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?}
 }
 \value{
 An object of class "formula".
@@ -29,5 +32,9 @@ Make formula for measurement error and missing data model
 \examples{
 f_moi <- y ~ x + z
 f_imp <- x ~ z
-make_inlami_formula(formula_moi = f_moi, formula_imp = f_imp, error_type = "classical")
+make_inlami_formula(formula_moi = f_moi,
+                    formula_imp = f_imp,
+                    error_type = "classical",
+                    prior.beta.error = c(0, 1/1000)
+                    )
 }

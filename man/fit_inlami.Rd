@@ -16,6 +16,7 @@ fit_inlami(
   prior.prec.berkson = NULL,
   prior.prec.classical = NULL,
   prior.prec.imp = NULL,
+  prior.beta.error = NULL,
   initial.prec.moi = NULL,
   initial.prec.berkson = NULL,
   initial.prec.classical = NULL,
@@ -47,6 +48,8 @@ fit_inlami(
 \item{prior.prec.classical}{a string containing the parameters for the prior for the precision of the error term for the classical error model.}
 
 \item{prior.prec.imp}{a string containing the parameters for the precision of the latent variable r, which is the variable being described in the imputation model.}
+
+\item{prior.beta.error}{parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?}
 
 \item{initial.prec.moi}{the initial value for the precision of the residual term for the model of interest.}
 
@@ -82,6 +85,7 @@ simple_model <- fit_inlami(data = simple_data,
                            prior.prec.berkson = c(10, 9),
                            prior.prec.classical = c(10, 9),
                            prior.prec.imp = c(10, 9),
+                           prior.beta.error = c(0, 1/1000),
                            initial.prec.moi = 1,
                            initial.prec.berkson = 1,
                            initial.prec.classical = 1,

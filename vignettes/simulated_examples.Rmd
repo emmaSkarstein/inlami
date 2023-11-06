@@ -72,23 +72,17 @@ simple_data <- data.frame(y = y, x = x_obs, z = z)
 ## Fitting the model
 
 ```{r}
-# Predictors for the sub-models
-simple_moi <- y ~ x + z
-simple_imp <- x ~ z
-
-# Prior for beta.x
-prior.beta <- c(0, 1/1000) # N(0, 10^3)
-
 # Fit the model
 simple_model <- fit_inlami(data = simple_data, 
-                         formula_moi = simple_moi, 
-                         formula_imp = simple_imp, 
+                         formula_moi = y ~ x + z, 
+                         formula_imp = x ~ z, 
                          family_moi = "gaussian",
                          error_type = c("berkson", "classical"),
-                         prior.prec.moi = c(10, 9),
-                         prior.prec.berkson = c(10, 9), 
-                         prior.prec.classical = c(10, 9),
-                         prior.prec.imp = c(10, 9),
+                         prior.prec.moi = c(10, 9),       # Gamma(10, 9)
+                         prior.prec.berkson = c(10, 9),   # Gamma(10, 9)
+                         prior.prec.classical = c(10, 9), # Gamma(10, 9)
+                         prior.prec.imp = c(10, 9),       # Gamma(10, 9)
+                         prior.beta.error = c(0, 1/1000), # N(0, 10^3)
                          initial.prec.moi = 1,
                          initial.prec.berkson = 1,
                          initial.prec.classical = 1,
@@ -165,6 +159,7 @@ missing_model <- fit_inlami(formula_moi = y ~ x + z,
                             error_type = "missing", 
                             prior.prec.moi = c(2, 1),
                             prior.prec.imp = c(2, 1),
+                            prior.beta.error = c(0, 1/1000),
                             initial.prec.moi = 1,
                             initial.prec.imp = 1)
 
@@ -247,7 +242,8 @@ reff_model <- fit_inlami(formula_moi = y ~ x + z +
                        initial.prec.imp = 1/4,
                        prior.prec.moi = c(1, 4),
                        prior.prec.classical = c(10, 10),
-                       prior.prec.imp = c(1, 4))
+                       prior.prec.imp = c(1, 4),
+                       prior.beta.error = c(0, 1/1000))
 
 summary(reff_model)
 
@@ -273,6 +269,8 @@ plot(reff_model) +
 |Berkson, classical | Binomial | asthma | airpollution | gender, age, district |
 
 In this example, we simulate data from a fictitious, but realistic scenario where we want examine if people in areas with high air pollution seem to have asthma more than in areas with lower air pollution. But the air pollution value for the people in the study canot be observed directly, instead sensors have been placed at certain locations, and the value for a person is set to be the value gathered at the closest sensor. This leads to a Berkson error. In addition to that, we believe that there is some noise in the measurements due to imprecision in the sensor. This corresponds to a classical measurement error. 
+
+TODO: random intercept model for district instead of treating it as continuous variable.
 
 ## Generating the data
 
@@ -305,11 +303,6 @@ airpollution <- data.frame(asthma = asthma,
 ```
 
 ## Fitting the model
-```{r}
-# Priors for model of interest coefficients
-prior.beta <- c(0, 1/1000) # N(0, 10^3)
-
-```
 
 ```{r}
 # Scale the data
@@ -327,6 +320,7 @@ airpollution_model <- fit_inlami(data = airpollution_scaled,
                          prior.prec.berkson = c(1000, 999), 
                          prior.prec.classical = c(1000, 999),
                          prior.prec.imp = c(0.5, 0.5),
+                         prior.beta.error = c(0, 1/1000),
                          initial.prec.berkson = 1,
                          initial.prec.classical = 1,
                          initial.prec.imp = 1/16)
@@ -429,6 +423,7 @@ birthweight_model <- fit_inlami(data = birthweight_scaled,
                          prior.prec.berkson = c(100, 1), 
                          prior.prec.classical = c(100, 1),
                          prior.prec.imp = c(10, 9),
+                         prior.beta.error = c(0, 1/1000),
                          initial.prec.moi = 1,
                          initial.prec.berkson = 1,
                          initial.prec.classical = 1/9,
@@ -449,4 +444,97 @@ birthweight.truth <- tibble::tribble(
 plot(birthweight_model, plot_intercept = FALSE, plot_imp = FALSE) +
   geom_point(data = birthweight.truth, aes(x = value))
 ```
+# Pumpkin weights
+
+```{r, message = FALSE, eval = FALSE}
+library(tidyverse)
+
+pumpkins_original <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-19/pumpkins.csv')
+
+visdat::vis_miss(select(pumpkins_original, c("weight_lbs", "ott")))
+
+pumpkins <- pumpkins_original %>% 
+  separate(col = id, sep = "-", into = c("year", "type")) %>% 
+  select(c("weight_lbs", "ott", "year", "type", "grower_name")) %>% 
+  mutate(across(c("year", "weight_lbs", "ott"), as.numeric)) %>% 
+  mutate(across(c("type"), as.factor)) %>% 
+  drop_na("weight_lbs") %>% 
+  distinct() %>% 
+  filter(ott > 10 & ott < 600) %>% # Many ott values are zero, why?
+  filter(!(type %in% c("T", "L"))) %>% 
+  # Scale weight and ott
+  mutate(across(c("weight_lbs", "ott"), ~ . - mean(.))) %>% 
+  mutate(ott2 = ott^2) %>% 
+  mutate(type = case_match(type, 
+                           "F" ~ "Field_Pumpkin",
+                           "P" ~ "Giant_Pumpkin",
+                           "S" ~ "Giant_Squash",
+                           "W" ~ "Giant_Watermelon",
+                           "L" ~ "Long_Gourd",
+                           "T" ~ "Tomato")) %>% 
+  # Dummy code the type:
+  mutate(dum = 1, type_copy = type) %>% 
+  pivot_wider(names_from = type_copy,
+              values_from = dum,
+              values_fill = 0)
+
+# Types: F = "Field Pumpkin", P = "Giant Pumpkin", S = "Giant Squash", W = "Giant Watermelon", L = "Long Gourd" (length in inches, not weight in pounds), T = Tomato
+
+ggplot(pumpkins, aes(x = ott, y = weight_lbs, color = type)) +
+  geom_point(alpha = 0.5)
+
+summary(pumpkins)
+
+pumpkin_model_lm <- lm(weight_lbs ~ ott + year + type, data = pumpkins)
+summary(pumpkin_model_lm)
+
+#library(lme4)
+#pumpkin_lmer <- lmer(weight_lbs ~ ott + (ott | type), data = pumpkins)
+#coef(pumpkin_model)$type
+#plot(pumpkin_model)
+
+# Artificially remove some of the ott measurements
+missing_id <- sample(c(1, NA), size = nrow(pumpkins), 
+                     prob = c(0.7, 0.3), replace = TRUE)
+pumpkins$ott_truth <- pumpkins$ott
+pumpkins$ott <- pumpkins$ott_truth*missing_id
+
+visdat::vis_miss(select(pumpkins, c("weight_lbs", "ott")))
+```
+
+```{r, eval = FALSE}
+library(inlami)
+inla_pumpkin <- inla(
+  formula = weight_lbs ~ ott + year + Giant_Pumpkin + Giant_Squash + Giant_Watermelon, 
+  data = pumpkins,
+  family = "gaussian")
+
+summary(inla_pumpkin)
+
+pumpkin_model <- fit_inlami(
+  formula_moi = weight_lbs ~ ott + Giant_Pumpkin + Giant_Squash + Giant_Watermelon,
+  formula_imp = ott ~ Giant_Pumpkin + Giant_Squash + Giant_Watermelon,
+  family_moi = "gaussian",
+  data = pumpkins,
+  error_type = "missing",
+  prior.prec.moi = c(2, 1),
+  prior.prec.imp = c(2, 1),
+  prior.beta.error = c(0, 1/1000),
+  initial.prec.moi = 1,
+  initial.prec.imp = 1)
+
+# Something is seriously wrong here...
+summary(pumpkin_model)
+
+plot(pumpkin_model)
+
+pumpkin_model$summary.fixed
+
+summary.inla(pumpkin_model)
+```
+
+
+
+
+
 

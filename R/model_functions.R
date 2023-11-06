@@ -81,7 +81,8 @@ extract_variables_from_formula <- function(formula_moi,
 #' @param formula_moi an object of class "formula", describing the main model to be fitted.
 #' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
 #' @param family_moi a string indicating the likelihood family for the model of interest (the main model).
-#' @param error_type Type of error (one of "classical", "berkson", "missing")
+#' @param error_type type of error (one of "classical", "berkson", "missing")
+#' @param prior.beta.error parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?
 #'
 #' @return An object of class "formula".
 #' @export
@@ -89,14 +90,18 @@ extract_variables_from_formula <- function(formula_moi,
 #' @examples
 #' f_moi <- y ~ x + z
 #' f_imp <- x ~ z
-#' make_inlami_formula(formula_moi = f_moi, formula_imp = f_imp, error_type = "classical")
+#' make_inlami_formula(formula_moi = f_moi,
+#'                     formula_imp = f_imp,
+#'                     error_type = "classical",
+#'                     prior.beta.error = c(0, 1/1000)
+#'                     )
 make_inlami_formula <- function(formula_moi,
                                 formula_imp,
                                 family_moi = "gaussian",
-                                error_type = "classical"){
+                                error_type = "classical",
+                                prior.beta.error){
 
   # Weaknesses:
-  # Fixed prior for beta.x
   # Fixed size of id.x and id.r values (1:n)
 
   # Extract and group all variables from formulas:
@@ -116,8 +121,10 @@ make_inlami_formula <- function(formula_moi,
 
 
   # The copy term to ensure the mismeasured variable is copied correctly through the models
+  #prior.beta.error <- c(0, 1/1000)
   copy_term1 <- paste0("f(", paste0("beta.", vars$response_imp),
-                       ", copy = 'id.x', hyper = list(beta = list(param = c(0, 1/1000), fixed = FALSE)))")
+                       ", copy = 'id.x', hyper = list(beta = list(param = ",
+                       deparse(prior.beta.error), ", fixed = FALSE)))")
   # TODO: What does the "param = c(0, 1/1000)" above actually control? Should this be given as an argument?
   # I think it's the prior for beta.x?
 
@@ -285,10 +292,8 @@ make_inlami_matrices <- function(data,
 #' @export
 #'
 #' @examples
-#' f_moi <- y ~ x + z
-#' f_imp <- x ~ z
-#' make_inlami_stacks(formula_moi = f_moi,
-#'                    formula_imp = f_imp,
+#' make_inlami_stacks(formula_moi = y ~ x + z,
+#'                    formula_imp = x ~ z,
 #'                    data = simple_data,
 #'                    error_type = "classical")
 make_inlami_stacks <- function(formula_moi,
@@ -316,21 +321,24 @@ make_inlami_stacks <- function(formula_moi,
   }
 
   # Check if it looks like there may be repeated measurements
-  if(sum(grepl(paste0("\\b", vars$error_variable, "(\\d|)\\b"),
+  repeated_obs_warning <- FALSE
+  if(sum(grepl(paste0("\\b", vars$error_variable, "(\\d)\\b"),
                names(data)))>1 &&
      !repeated_observations){
-    stop("It looks like you may have repeated measurements of the variable with measurement error or missingness. If this is correct, specify the argument 'repeated_observations = TRUE' to ensure correct analysis.")
+    repeated_obs_warning <- TRUE
+    warning("It looks like you may have repeated measurements of the variable with measurement error or missingness. If this is the case, specify the argument 'repeated_observations = TRUE' to ensure correct analysis.")
   }
 
   # Check that all variables in formula exist in data
   formula_vars <- union(all.vars(formula_moi), all.vars(formula_imp))
   data_vars <- names(data)
-  if(repeated_observations){
+  if(repeated_observations | repeated_obs_warning){
+    # If reason to believe repeated measurements, ignore the error variable in the comparison
     formula_vars <- setdiff(formula_vars, vars$error_variable)
   }
   diff_vars <- setdiff(formula_vars, data_vars) # vars in formula but not in data
   if(length(diff_vars)>0){
-    stop(paste0("It looks like the following variable(s) are in the formula but not the data: ", diff_vars))
+    stop(paste0("It looks like the following variable(s) are in the formula but not the data: ", toString(diff_vars)))
   }
 
 
@@ -585,6 +593,7 @@ make_inlami_scaling_vector <- function(inlami_stack,
 #' @param prior.prec.berkson a string containing the parameters for the prior for the precision of the error term for the Berkson error model.
 #' @param prior.prec.classical a string containing the parameters for the prior for the precision of the error term for the classical error model.
 #' @param prior.prec.imp a string containing the parameters for the precision of the latent variable r, which is the variable being described in the imputation model.
+#' @param prior.beta.error parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?
 #' @param initial.prec.moi the initial value for the precision of the residual term for the model of interest.
 #' @param initial.prec.berkson the initial value for the precision of the residual term for the Berkson error term.
 #' @param initial.prec.classical the initial value for the precision of the residual term for the classical error term.
@@ -610,6 +619,7 @@ make_inlami_scaling_vector <- function(inlami_stack,
 #'                            prior.prec.berkson = c(10, 9),
 #'                            prior.prec.classical = c(10, 9),
 #'                            prior.prec.imp = c(10, 9),
+#'                            prior.beta.error = c(0, 1/1000),
 #'                            initial.prec.moi = 1,
 #'                            initial.prec.berkson = 1,
 #'                            initial.prec.classical = 1,
@@ -625,6 +635,7 @@ fit_inlami <- function(formula_moi,
                      prior.prec.berkson = NULL,
                      prior.prec.classical = NULL,
                      prior.prec.imp = NULL,
+                     prior.beta.error = NULL,
                      initial.prec.moi = NULL,
                      initial.prec.berkson = NULL,
                      initial.prec.classical = NULL,
@@ -640,7 +651,8 @@ fit_inlami <- function(formula_moi,
   formula_full <- make_inlami_formula(formula_moi = formula_moi,
                                formula_imp = formula_imp,
                                family_moi = family_moi,
-                               error_type = error_type)
+                               error_type = error_type,
+                               prior.beta.error = prior.beta.error)
 
   # Define some stuff ----------------------------------------------------------
   model_levels_without_moi <- union(error_type, c("classical", "imp")) # Always need classical

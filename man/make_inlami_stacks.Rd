@@ -33,10 +33,8 @@ An object of class inla.stack with data structured according to specified formul
 Make data stacks for joint model specification in INLA
 }
 \examples{
-f_moi <- y ~ x + z
-f_imp <- x ~ z
-make_inlami_stacks(formula_moi = f_moi,
-                   formula_imp = f_imp,
+make_inlami_stacks(formula_moi = y ~ x + z,
+                   formula_imp = x ~ z,
                    data = simple_data,
                    error_type = "classical")
 }

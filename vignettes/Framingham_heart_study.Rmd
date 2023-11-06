@@ -31,7 +31,7 @@ In this example, we fit a logistic regression model for whether or not a patient
 
 The formula for the main model of interest will be
 $$
-\texttt{disease}_i = \beta_0 + \beta_{\texttt{sbp}} \texttt{sbp}_i + \beta_{\texttt{smoking}} +  \texttt{smoking}_i + \varepsilon_i,
+\text{logit}\{\texttt{disease}_i\} = \beta_0 + \beta_{\texttt{sbp}} \texttt{sbp}_i + \beta_{\texttt{smoking}} \texttt{smoking}_i,
 $$
 and the formula for the imputation model will be
 
@@ -50,11 +50,10 @@ where $u_i^{1}, u_i^{2} \sim N(0, \tau_u)$ are the measurement error terms.
 TODO: Let user specify these priors.
 ```{r}
 prior.beta <- c(0, 0.01)
-prior.alpha0 <- c(0, 1)
-prior.alphaz <- c(0, 1)
+
 ```
 
-We can then call the `fit_inlami` function directly with the above formulas for the model of interest and imputation model. Also note the repeated measurements argument, which must be set to `TRUE` to ensure that the model is specified correctly. We give the precision for the error term of the measurement error model a \texttt{Gamma(100, 1)} prior, and the error term for the imputation model a \texttt{Gamma(10, 1)} prior.
+We can then call the `fit_inlami` function directly with the above formulas for the model of interest and imputation model. Also note the repeated measurements argument, which must be set to `TRUE` to ensure that the model is specified correctly. We give the precision for the error term of the measurement error model a \texttt{Gamma(100, 1)} prior, and the error term for the imputation model a \texttt{Gamma(10, 1)} prior. By default in R-INLA, the fixed effects are given Gaussian priors with mean $0$ and precision $0.001$. We re-assign the precisions to be $0.01$, but keep the means at 0 (therefore they are not specified in the `control.fixed` argument).
 
 ```{r}
 framingham_model <- fit_inlami(formula_moi = disease ~ sbp + smoking,
@@ -65,8 +64,14 @@ framingham_model <- fit_inlami(formula_moi = disease ~ sbp + smoking,
                                repeated_observations = TRUE,
                                prior.prec.classical = c(100, 1),
                                prior.prec.imp = c(10, 1),
+                               prior.beta.error = c(0, 0.01),
                                initial.prec.classical = 100,
-                               initial.prec.imp = 10)
+                               initial.prec.imp = 10,
+                               control.fixed = list(
+                                 prec = list(beta.0 = 0.01, 
+                                             beta.smoking = 0.01, 
+                                             alpha.0 = 0.01, 
+                                             alpha.smoking = 0.01)))
 ```
 
 Once the model is fit we can look at the summary.
