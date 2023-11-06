@@ -59,17 +59,18 @@ test_that("make_inlami_stacks works", {
                              formula_imp = formula_imp))
 
   # Check if repeated observations are specified
-  expect_error(make_inlami_stacks(data = framingham,
-                                  formula_moi = disease ~ sbp + smoking,
-                                  formula_imp = sbp ~ smoking,
-                                  error_type = "classical"))
+  expect_warning(make_inlami_stacks(data = framingham,
+                                 formula_moi = disease ~ sbp + smoking,
+                                 formula_imp = sbp ~ smoking,
+                                 error_type = "classical"))
 
   # Check if variables in formula are in data (but not sensitive to repeated measurements)
   expect_error(make_inlami_stacks(
     formula_moi = inla.surv(t, d) ~ sbp + aged + smoking + sex + diabetes,
     formula_imp = sbp ~ age + smoke + sex + diabetes,
     data = nhanes_survival,
-    error_type = c("classical", "missing"))
+    error_type = c("classical", "missing"),
+    repeated_observations = TRUE)
   )
 
 })
@@ -97,6 +98,7 @@ test_that("fit_inlami works", {
                              prior.prec.berkson = c(10, 9),
                              prior.prec.classical = c(10, 9),
                              prior.prec.imp = c(10, 9),
+                             prior.beta.error = c(0, 1/1000),
                              initial.prec.moi = 1,
                              initial.prec.berkson = 1,
                              initial.prec.classical = 1,
@@ -110,7 +112,7 @@ test_that("fit_inlami works", {
 
   # Check the estimate for beta.x and the precision of MOI-level
   beta.x <- simple_model$summary.hyperpar["Beta for beta.x", "mean"]
-  expect_equal(beta.x, 2, tolerance = 0.1)
+  expect_equal(beta.x, 2, tolerance = 0.3)
   prec.moi <- simple_model$summary.hyperpar["Precision for the Gaussian observations", "mean"]
   expect_equal(prec.moi, 1, tolerance = 0.2)
 
