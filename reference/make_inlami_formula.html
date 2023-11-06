@@ -55,7 +55,8 @@
 <span>  <span class="va">formula_moi</span>,</span>
 <span>  <span class="va">formula_imp</span>,</span>
 <span>  family_moi <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
-<span>  error_type <span class="op">=</span> <span class="st">"classical"</span></span>
+<span>  error_type <span class="op">=</span> <span class="st">"classical"</span>,</span>
+<span>  <span class="va">prior.beta.error</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,7 +75,11 @@
 
 
 <dt>error_type</dt>
-<dd><p>Type of error (one of "classical", "berkson", "missing")</p></dd>
+<dd><p>type of error (one of "classical", "berkson", "missing")</p></dd>
+
+
+<dt>prior.beta.error</dt>
+<dd><p>parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -88,12 +93,16 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">f_moi</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="va">z</span></span></span>
 <span class="r-in"><span><span class="va">f_imp</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">~</span> <span class="va">z</span></span></span>
-<span class="r-in"><span><span class="fu">make_inlami_formula</span><span class="op">(</span>formula_moi <span class="op">=</span> <span class="va">f_moi</span>, formula_imp <span class="op">=</span> <span class="va">f_imp</span>, error_type <span class="op">=</span> <span class="st">"classical"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">make_inlami_formula</span><span class="op">(</span>formula_moi <span class="op">=</span> <span class="va">f_moi</span>,</span></span>
+<span class="r-in"><span>                    formula_imp <span class="op">=</span> <span class="va">f_imp</span>,</span></span>
+<span class="r-in"><span>                    error_type <span class="op">=</span> <span class="st">"classical"</span>,</span></span>
+<span class="r-in"><span>                    prior.beta.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    <span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> list(y_moi, y_classical, y_imp) ~ -1 + beta.0 + beta.z + alpha.0 + </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     alpha.z + f(beta.x, copy = "id.x", hyper = list(beta = list(param = c(0, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     1/1000), fixed = FALSE))) + f(id.x, weight.x, model = "iid", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     0.001), fixed = FALSE))) + f(id.x, weight.x, model = "iid", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     values = 1:n, hyper = list(prec = list(initial = -15, fixed = TRUE)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55f831add210&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5578cc4494c8&gt;</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

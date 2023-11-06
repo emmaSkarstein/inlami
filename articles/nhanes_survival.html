@@ -189,6 +189,7 @@ repeated measurements for SBP, we need to set this argument to
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>hyper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>initial <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">prec.x</span><span class="op">)</span>,</span>
 <span>                                  param <span class="op">=</span> <span class="va">prior.prec.x</span>,</span>
 <span>                                  fixed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  prior.beta.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span>, <span class="co"># Prior for beta.sbp</span></span>
 <span>  control.predictor<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>link<span class="op">=</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="co"># Why 3?</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">survival_model</span><span class="op">)</span></span>
@@ -203,45 +204,45 @@ repeated measurements for SBP, we need to set this argument to
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
 <span><span class="co">#&gt;                     mean         sd 0.025quant   0.5quant 0.975quant       mode</span></span>
-<span><span class="co">#&gt; beta.0        -5.4452411 0.13790659 -5.7127346 -5.4419184 -5.1859186 -5.4156721</span></span>
-<span><span class="co">#&gt; beta.age       0.9045966 0.04988459  0.8068993  0.9045701  1.0024222  0.9045645</span></span>
-<span><span class="co">#&gt; beta.smoke     0.2696714 0.08460127  0.1037682  0.2696743  0.4355586  0.2696744</span></span>
-<span><span class="co">#&gt; beta.sex       0.4450914 0.07886732  0.2904359  0.4450929  0.5997389  0.4450929</span></span>
-<span><span class="co">#&gt; beta.diabetes  0.5914806 0.09300339  0.4090873  0.5914886  0.7738282  0.5914887</span></span>
+<span><span class="co">#&gt; beta.0        -5.4540781 0.13790976 -5.7178520 -5.4542795 -5.1898460 -5.4542717</span></span>
+<span><span class="co">#&gt; beta.age       0.9054657 0.04986830  0.8076087  0.9055102  1.0030712  0.9055112</span></span>
+<span><span class="co">#&gt; beta.smoke     0.2700314 0.08453205  0.1042703  0.2700318  0.4357905  0.2700318</span></span>
+<span><span class="co">#&gt; beta.sex       0.4454308 0.07880390  0.2909165  0.4454261  0.5999723  0.4454261</span></span>
+<span><span class="co">#&gt; beta.diabetes  0.5919701 0.09293527  0.4096874  0.5919860  0.7741628  0.5919861</span></span>
 <span><span class="co">#&gt;                        kld</span></span>
-<span><span class="co">#&gt; beta.0        4.901895e-07</span></span>
-<span><span class="co">#&gt; beta.age      1.504661e-09</span></span>
-<span><span class="co">#&gt; beta.smoke    5.347680e-11</span></span>
-<span><span class="co">#&gt; beta.sex      5.302257e-11</span></span>
-<span><span class="co">#&gt; beta.diabetes 5.698918e-11</span></span>
+<span><span class="co">#&gt; beta.0        4.309752e-07</span></span>
+<span><span class="co">#&gt; beta.age      1.627071e-09</span></span>
+<span><span class="co">#&gt; beta.smoke    5.014923e-11</span></span>
+<span><span class="co">#&gt; beta.sex      5.038384e-11</span></span>
+<span><span class="co">#&gt; beta.diabetes 5.911659e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
-<span><span class="co">#&gt;               mean         sd 0.025quant  0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; beta.sbp 0.1125538 0.04852011 0.01640001 0.1127705  0.2074407 0.113675</span></span>
+<span><span class="co">#&gt;               mean         sd 0.025quant 0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; beta.sbp 0.1132241 0.04863349 0.01739893 0.113252  0.2088867 0.1133677</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
 <span><span class="co">#&gt;                        mean         sd  0.025quant     0.5quant 0.975quant</span></span>
-<span><span class="co">#&gt; alpha.0         0.006405755 0.04311996 -0.07815450  0.006405595 0.09096693</span></span>
-<span><span class="co">#&gt; alpha.age       0.322546784 0.02956478  0.26457125  0.322545850 0.38052765</span></span>
-<span><span class="co">#&gt; alpha.smoke     0.004835516 0.05062596 -0.09444538  0.004835695 0.10411539</span></span>
-<span><span class="co">#&gt; alpha.sex      -0.061806903 0.04701918 -0.15401339 -0.061807183 0.03040119</span></span>
-<span><span class="co">#&gt; alpha.diabetes  0.137921122 0.06224309  0.01586262  0.137919798 0.25998718</span></span>
+<span><span class="co">#&gt; alpha.0         0.006414733 0.04311843 -0.07814273  0.006414670 0.09097256</span></span>
+<span><span class="co">#&gt; alpha.age       0.322557248 0.02956393  0.26458301  0.322556464 0.38053596</span></span>
+<span><span class="co">#&gt; alpha.smoke     0.004837677 0.05062418 -0.09443968  0.004837877 0.10411389</span></span>
+<span><span class="co">#&gt; alpha.sex      -0.061813664 0.04701750 -0.15401662 -0.061814000 0.03039121</span></span>
+<span><span class="co">#&gt; alpha.diabetes  0.137938573 0.06224096  0.01588372  0.137937474 0.25999970</span></span>
 <span><span class="co">#&gt;                        mode          kld</span></span>
-<span><span class="co">#&gt; alpha.0         0.006405596 1.135957e-11</span></span>
-<span><span class="co">#&gt; alpha.age       0.322545849 1.183633e-11</span></span>
-<span><span class="co">#&gt; alpha.smoke     0.004835696 1.146441e-11</span></span>
-<span><span class="co">#&gt; alpha.sex      -0.061807185 1.142997e-11</span></span>
-<span><span class="co">#&gt; alpha.diabetes  0.137919797 1.146537e-11</span></span>
+<span><span class="co">#&gt; alpha.0         0.006414670 1.169908e-11</span></span>
+<span><span class="co">#&gt; alpha.age       0.322556462 1.210694e-11</span></span>
+<span><span class="co">#&gt; alpha.smoke     0.004837878 1.180837e-11</span></span>
+<span><span class="co">#&gt; alpha.sex      -0.061814001 1.177635e-11</span></span>
+<span><span class="co">#&gt; alpha.diabetes  0.137937472 1.177245e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters (apart from beta.sbp): </span></span>
 <span><span class="co">#&gt;                                                mean         sd 0.025quant</span></span>
-<span><span class="co">#&gt; alpha parameter for weibullsurv            1.377515 0.04120540  1.3011878</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.843076 0.26013396  2.3545774</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.026943 0.04966621  0.9336443</span></span>
+<span><span class="co">#&gt; alpha parameter for weibullsurv            1.376961 0.04080192   1.297822</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.838731 0.25689313   2.357709</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.027330 0.04959679   0.934313</span></span>
 <span><span class="co">#&gt;                                            0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; alpha parameter for weibullsurv            1.375912   1.463318 1.370360</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.834934   3.377684 2.826520</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.025401   1.129156 1.021588</span></span>
+<span><span class="co">#&gt; alpha parameter for weibullsurv            1.376548   1.458457 1.376139</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.830221   3.368164 2.819662</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.025740   1.129552 1.021713</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">survival_model</span>, plot_intercepts <span class="op">=</span> <span class="cn">FALSE</span>, plot_imp <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nhanes_survival_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
   </main>

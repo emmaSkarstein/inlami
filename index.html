@@ -159,6 +159,7 @@
 <span>                         prior.prec.berkson <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>, </span>
 <span>                         prior.prec.classical <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>,</span>
 <span>                         prior.prec.imp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">9</span><span class="op">)</span>,</span>
+<span>                         prior.beta.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span>,</span>
 <span>                         initial.prec.moi <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                         initial.prec.berkson <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                         initial.prec.classical <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -176,30 +177,33 @@
 <span><span class="co">#&gt; [1] "berkson"   "classical" "missing"  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
-<span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant mode          kld</span></span>
-<span><span class="co">#&gt; beta.0 1.034330 0.2263730  0.6043257 1.045291   1.461791   NA 1.863033e-06</span></span>
-<span><span class="co">#&gt; beta.z 1.922222 0.4072509  1.2067566 1.964587   2.676866   NA 1.147397e-05</span></span>
+<span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant     mode          kld</span></span>
+<span><span class="co">#&gt; beta.0 1.032704 0.2192166  0.6137157 1.031401   1.447328 1.027929 1.081872e-06</span></span>
+<span><span class="co">#&gt; beta.z 1.916506 0.3886175  1.2284307 1.908203   2.581477 1.915849 2.014284e-04</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
-<span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant mode</span></span>
-<span><span class="co">#&gt; beta.x 1.931857 0.1724726   1.593721 1.931025   2.274265   NA</span></span>
+<span><span class="co">#&gt;            mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
+<span><span class="co">#&gt; beta.x 1.973528 0.2005449   1.576926 1.974143   2.366543 1.976701</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
-<span><span class="co">#&gt;             mean         sd 0.025quant 0.5quant 0.975quant mode          kld</span></span>
-<span><span class="co">#&gt; alpha.0 1.033066 0.05061246  0.9337548 1.033076   1.132319   NA 3.922328e-12</span></span>
-<span><span class="co">#&gt; alpha.z 2.024740 0.05227671  1.9222559 2.024718   2.127349   NA 1.755001e-11</span></span>
+<span><span class="co">#&gt;             mean         sd 0.025quant 0.5quant 0.975quant     mode</span></span>
+<span><span class="co">#&gt; alpha.0 1.033081 0.05059543  0.9338211 1.033089   1.132294 1.033089</span></span>
+<span><span class="co">#&gt; alpha.z 2.024705 0.05225807  1.9222584 2.024687   2.127253 2.024687</span></span>
+<span><span class="co">#&gt;                  kld</span></span>
+<span><span class="co">#&gt; alpha.0 3.116138e-11</span></span>
+<span><span class="co">#&gt; alpha.z 5.317572e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters (apart from beta.x): </span></span>
 <span><span class="co">#&gt;                                                 mean        sd 0.025quant</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    1.1512050 0.3731690  0.5697345</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.0722138 0.3082185  0.6027874</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9429485 0.1056632  0.7501488</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9563592 0.1082409  0.7652814</span></span>
-<span><span class="co">#&gt;                                             0.5quant 0.975quant mode</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations    1.1011717   2.025993   NA</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.0263249   1.806385   NA</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9377501   1.166294   NA</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9485817   1.191246   NA</span></span></code></pre></div>
+<span><span class="co">#&gt; Precision for the Gaussian observations    1.1256171 0.3616641  0.5549841</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.1223166 0.3440037  0.5934569</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9259914 0.1090604  0.7302314</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9777175 0.1254844  0.7537948</span></span>
+<span><span class="co">#&gt;                                             0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations    1.0788756   1.962409 0.9940443</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 1.0734918   1.934221 0.9823583</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 0.9195217   1.159024 0.9064963</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[4] 0.9698390   1.247017 0.9544026</span></span></code></pre></div>
 <p>And we can use the default plot function to see a plot of the fixed effects and estimated coefficient for the variable with error:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">simple_model</span><span class="op">)</span></span></code></pre></div>

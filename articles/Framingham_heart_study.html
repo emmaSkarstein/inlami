@@ -114,8 +114,8 @@ SBP into the model. This can be done easily in the <code>inlami</code>
 package. The data used in this example is also included in the package,
 simply type <code><a href="../reference/framingham.html">?framingham</a></code> for more details.</p>
 <p>The formula for the main model of interest will be <span class="math display">\[
-\texttt{disease}_i = \beta_0 + \beta_{\texttt{sbp}} \texttt{sbp}_i +
-\beta_{\texttt{smoking}} +  \texttt{smoking}_i + \varepsilon_i,
+\text{logit}\{\texttt{disease}_i\} = \beta_0 + \beta_{\texttt{sbp}}
+\texttt{sbp}_i + \beta_{\texttt{smoking}} \texttt{smoking}_i,
 \]</span> and the formula for the imputation model will be</p>
 <p><span class="math display">\[
 \texttt{sbp}_i = \alpha_0 + \alpha_{\texttt{smoking}} \texttt{smoking}_i
@@ -131,15 +131,17 @@ since we have repeated measurements we actually have two: <span class="math disp
 \tau_u)\)</span> are the measurement error terms.</p>
 <p>TODO: Let user specify these priors.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">prior.beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.01</span><span class="op">)</span></span>
-<span><span class="va">prior.alpha0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">prior.alphaz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">prior.beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
 <p>We can then call the <code>fit_inlami</code> function directly with
 the above formulas for the model of interest and imputation model. Also
 note the repeated measurements argument, which must be set to
 <code>TRUE</code> to ensure that the model is specified correctly. We
 give the precision for the error term of the measurement error model a
-prior, and the error term for the imputation model a prior.</p>
+prior, and the error term for the imputation model a prior. By default
+in R-INLA, the fixed effects are given Gaussian priors with mean <span class="math inline">\(0\)</span> and precision <span class="math inline">\(0.001\)</span>. We re-assign the precisions to be
+<span class="math inline">\(0.01\)</span>, but keep the means at 0
+(therefore they are not specified in the <code>control.fixed</code>
+argument).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">framingham_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_inlami.html">fit_inlami</a></span><span class="op">(</span>formula_moi <span class="op">=</span> <span class="va">disease</span> <span class="op">~</span> <span class="va">sbp</span> <span class="op">+</span> <span class="va">smoking</span>,</span>
 <span>                               formula_imp <span class="op">=</span> <span class="va">sbp</span> <span class="op">~</span> <span class="va">smoking</span>,</span>
@@ -149,8 +151,14 @@ prior, and the error term for the imputation model a prior.</p>
 <span>                               repeated_observations <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                               prior.prec.classical <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>                               prior.prec.imp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>                               prior.beta.error <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.01</span><span class="op">)</span>,</span>
 <span>                               initial.prec.classical <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>                               initial.prec.imp <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<span>                               initial.prec.imp <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>                               control.fixed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>                                 prec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>beta.0 <span class="op">=</span> <span class="fl">0.01</span>, </span>
+<span>                                             beta.smoking <span class="op">=</span> <span class="fl">0.01</span>, </span>
+<span>                                             alpha.0 <span class="op">=</span> <span class="fl">0.01</span>, </span>
+<span>                                             alpha.smoking <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Once the model is fit we can look at the summary.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">framingham_model</span><span class="op">)</span></span>
@@ -164,32 +172,32 @@ prior, and the error term for the imputation model a prior.</p>
 <span><span class="co">#&gt; [1] "classical"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
-<span><span class="co">#&gt;                    mean        sd 0.025quant   0.5quant 0.975quant       mode</span></span>
-<span><span class="co">#&gt; beta.0       -2.3641397 0.2691086  -2.893386 -2.3635864 -1.8380118 -2.3635746</span></span>
-<span><span class="co">#&gt; beta.smoking  0.4013925 0.2979739  -0.182524  0.4012492  0.9861185  0.4012467</span></span>
+<span><span class="co">#&gt;                   mean        sd 0.025quant   0.5quant 0.975quant       mode</span></span>
+<span><span class="co">#&gt; beta.0       -2.360710 0.2687678 -2.8893552 -2.3601346 -1.8353076 -2.3601222</span></span>
+<span><span class="co">#&gt; beta.smoking  0.398949 0.2976650 -0.1843519  0.3988018  0.9830817  0.3987993</span></span>
 <span><span class="co">#&gt;                       kld</span></span>
-<span><span class="co">#&gt; beta.0       1.112424e-09</span></span>
-<span><span class="co">#&gt; beta.smoking 8.725984e-11</span></span>
+<span><span class="co">#&gt; beta.0       1.193013e-09</span></span>
+<span><span class="co">#&gt; beta.smoking 8.968215e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
 <span><span class="co">#&gt;              mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; beta.sbp 1.907873 0.5654564  0.8292758 1.896432   3.054844 1.846415</span></span>
+<span><span class="co">#&gt; beta.sbp 1.904285 0.5618837  0.8469172 1.888488    3.05705 1.817599</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
 <span><span class="co">#&gt;                      mean         sd  0.025quant    0.5quant 0.975quant</span></span>
-<span><span class="co">#&gt; alpha.0        0.01454484 0.01858755 -0.02191495  0.01454484 0.05100463</span></span>
-<span><span class="co">#&gt; alpha.smoking -0.01958671 0.02156987 -0.06189639 -0.01958671 0.02272297</span></span>
+<span><span class="co">#&gt; alpha.0        0.01454288 0.01858120 -0.02190445  0.01454288 0.05099022</span></span>
+<span><span class="co">#&gt; alpha.smoking -0.01958464 0.02156251 -0.06187986 -0.01958464 0.02271058</span></span>
 <span><span class="co">#&gt;                      mode          kld</span></span>
-<span><span class="co">#&gt; alpha.0        0.01454484 7.041412e-11</span></span>
-<span><span class="co">#&gt; alpha.smoking -0.01958671 7.041393e-11</span></span>
+<span><span class="co">#&gt; alpha.0        0.01454288 7.072634e-11</span></span>
+<span><span class="co">#&gt; alpha.smoking -0.01958464 7.072630e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters (apart from beta.sbp): </span></span>
 <span><span class="co">#&gt;                                                mean       sd 0.025quant</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 75.90915 3.687675   68.87394</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 19.90198 1.235259   17.57413</span></span>
-<span><span class="co">#&gt;                                            0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 75.83154   83.38982 75.70197</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 19.86616   22.43578 19.79984</span></span></code></pre></div>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 75.90179 3.690487   68.89263</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 19.89454 1.234043   17.55058</span></span>
+<span><span class="co">#&gt;                                            0.5quant 0.975quant    mode</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 75.81333   83.41982 75.6394</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 19.86501   22.40724 19.8246</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">framingham_model</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Framingham_heart_study_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
