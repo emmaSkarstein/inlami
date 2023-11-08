@@ -46,3 +46,20 @@
 #' }
 #' @source https://github.com/ruthkeogh/meas_error_handbook
 "nhanes_survival"
+
+#' Simulated data with two covariates with classical measurement error
+#'
+#' A simulated dataset to demonstrate how to set up a model in the case where there are two variables with measurement error.
+#'
+#' @format ## `two_error_data`
+#' A data frame with 1000 rows and 5 columns:
+#' \describe{
+#'   \item{y}{Response variable}
+#'   \item{x1}{Covariate measured with classical error, correlated with z}
+#'   \item{x2}{Covariate measured with classical error}
+#'   \item{x1_true}{Correct version of x1}
+#'   \item{x2_true}{Correct version of x2}
+#'   \item{z}{Error free covariate, correlated with x1}
+#' }
+#' @source The dataset is simulated.
+"two_error_data"
