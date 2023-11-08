@@ -2,7 +2,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- Build rd-file with devtools::build_readme() -->
 
-# inlami <a href='https://github.com/emmaSkarstein/inlami'><img src='man/figures/inlami_transparent.png' style="float:right; height:200px;" /></a>
+# inlami <a href='https://github.com/emmaSkarstein/inlami'><img src='man/figures/inlami_transparent.png' align="right" height = "200px" /></a>
 
 <!-- badges: start -->
 
@@ -157,32 +157,32 @@ summary(simple_model)
 #> 
 #> Fixed effects for model of interest: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant     mode          kld
-#> beta.0 1.032704 0.2192166  0.6137157 1.031401   1.447328 1.027929 1.081872e-06
-#> beta.z 1.916506 0.3886175  1.2284307 1.908203   2.581477 1.915849 2.014284e-04
+#> beta.0 1.033270 0.2186557  0.6125749 1.032940   1.448148 1.028621 7.323068e-07
+#> beta.z 1.918203 0.3876528  1.2239224 1.910555   2.585845 1.916175 1.757007e-04
 #> 
 #> Coefficient for error prone variable: 
 #>            mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> beta.x 1.973528 0.2005449   1.576926 1.974143   2.366543 1.976701
+#> beta.x 1.973326 0.1964043   1.584204  1.97417   2.357517 1.977689
 #> 
 #> Fixed effects for imputation model: 
 #>             mean         sd 0.025quant 0.5quant 0.975quant     mode
-#> alpha.0 1.033081 0.05059543  0.9338211 1.033089   1.132294 1.033089
-#> alpha.z 2.024705 0.05225807  1.9222584 2.024687   2.127253 2.024687
+#> alpha.0 1.033076 0.05057591  0.9338548 1.033084   1.132251 1.033084
+#> alpha.z 2.024717 0.05223744  1.9223102 2.024700   2.127224 2.024700
 #>                  kld
-#> alpha.0 3.116138e-11
-#> alpha.z 5.317572e-11
+#> alpha.0 2.936248e-11
+#> alpha.z 5.028830e-11
 #> 
 #> Model hyperparameters (apart from beta.x): 
 #>                                                 mean        sd 0.025quant
-#> Precision for the Gaussian observations    1.1256171 0.3616641  0.5549841
-#> Precision for the Gaussian observations[2] 1.1223166 0.3440037  0.5934569
-#> Precision for the Gaussian observations[3] 0.9259914 0.1090604  0.7302314
-#> Precision for the Gaussian observations[4] 0.9777175 0.1254844  0.7537948
+#> Precision for the Gaussian observations    1.1256194 0.3562013  0.5637931
+#> Precision for the Gaussian observations[2] 1.1239047 0.3363337  0.6026669
+#> Precision for the Gaussian observations[3] 0.9267863 0.1075895  0.7330292
+#> Precision for the Gaussian observations[4] 0.9781439 0.1234605  0.7575228
 #>                                             0.5quant 0.975quant      mode
-#> Precision for the Gaussian observations    1.0788756   1.962409 0.9940443
-#> Precision for the Gaussian observations[2] 1.0734918   1.934221 0.9823583
-#> Precision for the Gaussian observations[3] 0.9195217   1.159024 0.9064963
-#> Precision for the Gaussian observations[4] 0.9698390   1.247017 0.9544026
+#> Precision for the Gaussian observations    1.0795430   1.950601 0.9958465
+#> Precision for the Gaussian observations[2] 1.0774596   1.914166 0.9906533
+#> Precision for the Gaussian observations[3] 0.9206204   1.156051 0.9084353
+#> Precision for the Gaussian observations[4] 0.9704951   1.242819 0.9554617
 ```
 
 And we can use the default plot function to see a plot of the fixed

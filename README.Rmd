@@ -15,7 +15,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-# inlami <a href='https://github.com/emmaSkarstein/inlami'><img src='man/figures/inlami_transparent.png' style="float:right; height:200px;" /></a>
+# inlami <a href='https://github.com/emmaSkarstein/inlami'><img src='man/figures/inlami_transparent.png' align="right" height = "200px" /></a>
+
 
 
 <!-- badges: start -->
