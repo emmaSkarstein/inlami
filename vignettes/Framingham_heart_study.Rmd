@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+# First example: A logistic regression model with repeated measurements
+
 |Error types | Likelihood | Response | Covariate with error | Other covariate(s) |
 |:-----------|:----------|:--------|:----------|:------------|
 |Classical | Binomial | `disease` | `sbp1`, `sbp2` | `smoking` |
@@ -110,6 +112,123 @@ ggplot(results, aes(x = mean, y = model, color = variable)) +
   facet_grid(~ variable, scales = "free_x") +
   theme_bw()
 ```
+
+# Second example: Heteroscedastic measurement error and interaction between error variable and error free variable
+
+In this example, we artificially increase the measurement error for the smoking group in order to study a model with homoscedastic measurement error. The model in this example is identical to that in [Muff & Keller (2015)](https://onlinelibrary.wiley.com/doi/10.1002/bimj.201400157)
+
+```{r}
+framingham2 <- framingham
+n <- nrow(framingham2)
+
+set.seed(1)
+framingham2$sbp1 <- framingham$sbp1 + 
+  ifelse(framingham2$smoking == 1, rnorm(n, 0, 0.117), 0)
+framingham2$sbp2 <- framingham$sbp2 + 
+  ifelse(framingham2$smoking == 1, rnorm(n, 0, 0.117), 0)
+
+# Or: 
+#framingham2 <- read.table("../data-raw/fram_data_case2.txt", header=T)
+#names(framingham2) <- c("disease", "sbp1", "sbp2", "smoking")
+
+#framingham2$sbp <- (framingham2$sbp1 + framingham2$sbp2)/2
+```
+
+```{r}
+error_scaling <- c(1/(1+9*framingham2$smoking), 1/(1+9*framingham2$smoking))
+```
+
+```{r}
+# Homoscedastic ME modeled as homoscedastic ME (correct)
+framingham_model2.1 <- fit_inlami(formula_moi = disease ~ sbp:smoking,
+                               formula_imp = sbp ~ smoking,
+                               family_moi = "binomial", 
+                               data = framingham,
+                               error_type = "classical", 
+                               repeated_observations = TRUE,
+                               prior.prec.classical = c(100, 1),
+                               prior.prec.imp = c(10, 1),
+                               prior.beta.error = c(0, 0.01),
+                               initial.prec.classical = 100,
+                               initial.prec.imp = 10,
+                               control.fixed = list(
+                                 prec = list(beta.0 = 0.01, 
+                                             beta.smoking = 0.01, 
+                                             alpha.0 = 0.01, 
+                                             alpha.smoking = 0.01)))
+
+# Heteroscedastic ME modeled as heteroscedastic ME (correct)
+framingham_model2.2 <- fit_inlami(formula_moi = disease ~ sbp:smoking,
+                               formula_imp = sbp ~ smoking,
+                               family_moi = "binomial", 
+                               data = framingham2,
+                               error_type = "classical", 
+                               repeated_observations = TRUE,
+                               classical_error_scaling = error_scaling,
+                               prior.prec.classical = c(100, 1),
+                               prior.prec.imp = c(10, 1),
+                               prior.beta.error = c(0, 0.01),
+                               initial.prec.classical = 100,
+                               initial.prec.imp = 10,
+                               control.fixed = list(
+                                 prec = list(beta.0 = 0.01, 
+                                             beta.smoking = 0.01, 
+                                             alpha.0 = 0.01, 
+                                             alpha.smoking = 0.01)))
+
+# Heteroscedastic ME modeled as homoscedastic ME (incorrect)
+framingham_model2.3 <- fit_inlami(formula_moi = disease ~ sbp:smoking,
+                               formula_imp = sbp ~ smoking,
+                               family_moi = "binomial", 
+                               data = framingham2,
+                               error_type = "classical", 
+                               repeated_observations = TRUE,
+                               prior.prec.classical = c(100, 1),
+                               prior.prec.imp = c(10, 1),
+                               prior.beta.error = c(0, 0.01),
+                               initial.prec.classical = 100,
+                               initial.prec.imp = 10,
+                               control.fixed = list(
+                                 prec = list(beta.0 = 0.01, 
+                                             beta.smoking = 0.01, 
+                                             alpha.0 = 0.01, 
+                                             alpha.smoking = 0.01)))
+
+framingham_model2.5 <- fit_inlami(formula_moi = disease ~ sbp:smoking,
+                               formula_imp = sbp ~ smoking,
+                               family_moi = "binomial", 
+                               data = framingham2,
+                               error_type = "classical", 
+                               repeated_observations = TRUE,
+                               classical_error_scaling = c(rep(10^(-12), 2*n)),
+                               prior.prec.classical = c(100, 1),
+                               prior.prec.imp = c(10, 1),
+                               prior.beta.error = c(0, 0.01),
+                               initial.prec.classical = 100,
+                               initial.prec.imp = 10,
+                               control.fixed = list(
+                                 prec = list(beta.0 = 0.01, 
+                                             beta.smoking = 0.01, 
+                                             alpha.0 = 0.01, 
+                                             alpha.smoking = 0.01)))
+
+plot(framingham_model2.1)
+plot(framingham_model2.2)
+plot(framingham_model2.3)
+plot(framingham_model2.5)
+
+
+framingham_model2.1$summary.hyperpar
+framingham_model2.2$summary.hyperpar
+framingham_model2.3$summary.hyperpar
+framingham_model2.5$summary.hyperpar
+```
+
+
+
+
+
+
 
 
 

@@ -1,10 +1,19 @@
 test_that("extract_variables_from_formula works", {
-  simple_moi <- y ~ x + z
-  simple_imp <- x ~ z
-  expected <- extract_variables_from_formula(formula_moi = simple_moi, formula_imp = simple_imp)
-
   # Check that all elements are characters
+  expected <- extract_variables_from_formula(formula_moi = y ~ x + z,
+                                             formula_imp = x ~ z)
   expect_true(all(sapply(expected, class) == "character"))
+
+  # Check that it correctly identifies interaction between error variable and another covariate.
+  expected2 <- extract_variables_from_formula(
+    formula_moi = y ~ x + x:z + x:m + z:s,
+    formula_imp = x ~ z)
+  expect_equal(expected2[["error_interaction_variables"]], c("z", "m"))
+
+  # Make sure it also works if only term is interaction term
+  expected3 <- extract_variables_from_formula(formula_moi <- y ~ smoking:sbp,
+                                              formula_imp = sbp ~ smoking)
+  expect_equal(expected3[["error_interaction_variables"]], "smoking")
 
   # Catching errors -----------------------------------------------------------
   expect_error(extract_variables_from_formula(formula_moi = "string", formula_imp = simple_imp))
@@ -59,7 +68,7 @@ test_that("make_inlami_stacks works", {
                              formula_imp = formula_imp))
 
   # Check if repeated observations are specified
-  expect_warning(make_inlami_stacks(data = framingham,
+  expect_error(make_inlami_stacks(data = framingham,
                                  formula_moi = disease ~ sbp + smoking,
                                  formula_imp = sbp ~ smoking,
                                  error_type = "classical"))

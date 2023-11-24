@@ -463,7 +463,7 @@ pumpkins <- pumpkins_original %>%
   filter(ott > 10 & ott < 600) %>% # Many ott values are zero, why?
   filter(!(type %in% c("T", "L"))) %>% 
   # Scale weight and ott
-  mutate(across(c("weight_lbs", "ott"), ~ . - mean(.))) %>% 
+  mutate(across(c("weight_lbs", "ott"), ~ (. - mean(.))/sd(.))) %>% 
   mutate(ott2 = ott^2) %>% 
   mutate(type = case_match(type, 
                            "F" ~ "Field_Pumpkin",
@@ -483,10 +483,13 @@ pumpkins <- pumpkins_original %>%
 ggplot(pumpkins, aes(x = ott, y = weight_lbs, color = type)) +
   geom_point(alpha = 0.5)
 
-summary(pumpkins)
+str(pumpkins)
 
-pumpkin_model_lm <- lm(weight_lbs ~ ott + year + type, data = pumpkins)
+pumpkin_model_lm <- lm(weight_lbs ~ ott*type, data = pumpkins)
 summary(pumpkin_model_lm)
+
+ott_model <- lm(ott ~ type, data = pumpkins)
+summary(ott_model)
 
 #library(lme4)
 #pumpkin_lmer <- lmer(weight_lbs ~ ott + (ott | type), data = pumpkins)
@@ -504,26 +507,33 @@ visdat::vis_miss(select(pumpkins, c("weight_lbs", "ott")))
 
 ```{r, eval = FALSE}
 library(inlami)
-inla_pumpkin <- inla(
-  formula = weight_lbs ~ ott + year + Giant_Pumpkin + Giant_Squash + Giant_Watermelon, 
+library(INLA)
+
+inla_pumpkin_naive <- inla(
+  formula = weight_lbs ~ ott + Giant_Pumpkin + Giant_Squash + Giant_Watermelon, 
   data = pumpkins,
   family = "gaussian")
 
-summary(inla_pumpkin)
+inla_pumpkin_correct <- inla(
+  formula = weight_lbs ~ ott_truth + Giant_Pumpkin + Giant_Squash + Giant_Watermelon, 
+  data = pumpkins,
+  family = "gaussian")
+
+inla_pumpkin_naive$summary.fixed
+inla_pumpkin_correct$summary.fixed
 
 pumpkin_model <- fit_inlami(
   formula_moi = weight_lbs ~ ott + Giant_Pumpkin + Giant_Squash + Giant_Watermelon,
-  formula_imp = ott ~ Giant_Pumpkin + Giant_Squash + Giant_Watermelon,
+  formula_imp = ott ~ weight_lbs + Giant_Pumpkin + Giant_Squash + Giant_Watermelon,
   family_moi = "gaussian",
   data = pumpkins,
   error_type = "missing",
-  prior.prec.moi = c(2, 1),
-  prior.prec.imp = c(2, 1),
+  prior.prec.moi = c(0.5, 3),
+  prior.prec.imp = c(0.5, 3),
   prior.beta.error = c(0, 1/1000),
-  initial.prec.moi = 1,
-  initial.prec.imp = 1)
+  initial.prec.moi = 0.28,
+  initial.prec.imp = 0.76)
 
-# Something is seriously wrong here...
 summary(pumpkin_model)
 
 plot(pumpkin_model)

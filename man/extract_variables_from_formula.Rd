@@ -20,7 +20,5 @@ imputation model, and groups them into responses, covariates, covariate with
 error and covariate(s) without error, for both sub-models.
 }
 \examples{
-f_moi <- y ~ x + z
-f_imp <- x ~ z
-extract_variables_from_formula(formula_moi = f_moi, formula_imp = f_imp)
+extract_variables_from_formula(formula_moi = y ~ x + z, formula_imp = x ~ z)
 }

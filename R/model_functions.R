@@ -10,10 +10,10 @@
 #' @return A list containing the names of the different variables of the model. The names of the elements in the list are "response_moi" (the response for the moi), "covariates_moi" (all covariates in the moi), "error_variable" (the name of the variable with error or missing data), "covariates_error_free" (the moi covariates without error), "response_imp" (imputation model response), "covariates_imp" (imputation model covariates).
 #' @export
 #'
+#' @importFrom stats terms
+#'
 #' @examples
-#' f_moi <- y ~ x + z
-#' f_imp <- x ~ z
-#' extract_variables_from_formula(formula_moi = f_moi, formula_imp = f_imp)
+#' extract_variables_from_formula(formula_moi = y ~ x + z, formula_imp = x ~ z)
 extract_variables_from_formula <- function(formula_moi,
                                            formula_imp){
   if(!(methods::is(formula_moi, "formula") & methods::is(formula_imp, "formula"))){
@@ -25,6 +25,9 @@ extract_variables_from_formula <- function(formula_moi,
 
   ## Extract name of response:
   response_moi <- all.vars(moi_components[[2]])
+
+  ## Right hand side terms
+  rhs_terms_moi <- labels(terms(formula_moi))
 
   ## Check for random effects in moi:
   reff_moi_index <- which(grepl("f\\((.*)\\)", moi_components[[3]]))
@@ -47,6 +50,23 @@ extract_variables_from_formula <- function(formula_moi,
   ## Error-free covariates:
   covariates_error_free <- covariates_moi[-error_var_index]
 
+  ## Check for interaction effects involving error variable:
+  error_interaction_variables <- ""
+  interaction_locs <- grepl(":|\\*", rhs_terms_moi)
+  if(any(interaction_locs)){
+    # If there are ANY interactions in the formula, we need to check if any of
+    #  them involve the error variable.
+    # Interaction indices
+    interactions <- rhs_terms_moi[interaction_locs]
+    error_interaction_id <- grepl(error_variable, interactions)
+    if(any(error_interaction_id)){
+      error_interactions <- interactions[error_interaction_id]
+      error_int_var_list <- strsplit(error_interactions, ":")
+      error_interaction_variables <- unlist(lapply(error_int_var_list,
+                                                   setdiff, error_variable))
+    }
+  }
+
   # Imputation model variables --
   imp_components <- as.list(formula_imp)
   response_imp <- error_variable
@@ -68,6 +88,7 @@ extract_variables_from_formula <- function(formula_moi,
               random_effects_moi = reff_moi,
               random_effect_variables_moi = reff_vars_moi,
               error_variable = error_variable,
+              error_interaction_variables = error_interaction_variables,
               covariates_error_free = covariates_error_free,
               response_imp = response_imp,
               covariates_imp = covariates_imp,
@@ -112,6 +133,20 @@ make_inlami_formula <- function(formula_moi,
   #  except the response and error prone covariate:
   covariates_error_free_string <- paste0("beta.", vars$covariates_error_free)
 
+  # String for potential interaction effects
+  interaction_effects <- ""
+  if(vars$error_interaction_variables != ""){
+    for(interaction_var in vars$error_interaction_variables){
+      coef_name <- paste0("beta.", interaction_var, vars$error_variable)
+      weight_name <- paste0("weight.", interaction_var, vars$error_variable)
+      f_string <- paste0("f(", coef_name, ", ", weight_name,
+                         ", copy = 'id.x', hyper = list(beta = list(param = ",
+                         deparse(prior.beta.error), ", fixed = FALSE)))")
+      interaction_effects <- c(interaction_effects, f_string)
+    }
+  }
+
+
   # Covariates for imputation model:
   if(length(vars$covariates_imp) > 0){
     covariates_imp_string <- paste0("alpha.", vars$covariates_imp)
@@ -119,14 +154,10 @@ make_inlami_formula <- function(formula_moi,
     covariates_imp_string <- ""
   }
 
-
   # The copy term to ensure the mismeasured variable is copied correctly through the models
-  #prior.beta.error <- c(0, 1/1000)
   copy_term1 <- paste0("f(", paste0("beta.", vars$response_imp),
                        ", copy = 'id.x', hyper = list(beta = list(param = ",
                        deparse(prior.beta.error), ", fixed = FALSE)))")
-  # TODO: What does the "param = c(0, 1/1000)" above actually control? Should this be given as an argument?
-  # I think it's the prior for beta.x?
 
   copy_term2 <- "f(id.x, weight.x, model='iid', values = 1:n, hyper = list(prec = list(initial = -15, fixed=TRUE)))"
 
@@ -152,6 +183,8 @@ make_inlami_formula <- function(formula_moi,
     paste(covariates_error_free_string, collapse = " + "),
     # MOI random effects
     paste(vars$random_effects_moi, collapse = " + "),
+    # MOI interaction terms with error variable
+    paste(interaction_effects, collapse = " + "),
     # Imputation model covariates
     "alpha.0",
     paste(covariates_imp_string, collapse = " + "),
@@ -340,6 +373,10 @@ make_inlami_stacks <- function(formula_moi,
   if(length(diff_vars)>0){
     stop(paste0("It looks like the following variable(s) are in the formula but not the data: ", toString(diff_vars)))
   }
+  # Check if error variable is not in data
+  if(!repeated_observations && !vars$error_variable %in% data_vars){
+    stop("The error variable, ", vars$error_variable, ", is not found among the variables in the data.")
+  }
 
 
   # Defining sizes -------------------------------------------------------------
@@ -365,7 +402,8 @@ make_inlami_stacks <- function(formula_moi,
 
   # The names of the variables that change based on the covariate names:
   moi_effects <- paste0(c("beta.0", beta.error_variable, cov_moi_names), " = ",
-                             c("beta.0", beta.error_variable, cov_moi_names), collapse = ", ")
+                        c("beta.0", beta.error_variable, cov_moi_names),
+                        collapse = ", ")
 
   # Add (optional) random effect variable
   if(nchar(vars$random_effects_moi) > 0){
@@ -375,6 +413,21 @@ make_inlami_stacks <- function(formula_moi,
 
     reff_list_moi <- paste0(reff_moi_names, " = ", reff_moi_names)
     moi_effects <- paste0(moi_effects, ", ", reff_list_moi)
+  }
+
+  # Add (optional) interaction variable
+  if(nchar(vars$error_interaction_variables) > 0){
+    for(interaction_var in vars$error_interaction_variables){
+      coef_name <- paste0("beta.", interaction_var, vars$error_variable)
+      assign(coef_name, 1:n)
+      weight_name <- paste0("weight.", interaction_var, vars$error_variable)
+      assign(weight_name, c(as.matrix(data[interaction_var])))
+
+      interaction_list <- paste0(coef_name, " = ", coef_name)
+      weight_list <- paste0(weight_name, " = ", weight_name)
+      moi_effects <- paste0(moi_effects, ", ", interaction_list,
+                            ", ", weight_list)
+    }
   }
 
   moi_effects_list <- NULL # Assign NULL to moi_effects_list, just to avoid notes when running checks.
@@ -421,9 +474,15 @@ make_inlami_stacks <- function(formula_moi,
 
   # Classical stack  -----------------------------------------------------------
 
-  # Check if repeated measurements
-  error_var_list <- names(data)[grepl(paste0("\\b", vars$error_variable, "(\\d|)\\b"), names(data))]
-  nr_repeats <- length(error_var_list)
+  # Set "height" of measurement error stack depending on no of repeats
+  if(repeated_observations){
+    error_var_list <- names(data)[grepl(paste0("\\b", vars$error_variable, "(\\d)\\b"), names(data))]
+    nr_repeats <- length(error_var_list)
+  }else{
+    error_var_list <- vars$error_variable
+    nr_repeats <- 1
+  }
+
   classical_id <- rep(1:n, nr_repeats)
 
   # Latent variable r if Berkson ME, otherwise x
@@ -672,7 +731,7 @@ fit_inlami <- function(formula_moi,
     error_type = error_type,
     classical_error_scaling = classical_error_scaling)
 
-  # Append scaling vector and data size to the matrices to pass to inla() ------
+  # Add extra stuff to inla data -----------------------------------------------
   n <- length(data_stack$data$index$moi) # Define number of observations
   data_for_inla <- INLA::inla.stack.data(data_stack,
                                          n = n,
