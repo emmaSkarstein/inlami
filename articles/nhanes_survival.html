@@ -8,8 +8,8 @@
 <meta name="description" content="inlami">
 <title>Survival data with repeated systolic blood pressure measurements • inlami</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Survival data with repeated systolic blood pressure measurements">
 <meta property="og:description" content="inlami">
@@ -204,45 +204,45 @@ repeated measurements for SBP, we need to set this argument to
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for model of interest: </span></span>
 <span><span class="co">#&gt;                     mean         sd 0.025quant   0.5quant 0.975quant       mode</span></span>
-<span><span class="co">#&gt; beta.0        -5.4546469 0.13810701 -5.7188907 -5.4550101 -5.1895841 -5.4553210</span></span>
-<span><span class="co">#&gt; beta.age       0.9060435 0.04989851  0.8081585  0.9060772  1.0037411  0.9060786</span></span>
-<span><span class="co">#&gt; beta.smoke     0.2699995 0.08458635  0.1041252  0.2700024  0.4358573  0.2700025</span></span>
-<span><span class="co">#&gt; beta.sex       0.4453415 0.07885338  0.2907124  0.4453432  0.5999609  0.4453433</span></span>
-<span><span class="co">#&gt; beta.diabetes  0.5921206 0.09298791  0.4097567  0.5921289  0.7744373  0.5921290</span></span>
+<span><span class="co">#&gt; beta.0        -5.4540793 0.13791028 -5.7178535 -5.4542812 -5.1898456 -5.4542741</span></span>
+<span><span class="co">#&gt; beta.age       0.9054658 0.04986833  0.8076086  0.9055102  1.0030713  0.9055112</span></span>
+<span><span class="co">#&gt; beta.smoke     0.2700315 0.08453204  0.1042703  0.2700318  0.4357906  0.2700319</span></span>
+<span><span class="co">#&gt; beta.sex       0.4454309 0.07880390  0.2909166  0.4454262  0.5999723  0.4454262</span></span>
+<span><span class="co">#&gt; beta.diabetes  0.5919702 0.09293527  0.4096874  0.5919860  0.7741628  0.5919862</span></span>
 <span><span class="co">#&gt;                        kld</span></span>
-<span><span class="co">#&gt; beta.0        3.998752e-07</span></span>
-<span><span class="co">#&gt; beta.age      1.515950e-09</span></span>
-<span><span class="co">#&gt; beta.smoke    5.296955e-11</span></span>
-<span><span class="co">#&gt; beta.sex      5.253914e-11</span></span>
-<span><span class="co">#&gt; beta.diabetes 5.631161e-11</span></span>
+<span><span class="co">#&gt; beta.0        4.309712e-07</span></span>
+<span><span class="co">#&gt; beta.age      1.627047e-09</span></span>
+<span><span class="co">#&gt; beta.smoke    5.015069e-11</span></span>
+<span><span class="co">#&gt; beta.sex      5.038385e-11</span></span>
+<span><span class="co">#&gt; beta.diabetes 5.911499e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficient for error prone variable: </span></span>
-<span><span class="co">#&gt;               mean         sd 0.025quant 0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; beta.sbp 0.1135453 0.04859668 0.01860968 0.113294  0.2099516 0.1122434</span></span>
+<span><span class="co">#&gt;               mean         sd 0.025quant  0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; beta.sbp 0.1132242 0.04863348  0.0173987 0.1132523  0.2088864 0.1133686</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects for imputation model: </span></span>
 <span><span class="co">#&gt;                        mean         sd  0.025quant     0.5quant 0.975quant</span></span>
-<span><span class="co">#&gt; alpha.0         0.006396939 0.04312792 -0.07817894  0.006396780 0.09097373</span></span>
-<span><span class="co">#&gt; alpha.age       0.322527828 0.02957052  0.26454106  0.322526886 0.38051997</span></span>
-<span><span class="co">#&gt; alpha.smoke     0.004834271 0.05063541 -0.09446519  0.004834453 0.10413269</span></span>
-<span><span class="co">#&gt; alpha.sex      -0.061804395 0.04702793 -0.15402805 -0.061804678 0.03042087</span></span>
-<span><span class="co">#&gt; alpha.diabetes  0.137895142 0.06225469  0.01581390  0.137893811 0.25998399</span></span>
+<span><span class="co">#&gt; alpha.0         0.006414737 0.04311843 -0.07814272  0.006414674 0.09097255</span></span>
+<span><span class="co">#&gt; alpha.age       0.322557254 0.02956393  0.26458302  0.322556470 0.38053596</span></span>
+<span><span class="co">#&gt; alpha.smoke     0.004837678 0.05062417 -0.09443968  0.004837878 0.10411389</span></span>
+<span><span class="co">#&gt; alpha.sex      -0.061813666 0.04701750 -0.15401662 -0.061814002 0.03039120</span></span>
+<span><span class="co">#&gt; alpha.diabetes  0.137938582 0.06224096  0.01588373  0.137937483 0.25999970</span></span>
 <span><span class="co">#&gt;                        mode          kld</span></span>
-<span><span class="co">#&gt; alpha.0         0.006396781 1.131528e-11</span></span>
-<span><span class="co">#&gt; alpha.age       0.322526885 1.180000e-11</span></span>
-<span><span class="co">#&gt; alpha.smoke     0.004834454 1.141860e-11</span></span>
-<span><span class="co">#&gt; alpha.sex      -0.061804680 1.138483e-11</span></span>
-<span><span class="co">#&gt; alpha.diabetes  0.137893812 1.142373e-11</span></span>
+<span><span class="co">#&gt; alpha.0         0.006414674 1.169908e-11</span></span>
+<span><span class="co">#&gt; alpha.age       0.322556468 1.209900e-11</span></span>
+<span><span class="co">#&gt; alpha.smoke     0.004837879 1.180854e-11</span></span>
+<span><span class="co">#&gt; alpha.sex      -0.061814003 1.177616e-11</span></span>
+<span><span class="co">#&gt; alpha.diabetes  0.137937481 1.177290e-11</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model hyperparameters (apart from beta.sbp): </span></span>
 <span><span class="co">#&gt;                                                mean         sd 0.025quant</span></span>
-<span><span class="co">#&gt; alpha parameter for weibullsurv            1.376952 0.04117691  1.2967909</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.843439 0.26210030  2.3617928</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.027144 0.04998484  0.9325767</span></span>
+<span><span class="co">#&gt; alpha parameter for weibullsurv            1.376961 0.04080254   1.297821</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.838731 0.25689408   2.357707</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.027330 0.04959681   0.934313</span></span>
 <span><span class="co">#&gt;                                            0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; alpha parameter for weibullsurv            1.376635   1.458899 1.376655</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.831663   3.392853 2.808739</span></span>
-<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.025819   1.129339 1.022948</span></span>
+<span><span class="co">#&gt; alpha parameter for weibullsurv            1.376548   1.458457 1.376139</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[2] 2.830221   3.368165 2.819662</span></span>
+<span><span class="co">#&gt; Precision for the Gaussian observations[3] 1.025740   1.129552 1.021714</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">survival_model</span>, plot_intercepts <span class="op">=</span> <span class="cn">FALSE</span>, plot_imp <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="nhanes_survival_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
   </main>
