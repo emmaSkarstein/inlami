@@ -4,12 +4,14 @@
 \alias{extract_variables_from_formula}
 \title{Extract and group variables from formulas}
 \usage{
-extract_variables_from_formula(formula_moi, formula_imp)
+extract_variables_from_formula(formula_moi, formula_imp, error_variable = NULL)
 }
 \arguments{
 \item{formula_moi}{an object of class "formula", describing the main model to be fitted.}
 
 \item{formula_imp}{an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.}
+
+\item{error_variable}{the name of the variable with error}
 }
 \value{
 A list containing the names of the different variables of the model. The names of the elements in the list are "response_moi" (the response for the moi), "covariates_moi" (all covariates in the moi), "error_variable" (the name of the variable with error or missing data), "covariates_error_free" (the moi covariates without error), "response_imp" (imputation model response), "covariates_imp" (imputation model covariates).

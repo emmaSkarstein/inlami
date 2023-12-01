@@ -6,10 +6,11 @@
 \usage{
 fit_inlami(
   formula_moi,
-  formula_imp,
+  formula_imp = NULL,
   family_moi,
   data,
   error_type = "classical",
+  error_variable = NULL,
   repeated_observations = FALSE,
   classical_error_scaling = NULL,
   prior.prec.moi = NULL,
@@ -21,6 +22,10 @@ fit_inlami(
   initial.prec.berkson = NULL,
   initial.prec.classical = NULL,
   initial.prec.imp = NULL,
+  control.family.moi = NULL,
+  control.family.berkson = NULL,
+  control.family.classical = NULL,
+  control.family.imp = NULL,
   control.family = NULL,
   control.predictor = NULL,
   ...
@@ -37,6 +42,8 @@ fit_inlami(
 
 \item{error_type}{type of error (one or more of "classical", "berkson", "missing")}
 
+\item{error_variable}{character vector with the name(s) of the variable(s) with error.}
+
 \item{repeated_observations}{Does the variable with measurement error and/or missingness have repeated observations? If so, set this to "TRUE". In that case, when specifying the formula, use the name of the variable without any numbers, but when specifying the data, make sure that the repeated measurements end in a number, i.e "sbp1" and "sbp2".}
 
 \item{classical_error_scaling}{can be specified if the classical measurement error varies across observations. Must be a vector of the same length as the data.}
@@ -47,7 +54,7 @@ fit_inlami(
 
 \item{prior.prec.classical}{a string containing the parameters for the prior for the precision of the error term for the classical error model.}
 
-\item{prior.prec.imp}{a string containing the parameters for the precision of the latent variable r, which is the variable being described in the imputation model.}
+\item{prior.prec.imp}{a string containing the parameters for the precision of the latent variable x, which is the variable being described in the imputation model.}
 
 \item{prior.beta.error}{parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?}
 
@@ -59,7 +66,15 @@ fit_inlami(
 
 \item{initial.prec.imp}{the initial value for the precision of the residual term for the latent variable r.}
 
-\item{control.family}{control.family for use in inla (can be provided directly instead of passing the "prior.prec...." and "initial.prec..." arguments.}
+\item{control.family.moi}{control.family component for model of interest. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments, or in the cases when other hyperparameters are needed for the model of interest, see for instance survival models.}
+
+\item{control.family.berkson}{control.family component Berkson model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.}
+
+\item{control.family.classical}{control.family component for classical model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.}
+
+\item{control.family.imp}{control.family component for imputation model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.}
+
+\item{control.family}{control.family for use in inla (can be provided directly instead of passing the "prior.prec...." and "initial.prec..." arguments. If this is specified, any other "control.family..." or "prior.prec..." arguments provided will be ignored.}
 
 \item{control.predictor}{control.predictor for use in inla.}
 
@@ -81,6 +96,7 @@ simple_model <- fit_inlami(data = simple_data,
                            formula_imp = simple_imp,
                            family_moi = "gaussian",
                            error_type = c("berkson", "classical"),
+                           error_variable = "x",
                            prior.prec.moi = c(10, 9),
                            prior.prec.berkson = c(10, 9),
                            prior.prec.classical = c(10, 9),

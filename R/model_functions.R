@@ -6,6 +6,7 @@
 #'
 #' @param formula_moi an object of class "formula", describing the main model to be fitted.
 #' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
+#' @param error_variable the name of the variable with error
 #'
 #' @return A list containing the names of the different variables of the model. The names of the elements in the list are "response_moi" (the response for the moi), "covariates_moi" (all covariates in the moi), "error_variable" (the name of the variable with error or missing data), "covariates_error_free" (the moi covariates without error), "response_imp" (imputation model response), "covariates_imp" (imputation model covariates).
 #' @export
@@ -15,7 +16,8 @@
 #' @examples
 #' extract_variables_from_formula(formula_moi = y ~ x + z, formula_imp = x ~ z)
 extract_variables_from_formula <- function(formula_moi,
-                                           formula_imp){
+                                           formula_imp,
+                                           error_variable = NULL){
   if(!(methods::is(formula_moi, "formula") & methods::is(formula_imp, "formula"))){
     stop("One of the input objects is not of class 'formula'")
   }
@@ -42,7 +44,13 @@ extract_variables_from_formula <- function(formula_moi,
   covariates_moi <- setdiff(all.vars(moi_components[[3]]), reff_vars_moi)
 
   ## Identify error prone variable:
-  error_variable <- rlang::as_string(as.list(formula_imp)[[2]])
+  error_variable_imp <- rlang::as_string(as.list(formula_imp)[[2]])
+  if(is.null(error_variable)) error_variable <- error_variable_imp
+
+  # Check if error variable and specified error variable are the same
+  if(error_variable != error_variable_imp){
+    stop("The specified error variable and the response of the imputation model are not the same.")
+  }
 
   ## Extract index of error variable in formula:
   error_var_index <- which(covariates_moi == error_variable)
@@ -103,6 +111,7 @@ extract_variables_from_formula <- function(formula_moi,
 #' @param formula_imp an object of class "formula", describing the imputation model for the mismeasured and/or missing observations.
 #' @param family_moi a string indicating the likelihood family for the model of interest (the main model).
 #' @param error_type type of error (one of "classical", "berkson", "missing")
+#' @param error_variable the name of the variable with error
 #' @param prior.beta.error parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?
 #'
 #' @return An object of class "formula".
@@ -120,6 +129,7 @@ make_inlami_formula <- function(formula_moi,
                                 formula_imp,
                                 family_moi = "gaussian",
                                 error_type = "classical",
+                                error_variable = NULL,
                                 prior.beta.error){
 
   # Weaknesses:
@@ -127,7 +137,8 @@ make_inlami_formula <- function(formula_moi,
 
   # Extract and group all variables from formulas:
   vars <- extract_variables_from_formula(formula_moi = formula_moi,
-                                         formula_imp = formula_imp)
+                                         formula_imp = formula_imp,
+                                         error_variable = error_variable)
 
   # Define covariates in output formula as all variables in moi formula
   #  except the response and error prone covariate:
@@ -637,6 +648,153 @@ make_inlami_scaling_vector <- function(inlami_stack,
   return(precision_scaling)
 }
 
+
+#' Make "control.family" argument for passing to the "inla" function
+#'
+#' @param family_moi a string indicating the likelihood family for the model of interest (the main model).
+#' @param error_type type of error (one or more of "classical", "berkson", "missing")
+#' @param prior.prec.moi a string containing the parameters for the prior for the precision of the residual term for the model of interest. If this precision should be fixed (to the value given as the initial value), this can be done by specifying "prior.prec.moi = 'fixed'".
+#' @param prior.prec.berkson a string containing the parameters for the prior for the precision of the error term for the Berkson error model. If this precision should be fixed (to the value given as the initial value), this can be done by specifying "prior.prec.berkson = 'fixed'".
+#' @param prior.prec.classical a string containing the parameters for the prior for the precision of the error term for the classical error model. If this precision should be fixed (to the value given as the initial value), this can be done by specifying "prior.prec.classical = 'fixed'".
+#' @param prior.prec.imp a string containing the parameters for the precision of the latent variable x, which is the variable being described in the imputation model. If this precision should be fixed (to the value given as the initial value), this can be done by specifying "prior.prec.imputation = 'fixed'".
+#' @param prior.beta.error parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?
+#' @param initial.prec.moi the initial value for the precision of the residual term for the model of interest.
+#' @param initial.prec.berkson the initial value for the precision of the residual term for the Berkson error term.
+#' @param initial.prec.classical the initial value for the precision of the residual term for the classical error term.
+#' @param initial.prec.imp the initial value for the precision of the residual term for the latent variable r.
+#' @param control.family.moi control.family component for model of interest. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments, or in the cases when other hyperparameters are needed for the model of interest, see for instance survival models.
+#' @param control.family.berkson control.family component Berkson model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.
+#' @param control.family.classical control.family component for classical model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.
+#' @param control.family.imp control.family component for imputation model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.
+#' @param control.family control.family for use in inla (can be provided directly instead of passing the "prior.prec...." and "initial.prec..." arguments. If this is specified, any other "control.family..." or "prior.prec..." arguments provided will be ignored.
+#'
+#' @return the "control.family" argument to be passed to inla, a list of "control.family" arguments for each model in the hierarchical measurement error model.
+#' @export
+#'
+#' @examples
+#' make_inlami_control.family(
+#'   formula_moi = simple_moi,
+#'   formula_imp = simple_imp,
+#'   family_moi = "gaussian",
+#'   error_type = c("berkson", "classical"),
+#'   prior.prec.moi = c(10, 9),
+#'   prior.prec.berkson = c(10, 9),
+#'   prior.prec.classical = c(10, 9),
+#'   prior.prec.imp = c(10, 9),
+#'   prior.beta.error = c(0, 1/1000),
+#'   initial.prec.moi = 1,
+#'   initial.prec.berkson = 1,
+#'   initial.prec.classical = 1,
+#'   initial.prec.imp = 1)
+#'
+#' make_inlami_control.family(
+#'   family_moi = "weibull.surv",
+#'   error_type = c("classical", "missing"),
+#'   control.family.moi =
+#'     list(hyper = list(alpha = list(param = 0.01,
+#'                                    initial = log(1.4),
+#'                                    fixed = FALSE))),
+#'   prior.prec.classical = c(0.5, 0.5),
+#'   prior.prec.imp = c(0.5, 0.5),
+#'   initial.prec.classical = 2.8,
+#'   initial.prec.imp = 1)
+make_inlami_control.family <- function(family_moi,
+                                       error_type = "classical",
+                                       prior.prec.moi = NULL,
+                                       prior.prec.berkson = NULL,
+                                       prior.prec.classical = NULL,
+                                       prior.prec.imp = NULL,
+                                       prior.beta.error = NULL,
+                                       initial.prec.moi = NULL,
+                                       initial.prec.berkson = NULL,
+                                       initial.prec.classical = NULL,
+                                       initial.prec.imp = NULL,
+                                       control.family.moi = NULL,
+                                       control.family.berkson = NULL,
+                                       control.family.classical = NULL,
+                                       control.family.imp = NULL,
+                                       control.family = NULL){
+  # Define some stuff
+  model_levels_without_moi <- union(error_type, c("classical", "imp")) # Always need classical
+  model_levels_without_moi_and_missing <- setdiff(model_levels_without_moi, "missing")
+
+  # If control.family is specified, just use that directly.
+  if(!is.null(control.family)){
+    return(control.family)
+  }
+  # Otherwise:
+
+  # Check if any defaults are needed -------------------------------------------
+  prec.list <- list(moi = prior.prec.moi, berkson = prior.prec.berkson,
+                    classical = prior.prec.classical, imp = prior.prec.imp)
+  # Not so easy to find indexes of NULL elements in list.
+  # Workaround is to find elements that have length 0.
+  which_prec_null <- names(prec.list[lengths(prec.list)==0])
+
+  # Find out which of these are missing:
+  which_need_defaults <- intersect(which_prec_null, model_levels_without_moi)
+
+  # Set defaults for necessary priors that have not been specified
+  for(component in which_need_defaults){
+    #warning(paste0("Using default prior Gamma(10, 9) for the precision of the ",
+    #               component, " model, and the initial value is set to 1 for the same term. This should be given a better value by specifying 'prior.prec.",
+    #               component, "' and 'initial.prec.", component, "'.\n"))
+    prior_code <- paste0("prior.prec.", component, " <- c(10, 9); ",
+                         "initial.prec.", component, " <- 1")
+    eval(parse(text = prior_code))
+  }
+
+  # Define control.family.moi --------------------------------------------------
+  if(is.null(control.family.moi)){ # If control.family.moi is not provided
+    if(family_moi %in% c("binomial", "poisson")){
+      control.family.moi <- list(hyper = list())
+    }
+    if(family_moi == "gaussian"){
+      # Check if default is needed
+      if(any(is.null(initial.prec.moi), is.null(prior.prec.moi))){
+        warning("Using default prior Gamma(10, 9) for the precision of the model of interest, and the initial value is set to 1 for the same term. This should be given a better value by specifying 'prior.prec.moi' and 'initial.prec.moi'.\n")
+        prior.prec.moi <- c(10, 9)
+        initial.prec.moi <- 1
+      }
+      control.family.moi <- list(hyper = list(prec = list(initial = log(initial.prec.moi),
+                                                          param = prior.prec.moi,
+                                                          fixed = FALSE)))
+    }
+  }
+  control.family <- list(control.family.moi)
+
+  # Optionally define control.family.berkson -----------------------------------
+  if("berkson" %in% error_type){
+    if(is.null(control.family.berkson)){ # If no control.fam.berk provided, insert arguments
+      control.family.berkson <- list(hyper = list(
+        prec = list(initial = log(initial.prec.berkson),
+                    param = prior.prec.berkson,
+                    fixed = FALSE)))
+    }
+    control.family <- append(control.family, list(control.family.berkson))
+  }
+
+  # Define control.family.classical --------------------------------------------
+  if(is.null(control.family.classical)){
+    control.family.classical <- list(hyper = list(
+      prec = list(initial = log(initial.prec.classical),
+                  param = prior.prec.classical,
+                  fixed = FALSE)))
+  }
+  control.family <- append(control.family, list(control.family.classical))
+
+  # Define control.family.imp --------------------------------------------------
+  if(is.null(control.family.imp)){
+    control.family.imp <- list(hyper = list(
+      prec = list(initial = log(initial.prec.imp),
+                  param = prior.prec.imp,
+                  fixed = FALSE)))
+  }
+  control.family <- append(control.family, list(control.family.imp))
+
+  return(control.family)
+}
+
 #' Fit model for measurement error and missing data in INLA
 #'
 #' A wrapper function around "INLA::inla()", providing the necessary structure to fit the hierarchical measurement error model that adjusts coefficient estimates to account for biases due to measurement error and missing data.
@@ -646,18 +804,23 @@ make_inlami_scaling_vector <- function(inlami_stack,
 #' @param family_moi a string indicating the likelihood family for the model of interest (the main model).
 #' @param data an object of class data.frame or list containing the variables in the model.
 #' @param error_type type of error (one or more of "classical", "berkson", "missing")
+#' @param error_variable character vector with the name(s) of the variable(s) with error.
 #' @param repeated_observations Does the variable with measurement error and/or missingness have repeated observations? If so, set this to "TRUE". In that case, when specifying the formula, use the name of the variable without any numbers, but when specifying the data, make sure that the repeated measurements end in a number, i.e "sbp1" and "sbp2".
 #' @param classical_error_scaling can be specified if the classical measurement error varies across observations. Must be a vector of the same length as the data.
 #' @param prior.prec.moi a string containing the parameters for the prior for the precision of the residual term for the model of interest.
 #' @param prior.prec.berkson a string containing the parameters for the prior for the precision of the error term for the Berkson error model.
 #' @param prior.prec.classical a string containing the parameters for the prior for the precision of the error term for the classical error model.
-#' @param prior.prec.imp a string containing the parameters for the precision of the latent variable r, which is the variable being described in the imputation model.
+#' @param prior.prec.imp a string containing the parameters for the precision of the latent variable x, which is the variable being described in the imputation model.
 #' @param prior.beta.error parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?
 #' @param initial.prec.moi the initial value for the precision of the residual term for the model of interest.
 #' @param initial.prec.berkson the initial value for the precision of the residual term for the Berkson error term.
 #' @param initial.prec.classical the initial value for the precision of the residual term for the classical error term.
 #' @param initial.prec.imp the initial value for the precision of the residual term for the latent variable r.
-#' @param control.family control.family for use in inla (can be provided directly instead of passing the "prior.prec...." and "initial.prec..." arguments.
+#' @param control.family.moi control.family component for model of interest. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments, or in the cases when other hyperparameters are needed for the model of interest, see for instance survival models.
+#' @param control.family.berkson control.family component Berkson model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.
+#' @param control.family.classical control.family component for classical model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.
+#' @param control.family.imp control.family component for imputation model. Can be specified here using the inla syntax instead of passing the "prior.prec..." and "initial.prec..." arguments. Useful in the cases when more flexibility is needed, for instance if one wants to specify a different prior distribution than Gamma.
+#' @param control.family control.family for use in inla (can be provided directly instead of passing the "prior.prec...." and "initial.prec..." arguments. If this is specified, any other "control.family..." or "prior.prec..." arguments provided will be ignored.
 #' @param control.predictor control.predictor for use in inla.
 #' @param ... other arguments to pass to `inla`.
 #'
@@ -674,6 +837,7 @@ make_inlami_scaling_vector <- function(inlami_stack,
 #'                            formula_imp = simple_imp,
 #'                            family_moi = "gaussian",
 #'                            error_type = c("berkson", "classical"),
+#'                            error_variable = "x",
 #'                            prior.prec.moi = c(10, 9),
 #'                            prior.prec.berkson = c(10, 9),
 #'                            prior.prec.classical = c(10, 9),
@@ -684,10 +848,11 @@ make_inlami_scaling_vector <- function(inlami_stack,
 #'                            initial.prec.classical = 1,
 #'                            initial.prec.imp = 1)
 fit_inlami <- function(formula_moi,
-                     formula_imp,
+                     formula_imp = NULL,
                      family_moi,
                      data,
                      error_type = "classical",
+                     error_variable = NULL,
                      repeated_observations = FALSE,
                      classical_error_scaling = NULL,
                      prior.prec.moi = NULL,
@@ -699,12 +864,19 @@ fit_inlami <- function(formula_moi,
                      initial.prec.berkson = NULL,
                      initial.prec.classical = NULL,
                      initial.prec.imp = NULL,
+                     control.family.moi = NULL,
+                     control.family.berkson = NULL,
+                     control.family.classical = NULL,
+                     control.family.imp = NULL,
                      control.family = NULL,
                      control.predictor = NULL,
                      ...){
 
   # Some checks ----------------------------------------------------------------
-
+  if(family_moi != "gaussian" && !is.null(prior.prec.moi)){
+    warning(paste("The 'prior.prec.moi' argument is only needed when fitting a Gaussian model. You have specified 'family_moi = ",
+                  family_moi, "', so 'prior.prec.moi' will not be used."))
+  }
 
   # Make formula from sub-models -----------------------------------------------
   formula_full <- make_inlami_formula(formula_moi = formula_moi,
@@ -740,69 +912,22 @@ fit_inlami <- function(formula_moi,
 
 
   # Make "control.family" ------------------------------------------------------
-  # If control.family is specified, just use that directly. If not:
-  if(is.null(control.family)){
-    # Check if any defaults are needed:
-    prec.list <- list(moi = prior.prec.moi, berkson = prior.prec.berkson,
-                      classical = prior.prec.classical, imp = prior.prec.imp)
-    # Not so easy to find indexes of NULL elements in list.
-    # Workaround is to find elements that have length 0.
-    which_prec_null <- names(prec.list[lengths(prec.list)==0])
-
-    # Find out which of these are missing:
-    which_need_defaults <- intersect(which_prec_null, model_levels_without_moi)
-
-    # Set defaults for necessary priors that have not been specified
-    for(component in which_need_defaults){
-      #warning(paste0("Using default prior Gamma(10, 9) for the precision of the ",
-      #               component, " model, and the initial value is set to 1 for the same term. This should be given a better value by specifying 'prior.prec.",
-      #               component, "' and 'initial.prec.", component, "'.\n"))
-      prior_code <- paste0("prior.prec.", component, " <- c(10, 9); ",
-                           "initial.prec.", component, " <- 1")
-      eval(parse(text = prior_code))
-    }
-
-    # Define control.family.moi
-    if(family_moi == "binomial"){
-      control.family.moi <- list(hyper = list())
-    }
-    if(family_moi == "gaussian"){
-      # Check if default is needed
-      if(any(is.null(initial.prec.moi), is.null(prior.prec.moi))){
-        warning("Using default prior Gamma(10, 9) for the precision of the model of interest, and the initial value is set to 1 for the same term. This should be given a better value by specifying 'prior.prec.moi' and 'initial.prec.moi'.\n")
-        prior.prec.moi <- c(10, 9)
-        initial.prec.moi <- 1
-      }
-      control.family.moi <- list(hyper = list(prec = list(initial = log(initial.prec.moi),
-                                                        param = prior.prec.moi,
-                                                        fixed = FALSE)))
-    }
-    # What if poisson or survival?
-
-    control.family <- list(control.family.moi)
-
-    # Optionally define control.family.berkson
-    if("berkson" %in% error_type){
-      control.family.berkson <- list(hyper = list(
-        prec = list(initial = log(initial.prec.berkson),
-                    param = prior.prec.berkson,
-                    fixed = FALSE)))
-      control.family <- append(control.family, list(control.family.berkson))
-    }
-
-    # Define control.family.classical and control.family.imp
-    control.family.classical <- list(hyper = list(
-      prec = list(initial = log(initial.prec.classical),
-                  param = prior.prec.classical,
-                  fixed = FALSE)))
-    control.family <- append(control.family, list(control.family.classical))
-
-    control.family.imp <- list(hyper = list(
-      prec = list(initial = log(initial.prec.imp),
-                  param = prior.prec.imp,
-                  fixed = FALSE)))
-    control.family <- append(control.family, list(control.family.imp))
-  }
+  control.family <- make_inlami_control.family(family_moi = family_moi,
+                                               error_type = error_type,
+                                               prior.prec.moi = prior.prec.moi,
+                                               prior.prec.berkson = prior.prec.berkson,
+                                               prior.prec.classical = prior.prec.classical,
+                                               prior.prec.imp = prior.prec.imp,
+                                               prior.beta.error = prior.beta.error,
+                                               initial.prec.moi = initial.prec.moi,
+                                               initial.prec.berkson = initial.prec.berkson,
+                                               initial.prec.classical = initial.prec.classical,
+                                               initial.prec.imp = initial.prec.imp,
+                                               control.family.moi = control.family.moi,
+                                               control.family.berkson = control.family.berkson,
+                                               control.family.classical = control.family.classical,
+                                               control.family.imp = control.family.imp,
+                                               control.family = control.family)
 
   # Specify "control.predictor" ------------------------------------------------
   if(is.null(control.predictor)){

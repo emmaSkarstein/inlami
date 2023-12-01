@@ -9,6 +9,7 @@ make_inlami_formula(
   formula_imp,
   family_moi = "gaussian",
   error_type = "classical",
+  error_variable = NULL,
   prior.beta.error
 )
 }
@@ -20,6 +21,8 @@ make_inlami_formula(
 \item{family_moi}{a string indicating the likelihood family for the model of interest (the main model).}
 
 \item{error_type}{type of error (one of "classical", "berkson", "missing")}
+
+\item{error_variable}{the name of the variable with error}
 
 \item{prior.beta.error}{parameters for the prior for the coefficient of the error prone variable. TODO: Which distribution? Gamma?}
 }

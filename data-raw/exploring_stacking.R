@@ -209,7 +209,7 @@ stk_full <- inla.stack(stk_moi, stk_b, stk_c, stk_imp)
 
 formula <- list(y_moi, y_berkson, y_classical, y_imp) ~ - 1 + beta.0 + beta.z +
   f(beta.x, copy = "id.x",
-    hyper = list(beta = list(param = prior.beta, fixed = FALSE))) +
+    hyper = list(beta = list(param = c(0, 1/1000), fixed = FALSE))) +
   f(id.x, weight.x, model = "iid", values = 1:n,
     hyper = list(prec = list(initial = -15, fixed = TRUE))) +
   f(id.r, weight.r, model="iid", values = 1:n,
