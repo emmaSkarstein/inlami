@@ -56,6 +56,7 @@
 <span>  <span class="va">formula_imp</span>,</span>
 <span>  family_moi <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
 <span>  error_type <span class="op">=</span> <span class="st">"classical"</span>,</span>
+<span>  error_variable <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">prior.beta.error</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -76,6 +77,10 @@
 
 <dt>error_type</dt>
 <dd><p>type of error (one of "classical", "berkson", "missing")</p></dd>
+
+
+<dt>error_variable</dt>
+<dd><p>the name of the variable with error</p></dd>
 
 
 <dt>prior.beta.error</dt>
@@ -102,7 +107,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     alpha.z + f(beta.x, copy = "id.x", hyper = list(beta = list(param = c(0, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     0.001), fixed = FALSE))) + f(id.x, weight.x, model = "iid", </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     values = 1:n, hyper = list(prec = list(initial = -15, fixed = TRUE)))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55f95593df40&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5605ec52d798&gt;</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
