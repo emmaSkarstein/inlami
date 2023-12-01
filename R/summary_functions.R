@@ -20,6 +20,21 @@ simplify_inlami_model_summary <- function(inlami_model){
 
   other_model_hyperpar <- dplyr::filter(hyper, !grepl("Beta for ", rownames(hyper)))
 
+  # Set better names for the hyperparameter precisions
+  precision_moi <- inlami_model$.args$family[1] == "gaussian"
+  precision_berkson <- grepl("berkson", toString(inlami_model$.args$formula[[2]]))
+  prec_names <- c()
+  if(precision_moi){
+    prec_names <- c("Precision for model of interest")
+  }
+  if(precision_berkson){
+    prec_names <- c(prec_names, "Precision for Berkson model")
+  }
+  prec_names <- c(prec_names, "Precision for classical model", "Precision for imputation model")
+  which_prec_for_model_levels <- grepl("Precision for the Gaussian observations",
+                                       rownames(other_model_hyperpar))
+  other_prec <- other_model_hyperpar[!which_prec_for_model_levels, ]
+  rownames(other_model_hyperpar) <- c(prec_names, rownames(other_prec))
 
   return(list(moi_coef = moi_coef,
               error_coef = error_coef,
